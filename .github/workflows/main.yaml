@@ -1,0 +1,49 @@
+name: Deploy To Dev CMS
+
+on:
+  push:
+    branches: [ main ] # change if your project uses a different branch
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: 22
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            git config --global --add safe.directory /home/ali-cms/htdocs/dev-cms.savoirproperties.com/cms-savoir
+            cd /home/ali-cms/htdocs/dev-cms.savoirproperties.com/cms-savoir
+
+            git fetch origin
+            sudo git reset --hard origin/main # change 'main' if using a different branch
+
+            # Set correct permissions for Laravel
+            sudo chown -R www-data:www-data storage bootstrap/cache
+            sudo chmod -R 775 storage bootstrap/cache
+
+            # Install dependencies without dev packages
+            composer install --no-interaction --prefer-dist --optimize-autoloader
+
+            # Clear old caches
+            php artisan config:clear
+            php artisan route:clear
+            php artisan view:clear
+            php artisan cache:clear
+
+            # Rebuild caches
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan optimize:clear
