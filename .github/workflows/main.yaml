@@ -41,7 +41,6 @@ jobs:
             sudo php artisan view:clear
             sudo php artisan cache:clear
 
-            sudo php artisan migrate --force
 
             sudo php artisan config:cache
             sudo php artisan route:cache
