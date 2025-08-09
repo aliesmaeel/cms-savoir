@@ -32,6 +32,7 @@ jobs:
             # Set correct permissions for Laravel
             sudo chown -R www-data:www-data storage bootstrap/cache
             sudo chmod -R 775 storage bootstrap/cache
+            sudo chmod -R 755 storage
 
             # Install dependencies without dev packages
             composer install --no-interaction --prefer-dist --optimize-autoloader
