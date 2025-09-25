@@ -304,26 +304,26 @@ class GoyzerIntegrationConroller extends Controller
                 'goyzer' => true,
             ]);
 
-            if ($newproperty->wasRecentlyCreated) {
+
+                $cloudName = "djd3y5gzw";
 
                 $property_images = is_array($property['Images']) ? $property['Images'] : json_decode($property['Images']);
                 if (array_key_exists('Image', $property_images) && count($property_images['Image']) > 0) {
                     foreach ($property_images['Image'] as $link) {
-                        DB::table('property_images')->insert(
-                            array(
-                                'url' => $link['ImageURL'],
-                                'newProperty_id' => $newproperty->id,
-                                'created_at' => Carbon::now(),
-                                'updated_at' => Carbon::now(),
-                                'is_external_image' => true,
-                            )
-                        );
+                        $originalUrl = $link['ImageURL'];
+
+                        $webpUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
+                        DB::table('property_images')->updateOrInsert([
+                            'url' => $webpUrl,
+                            'newProperty_id' => $newproperty->id,
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                            'is_external_image' => true,
+                        ]);
                     }
                 }
-                return true;
-            } else {
-                return false;
-            }
+
         } catch (\Throwable $th) {
             Log::channel('fetching_properties')->alert($th->getMessage());
         }

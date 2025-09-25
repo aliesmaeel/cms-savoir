@@ -103,7 +103,9 @@
             border-radius: 0 0px 55px 0;
             /* background-image:linear-gradient(to right, #211706, #291d0a, #30230c, #39290f, #412f10, #503913, #5f4416, #6e4f19, #88621f, #a37526, #be892c, #db9d33); */
         }
-
+        .cke_notification{
+            display: none;
+        }
         .sidebar-divider {
             display: none;
         }
@@ -169,8 +171,7 @@
             margin: 5px;
             /* border: 1px solid #e4aa47; */
             border-radius: 5px;
-            padding: 20px 51px;
-            width: 50rem;
+            width: 65rem;
             margin: 5rem auto;
         }
 
@@ -552,4 +553,20 @@
 
 
     </script>
+
+    <script>
+        document.getElementById('title').addEventListener('keyup', function () {
+            let title = this.value;
+
+            let slug = title
+                .replace(/[0-9]/g, '')       // remove numbers
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, '-')        // spaces to hyphens
+                .replace(/[^a-z\-]/g, '');   // keep only letters and hyphens
+
+            document.getElementById('slug').value = slug;
+        });
+    </script>
+
 @endpush

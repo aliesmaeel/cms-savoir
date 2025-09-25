@@ -158,14 +158,15 @@
             right: 20px;
             width: 16rem;
         }
-
+        .cke_notification{
+            display: none;
+        }
         #maindata {
             /* box-shadow: 0px 0px 4px 1px #6c4d18; */
             margin: 5px;
             /* border: 1px solid #e4aa47; */
             border-radius: 5px;
-            padding: 20px 51px;
-            width: 50rem;
+            width: 65rem;
             margin: 5rem auto;
         }
 

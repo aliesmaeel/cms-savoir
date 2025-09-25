@@ -316,6 +316,11 @@
                     <li id="sbitem4_5"><a href="{{ route('uploadedFiles') }}"><i class="fas fa-ad"></i>
                             Export & Uploaded Files</a>
                     </li>
+
+                    <li id="sbitem4_88" ><a href="{{ route('signature.index') }}"><i class="fas fa-ad"></i>
+                            Create Signature</a>
+                    </li>
+
                 @endif
                 @if (Auth::user()->issuperAdmin())
                     <li id="sbitem4_6"><a href="{{ route('create_super_Admin') }}"><i class="fas fa-ad"></i>

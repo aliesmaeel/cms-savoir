@@ -808,6 +808,7 @@
         #sbitem4_3,
         #sbitem4_4,
         #sbitem4_5,
+        #sbitem4_88,
         #sbitem4_6,
         #sbitem4_7 {
             line-height: 17px !important;
@@ -820,6 +821,7 @@
         #sbitem4_4 a,
         #sbitem4_5 a,
         #sbitem4_6 a,
+        #sbitem4_88 a,
         #sbitem4_7 a {
             padding-left: 15px !important;
             font-size: 12px !important;
@@ -1342,9 +1344,12 @@
                 "{{ request()->route()->getName() }}" == 'create_user_index' ||
                 "{{ request()->route()->getName() }}" == 'update_user_index' ||
                 "{{ request()->route()->getName() }}" == 'create_buyer_index' ||
-                "{{ request()->route()->getName() }}" == 'create_super_Admin'
+                "{{ request()->route()->getName() }}" == 'create_super_Admin' ||
+                "{{ request()->route()->getName() }}" == 'signature.index'
+
 
             ) {
+
                 $('#sbitem4').find('a:first').toggleClass('selected');
                 if ("{{ request()->route()->getName() }}" == 'create_buyer_index')
                     $('#sbitem4_1_1').addClass('active');
@@ -1355,7 +1360,13 @@
                 else if ("{{ request()->route()->getName() }}" == 'uploadedFiles')
                     $('#sbitem4_5').addClass('active');
                 else if ("{{ request()->route()->getName() }}" == 'create_super_Admin')
-                    $('#sbitem4_6').addClass('active');
+                    $('#sbitem4_6').addClass('active')
+                else if ("{{ request()->route()->getName() }}" == 'signature.index'){
+                    $('#sbitem4_88').addClass('active')
+                }
+
+
+
 
 
 

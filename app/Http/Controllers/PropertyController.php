@@ -83,6 +83,7 @@ class PropertyController extends Controller
                 ->where('bedroom', 'like', $request->bedrooms . '%')
                 ->orderBy('new_properties.created_at', 'DESC')->get();
         }
+
         return DataTables::of($properties)
             ->addColumn('user', function (NewProperty $property) {
                 return $property->user?->name;
@@ -1372,7 +1373,11 @@ class PropertyController extends Controller
     {
         $types = [
             "RR" => "Residential Rent",
-            "RS" => "Residential Sale"
+            "RS" => "Residential Sale",
+            'RC' => "Residential Commercial",
+            'CR' => "Commercial Rent",
+            'CS' => "Commercial Sale",
+
         ];
         return $types[$type];
     }
