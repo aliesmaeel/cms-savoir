@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\PropertyApiController;
 use App\Http\Controllers\leadsregisteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\PropertyApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +21,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('pf_webhook_lead_store',[leadsregisteController::class, 'property_finder_webhook_lead_store']);
-Route::get('/getProperties', [PropertyApiController::class, 'getProperties'])->name('get_Properties');   
-Route::get('/getCommunities', [PropertyApiController::class, 'getCommunities'])->name('get_Communities');   
-Route::get('/getSubCommunities', [PropertyApiController::class, 'getSubCommunities'])->name('get_Sub_Communities');   
-Route::get('/getBuildings', [PropertyApiController::class, 'getBuildings'])->name('get_Buildings');   
+Route::get('/getProperties', [PropertyApiController::class, 'getProperties'])->name('get_Properties');
+Route::get('/getCommunities', [PropertyApiController::class, 'getCommunities'])->name('get_Communities');
+Route::get('/getSubCommunities', [PropertyApiController::class, 'getSubCommunities'])->name('get_Sub_Communities');
+Route::get('/getBuildings', [PropertyApiController::class, 'getBuildings'])->name('get_Buildings');
+
+
+Route::get('/home', [\App\Http\Controllers\Api\HomeController::class, 'homePage']);

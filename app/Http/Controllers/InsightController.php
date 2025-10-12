@@ -28,12 +28,16 @@ class InsightController extends Controller
                 'slug' => $request->slug,
             ]);
 
+            $cloudName = "djd3y5gzw";
 
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
                 $filename =uploadFile($file  ,'insights');
+                $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/'.$filename;
+                $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
                 $insight->update([
-                    'image' => $filename
+                    'image' => $store
                 ]);
             }
 
@@ -106,13 +110,15 @@ class InsightController extends Controller
                         'slug' => $request->slug,
                     ]
                 );
-
+                $cloudName = "djd3y5gzw";
                 if ($request->hasFile('image')) {
                     deleteFile($insight->image);
                     $file = $request->file('image');
                     $filename=uploadFile($file ,'insights');
+                    $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/'.$filename;
+                    $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
                     $insight->update([
-                        'image' => $filename
+                        'image' => $store
                     ]);
                 }
                 return response()->json(['success' => true, 'message' => 'Insight Project updated successfully']);

@@ -203,6 +203,7 @@ class GoyzerIntegrationConroller extends Controller
     }
     public function create_new_property($property, $communities, $sub_communities)
     {
+
         try {
             if (array_key_exists('ListingType', $property) && $property['ListingType']) {
                 if ($property['ListingType'] == 'Off Plan') {
@@ -234,6 +235,7 @@ class GoyzerIntegrationConroller extends Controller
             } else {
                 $price = null;
             }
+
             $newproperty = NewProperty::firstOrCreate([
                 'reference_number' => $property['RefNo'] ? $property['RefNo'] : null,
                 'offering_type' => $property['OfferingType'] ? $property['OfferingType'] : null,
@@ -262,6 +264,7 @@ class GoyzerIntegrationConroller extends Controller
                 'country' => $property['CountryName'] ? $property['CountryName'] : null,
                 'user_id' => $user_id,
                 'goyzer' => true,
+                'photo' => (array_key_exists('Images', $property) && array_key_exists('Image', $property['Images']) && count($property['Images']['Image']) > 0) ? $property['Images']['Image'][0]['ImageURL'] : null,
             ]);
             if ($newproperty->wasRecentlyCreated) {
                 $property_images = is_array($property['Images']) ? $property['Images'] : json_decode($property['Images']);

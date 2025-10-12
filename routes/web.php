@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\InsightController;
+use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\RealEstateController;
 use App\Models\Community;
 use Illuminate\Support\Facades\Auth;
@@ -443,18 +445,32 @@ Route::match(['post', 'get'], '/insight_list', [InsightController::class,'insigh
 Route::match(['post', 'get'], '/insight_list_update/{id}', [InsightController::class,'insight_list_update'])->name('insight_update');
 Route::post('/insight_delete', [InsightController::class,'insight_delete'])->name('insight_delete');
 
+Route::match(['post', 'get'], '/marketing_create', [MarketingController::class,'marketing_create'])->name('create_marketing');
+Route::match(['post', 'get'], '/marketing_list', [MarketingController::class,'marketing_list'])->name('list_marketing');
+Route::post('/marketing_delete', [MarketingController::class,'marketing_delete'])->name('delete_marketing');
+Route::match(['post', 'get'], '/marketing_update/{id}', [MarketingController::class,'marketing_update'])->name('marketing_update');
+
+Route::match(['post', 'get'], '/listing_create', [MarketingController::class,'listing_create'])->name('create_listing');
+Route::match(['post', 'get'], '/listing_list', [MarketingController::class,'listing_list'])->name('list_listing');
+Route::post('/listing_delete', [MarketingController::class,'listing_delete'])->name('delete_listing');
+Route::match(['post', 'get'], '/listing_update/{id}', [MarketingController::class,'listing_update'])->name('update_listing');
+
 // Off-Plan Projects
 Route::match(['post', 'get'], '/off_plan_project_create', [OffPlanProjectController::class,'off_plan_project_create'])->name('off_plan_project_create');
+Route::match(['post', 'get'], '/testimonial_project_create', [HomePageController::class,'testimonial_project_create'])->name('create_testimonial');
 Route::match(['post', 'get'], '/real_estate_guides', [RealEstateController::class,'real_estate_guides_create'])->name('real_estate_guides_create');
 Route::post('/real_estate_guides_delete', [RealEstateController::class,'real_estate_guides_delete'])->name('real_estate_guides_delete');
 Route::match(['post', 'get'], '/real_estate_guides_update/{id}', [RealEstateController::class,'real_estate_guides_update'])->name('real_estate_guides_update');
 Route::get('download/{filename}', [RealEstateController::class, 'download'])->name('file.download');
 
 Route::match(['post', 'get'], '/off_plan_project_list', [OffPlanProjectController::class,'off_plan_project_list'])->name('off_plan_project_list');
+Route::match(['post', 'get'], '/testimonial_project_list', [HomePageController::class,'testimonial_project_list'])->name('list_testimonials');
 Route::match(['post', 'get'], '/real_estate_list', [RealEstateController::class,'real_estate_list'])->name('real_estate_list');
 Route::match(['post', 'get'], '/off_plan_project_update/{id}', [OffPlanProjectController::class,'off_plan_project_update'])->name('off_plan_project_update');
+Route::match(['post', 'get'], '/testimonial_project_update/{id}', [HomePageController::class,'testimonial_project_update'])->name('testimonial_project_update');
 Route::match(['post', 'get'], '/popup', [OffPlanProjectController::class,'popUpUpdate'])->name('pop-up-update');
 Route::post('/off_plan_project_delete', [OffPlanProjectController::class,'off_plan_project_delete'])->name('off_plan_project_delete');
+Route::post('/testimonial_project_delete', [HomePageController::class,'testimonial_project_delete'])->name('testimonial_project_delete');
 Route::controller(CountryController::class)->prefix('countries')->group(function () {
     Route::match(['post', 'get'], '/', 'index')->name('list_countries');
     Route::match(['post', 'get'], '/create', 'create')->name('create_country');

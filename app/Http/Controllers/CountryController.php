@@ -36,72 +36,105 @@ class CountryController extends Controller
         }
         return view('countries.index');
     }
-    public function create(Request $request){
-        if($request->ajax()){
-            $request->validate(
-                [
-                    'name' => 'required',
-                    'code' => 'required|unique:countries,code',
-                ]
-            );
-
-            $country=Country::create($request->except('_token'));
-
-            $file = $request->file('image');
-            $randomName = Str::random(10) . '.' . $file->getClientOriginalExtension();
-            $store = $file->storeAs('images', $randomName, 'public');
-            $show=$request->show_in_home_page =='on' ? 1:0;
-            $country->update([
-                'image' => $store,
-                'show_in_home_page'=>$show
+    public function create(Request $request)
+    {
+        if ($request->ajax()) {
+            $request->validate([
+                'name' => 'required',
+                'code' => 'required|unique:countries,code',
+                'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             ]);
 
-            if($country){
-                return response()->json(['success' => true, 'message' => 'Country created successfully']);
-            }else{
-                return response()->json(['success' => false, 'message' => 'Error in creating new Country']);
-            }
-        }
-        return view('countries.create');
-
-    }
-    public function update(Request $request,$id){
-        $country=Country::find($id);
-        if($request->ajax()){
-            $request->validate(
-                [
-                    'name' => 'required',
-                    'code' => 'required|unique:countries,code,'.$id,
-                ]
-            );
-            if($country){
-                $country->update($request->except('_token'));
-
+            // Create country without image
+            $country = Country::create($request->except(['_token', 'image', 'show_in_home_page']));
+            $cloudName = "djd3y5gzw"; // ⚠️ Replace with your actual Cloudinary cloud name
+            // Handle file upload
+            if ($request->hasFile('image')) {
                 $file = $request->file('image');
+                $filename =uploadFile($file  ,'countries');
+                $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/'.$filename;
+                // Generate optimized Cloudinary URL
+                $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
 
-                  if ($file){
-                    $randomName = Str::random(10) . '.' . $file->getClientOriginalExtension();
-                    $store = $file->storeAs('images', $randomName, 'public');
-                }else{
-                    $store=$country->image;
-                }
-                $show=$request->show_in_home_page =='on' ? 1:0;
+                // Handle checkbox value
+                $show = $request->show_in_home_page == 'on' ? 1 : 0;
+
+                // Update country record
                 $country->update([
                     'image' => $store,
-                    'show_in_home_page'=>$show
+                    'show_in_home_page' => $show,
                 ]);
+            }
 
-                return response()->json(['success' => true, 'message' => 'Country updated successfully']);
-            }else{
-                return response()->json(['success' => false, 'message' => 'Country not found']);
+            if ($country) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Country created successfully',
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error creating new Country',
+                ]);
             }
         }
-        if($country){
-            return view('countries.update',compact('country'));
-        }else{
-            return back();
-        }
+
+        return view('countries.create');
     }
+
+    public function update(Request $request, $id)
+    {
+        $country = Country::find($id);
+
+        if ($request->ajax()) {
+            $request->validate([
+                'name' => 'required',
+                'code' => 'required|unique:countries,code,' . $id,
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            ]);
+
+            if ($country) {
+                // Update basic fields except image
+                $country->update($request->except(['_token', 'image', 'show_in_home_page']));
+
+                $show = $request->show_in_home_page == 'on' ? 1 : 0;
+                $cloudName = "djd3y5gzw"; // ⚠️ Replace with your actual Cloudinary cloud name
+                $store = $country->image; // Default: existing image stays the same
+
+                if ($request->hasFile('image')) {
+                    $file = $request->file('image');
+                    $filename =uploadFile($file  ,'countries');
+                    $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/'.$filename;
+                    // Generate optimized Cloudinary URL
+                    $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+                }
+
+                // Update the record
+                $country->update([
+                    'image' => $store,
+                    'show_in_home_page' => $show,
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Country updated successfully',
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Country not found',
+            ]);
+        }
+
+        // Normal (non-AJAX) request → return view
+        if ($country) {
+            return view('countries.update', compact('country'));
+        }
+
+        return back();
+    }
+
     public function delete(Request $request){
         $country=Country::find($request->id);
         if($country){

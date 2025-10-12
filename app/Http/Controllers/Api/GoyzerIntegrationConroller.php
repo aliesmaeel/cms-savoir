@@ -184,6 +184,9 @@ class GoyzerIntegrationConroller extends Controller
                 'documents' => $property['Documents'] ? $property['Documents'] : null,
                 'offering_type' => $property['OfferingType'] ? $property['OfferingType'] : null,
                 'custom_fields' => $property['CustomFields'] ? $property['CustomFields'] : null,
+                'featured' => 0 ,
+                'photo' => (array_key_exists('Images', $property) && array_key_exists('Image', $property['Images']) && count($property['Images']['Image']) > 0) ? $property['Images']['Image'][0]['ImageURL'] : null,
+
             ]);
         } catch (\Throwable $th) {
             Log::channel('fetching_properties')->alert($th->getMessage());
@@ -224,7 +227,7 @@ class GoyzerIntegrationConroller extends Controller
                     $completion_status = 'completed';
                 }
             } else {
-                $completion_status = null;
+                $completion_status = 'completed';
             }
             $user_id = $this->get_user($property['SalesmanEmail'], $property['Agent']);
             $community_id = $this->get_community($property, $communities);
@@ -278,6 +281,8 @@ class GoyzerIntegrationConroller extends Controller
                 'country' => $property['CountryName'] ? $property['CountryName'] : null,
                 'user_id' => $user_id,
                 'goyzer' => true,
+                'featured' => 0,
+                'photo' => (array_key_exists('Images', $property) && array_key_exists('Image', $property['Images']) && count($property['Images']['Image']) > 0) ? $property['Images']['Image'][0]['ImageURL'] : null,
             ]);
 
             $newproperty->update([
@@ -302,6 +307,8 @@ class GoyzerIntegrationConroller extends Controller
                 'completion_status' => $completion_status,
                 'country' => $property['CountryName'] ? $property['CountryName'] : null,
                 'goyzer' => true,
+                'photo' => (array_key_exists('Images', $property) && array_key_exists('Image', $property['Images']) && count($property['Images']['Image']) > 0) ? $property['Images']['Image'][0]['ImageURL'] : null,
+
             ]);
 
 
@@ -311,16 +318,19 @@ class GoyzerIntegrationConroller extends Controller
                 if (array_key_exists('Image', $property_images) && count($property_images['Image']) > 0) {
                     foreach ($property_images['Image'] as $link) {
                         $originalUrl = $link['ImageURL'];
-
                         $webpUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
 
-                        DB::table('property_images')->updateOrInsert([
-                            'url' => $webpUrl,
-                            'newProperty_id' => $newproperty->id,
-                            'created_at' => Carbon::now(),
-                            'updated_at' => Carbon::now(),
-                            'is_external_image' => true,
-                        ]);
+                        DB::table('property_images')->updateOrInsert(
+                            [
+                                'url' => $webpUrl,
+                                'newProperty_id' => $newproperty->id,
+                            ],
+                            [
+                                'is_external_image' => true,
+                                'updated_at' => Carbon::now(),
+                                'created_at' => Carbon::now(),
+                            ]
+                        );
                     }
                 }
 

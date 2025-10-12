@@ -314,7 +314,15 @@
             box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
             background: #fff;
         }
-
+        nav ul .off-plan-show63.show {
+            display: block;
+            height: auto;
+            overflow-y: auto;
+            width: 100%;
+            border-radius: 0px 3px 3px 0;
+            box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
+            background: #fff;
+        }
         nav ul .off-plan-show56.show {
             display: block;
             height: auto;
@@ -408,7 +416,8 @@
         #sbitem31 .link-content,
         #sbitem32 .link-content,
         #sbitem30 .link-content,
-        #sbitem56 .link-content
+        #sbitem56 .link-content,
+        #sbitem63 .link-content
         {
             height: 4rem;
             padding: 9px 20px;
@@ -2742,6 +2751,30 @@
         $('nav ul .off-plan30').toggleClass('rotate');
         $('nav ul .off-plan-show30').toggleClass('show');
     });
+
+        $('.data-btn63').click(function() {
+            $('nav ul .asd-show').removeClass('show');
+            $('nav ul .comments-show').removeClass('show');
+            $('nav ul .data-show').removeClass('show');
+            $('nav ul .data-show3').removeClass('show');
+            $('nav ul .data-show20').removeClass('show');
+            $('nav ul .data-show2').removeClass('show');
+            $('nav ul .report-show').removeClass('show');
+            $('nav ul .au-show').removeClass('show');
+            $('nav ul .pm-event').removeClass('show');
+            $('nav ul .pm-show').removeClass('show');
+            $('nav ul .ap-show').removeClass('show');
+            $('nav ul .meet-show').removeClass('show');
+            $('nav ul .setting-show').removeClass('show');
+            $('nav ul .sync-show').removeClass('show');
+            $('nav ul .leads-show').removeClass('show');
+            $('nav ul .data-show21').removeClass('show');
+            $('nav ul .subscriptions-span').removeClass('rotate');
+            $('nav ul .subscriptions-show').removeClass('show');
+            $('nav ul .off-plan63').toggleClass('rotate');
+            $('nav ul .off-plan-show63').toggleClass('show');
+        });
+
         $('.data-btn56').click(function() {
             $('nav ul .asd-show').removeClass('show');
             $('nav ul .comments-show').removeClass('show');

@@ -17,7 +17,7 @@ class CreateInsightsTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug');
-            $table->string('image')->nullable();
+            $table->string('image',255)->nullable();
             $table->string('youtube')->nullable();
             $table->text('description');
             $table->boolean('isfeatured')->default(0);

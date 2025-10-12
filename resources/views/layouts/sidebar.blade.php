@@ -15,7 +15,7 @@
                 <a class="sidebar-brand align-items-center " href="{{ url('/createlead') }}">
                     <div class="sidebar-brand-icon">
                         <img src="{{ asset('img/savoir.png') }}" style="width: 4.4rem;"
-                            class="user-img img-responsive" alt="">
+                             class="user-img img-responsive" alt="">
 
                     </div>
                 </a>
@@ -127,11 +127,12 @@
                     <li id="sbitem17_5"><a href="{{ route('index1') }}"><i class="fas fa-fw fa-table"></i> Data
                             Comments</a>
                     </li>
+                </ul>
             </li>
-
     </ul>
-    </li>
     @endif
+
+
 
     @if (Auth::user()->isadmin() || Auth::user()->issuperAdmin() || Auth::user()->isagent())
         {{-- Data Section --}}
@@ -213,10 +214,10 @@
                             Sub-Communities</a>
                     </li>
                     <li id="sbitem5_14"><a href="{{ route('list_countries') }}"><i class="fas fa-ad"></i>
-                        countries</a>
+                            countries</a>
                     </li>
                     <li id="sbitem5_13"><a href="{{ route('list_cities') }}"><i class="fas fa-ad"></i>
-                        cities</a>
+                            cities</a>
                     </li>
                     {{-- <li id="sbitem5_2"><a href="{{ route('create_payment_index') }}"><i class="fas fa-ad"></i>
                         Create payment</a></li> --}}
@@ -317,7 +318,7 @@
                             Export & Uploaded Files</a>
                     </li>
 
-                    <li id="sbitem4_88" ><a href="{{ route('signature.index') }}"><i class="fas fa-ad"></i>
+                    <li id="sbitem4_88"><a href="{{ route('signature.index') }}"><i class="fas fa-ad"></i>
                             Create Signature</a>
                     </li>
 
@@ -421,7 +422,8 @@
             <a href="#" class="link-content subscriptions-btn"><span class="left-title">Subscriptions</span><span
                     class="fas fa-caret-down subscriptions-span"></span></a>
             <ul class="subscriptions-show">
-                <li id="sbitem22_1"><a href="{{ route('subscriptions') }}"><i class="fas fa-ad"></i>Subscriptions List </a>
+                <li id="sbitem22_1"><a href="{{ route('subscriptions') }}"><i class="fas fa-ad"></i>Subscriptions List
+                    </a>
                 </li>
             </ul>
         </li>
@@ -433,16 +435,37 @@
                 <li id="sbitem30_1"><a href="{{ route('off_plan_project_create') }}"><i class="fas fa-ad"></i>
                         Create Off-Plan Project</a></li>
                 <li id="sbitem30_2"><a href="{{ route('off_plan_project_list') }}"><i class="fas fa-fw fa-table"></i>
-                    Off-Plan Projects List</a>
+                        Off-Plan Projects List</a>
                 </li>
 
                 <li id="sbitem30_2"><a href="{{ route('pop-up-update') }}"><i class="fas fa-fw fa-table"></i>
-                       Popup Update</a>
+                        Popup Update</a>
                 </li>
-
-
             </ul>
         </li>
+
+
+        <li id="sbitem63">
+            <a href="#" class="link-content data-btn63"><span class="left-title">Home Page</span><span
+                    class="fas fa-caret-down off-plan63"></span></a>
+            <ul class="off-plan-show63">
+                <li id="sbitem63_1"><a href="{{ route('create_testimonial') }}"><i class="fas fa-ad"></i>
+                        Create Testimonial</a></li>
+                <li id="sbitem63_2"><a href="{{ route('list_testimonials') }}"><i class="fas fa-fw fa-table"></i>
+                         List Testimonial</a>
+                </li>
+                <li id="sbitem63_3"><a href="{{ route('create_marketing') }}"><i class="fas fa-ad"></i>
+                        Create Marketing Channel</a></li>
+                <li id="sbitem63_4"><a href="{{ route('list_marketing') }}"><i class="fas fa-fw fa-table"></i>
+                         List Marketing Channels</a>
+                </li>
+                <li id="sbitem63_3"><a href="{{ route('create_listing') }}"><i class="fas fa-ad"></i>
+                        Create Listing Syndication</a></li>
+                <li id="sbitem63_4"><a href="{{ route('list_listing') }}"><i class="fas fa-fw fa-table"></i>
+                         List Listing Syndications</a>
+            </ul>
+        </li>
+
 
         <li id="sbitem56">
             <a href="#" class="link-content data-btn56"><span class="left-title">Insights</span><span
@@ -479,7 +502,7 @@
                 <li id="sbitem55_1"><a href="{{ route('real_estate_guides_create') }}"><i class="fas fa-ad"></i>
                         Real Estate Create </a></li>
                 <li id="sbitem55_2"><a href="{{ route('real_estate_list') }}"><i class="fas fa-fw fa-table"></i>
-                        Real Estate List  </a>
+                        Real Estate List </a>
                 </li>
             </ul>
         </li>
@@ -490,7 +513,8 @@
             <ul class="sync-show">
                 <li id="sbitem14_1"><a href="{{ route('sync') }}"><i class="fas fa-ad"></i> Sync Properties</a>
                 <li id="sbitem14_2"><a href="{{ route('sync_communities') }}"><i class="fas fa-ad"></i> Sync Communities</a>
-                <li id="sbitem14_3"><a href="{{ route('sync_sub_communities') }}"><i class="fas fa-ad"></i> Sync SubCommunities</a>
+                <li id="sbitem14_3"><a href="{{ route('sync_sub_communities') }}"><i class="fas fa-ad"></i> Sync
+                        SubCommunities</a>
                 <li id="sbitem14_4"><a href="{{ route('sync_buildings') }}"><i class="fas fa-ad"></i> Sync Buildings</a>
                 </li>
             </ul>
@@ -515,7 +539,7 @@
     {{-- Log Out --}}
     <li>
         <a href="{{ route('logout') }}"
-            onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+           onclick="event.preventDefault();document.getElementById('logout-form').submit();">
             <span class="left-title"> {{ __('Logout') }}</span>
         </a>
 
