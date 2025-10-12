@@ -37,6 +37,9 @@ jobs:
             # Install dependencies without dev packages
             composer install --no-interaction --prefer-dist --optimize-autoloader
 
+            # Run database migrations
+            sudo php artisan migrate --force
+
              sudo php artisan config:clear
             sudo php artisan route:clear
             sudo php artisan view:clear
