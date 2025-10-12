@@ -81,6 +81,7 @@ class HomeController
             ->take(4)
             ->get();
         $areas=DB::table('communities')
+            ->orderBy('order','asc')
             ->select('name','image')->take(6)->get();
 
         $testimonials = DB::table('testimonials')
