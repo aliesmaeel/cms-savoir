@@ -15,54 +15,7 @@ class CommunityController extends Controller
     {
         $this->middleware('auth');
     }
-    public function createnewcommunity(Request $request)
-    {
 
-        if ($request->ajax()) {
-
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|unique:communities,name',
-                'slug' =>'required|unique:communities,slug',
-                'image'=>'required',
-                'inner_image'=>'required',
-                'youtube'=>'required',
-                'location'=>'required',
-                'description'=>'required',
-                'Order'=>'required|unique:communities,name'
-            ]);
-            if ($validator->fails())
-                return ["success" => false, "message" => $validator->getMessageBag()->first()];
-           $community= Community::create([
-                'name' => $request->name,
-                'slug' => $request->slug,
-                'description' => $request->description,
-                'Order' => $request->Order,
-               'youtube'=>$request->youtube,
-               'location'=>$request->location,
-
-            ]);
-
-            if ($request->hasFile('image')) {
-                $file = $request->file('image');
-                $filename=uploadFile($file ,'areas');
-                $community->update([
-                    'image' => $filename
-                ]);
-            }
-
-            if ($request->hasFile('inner_image')) {
-                $file = $request->file('inner_image');
-                $filename=uploadFile($file ,'areas');
-                $community->update([
-                    'inner_image' => $filename
-                ]);
-            }
-
-
-            return ["success" => true, "message" => "Community added successfully"];
-        }
-        return view('admin.createnewcommunity');
-    }
 
     public function createnewsubcommunity(Request $request)
     {
@@ -162,51 +115,130 @@ class CommunityController extends Controller
         return view('admin.updatenewsubcommunity', ['subCommunity' => $subCommunity, 'communities' => $communities]);
     }
 
+    public function createnewcommunity(Request $request)
+    {
+        if ($request->ajax()) {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|unique:communities,name',
+                'slug' => 'required|unique:communities,slug',
+                'image' => 'required',
+                'inner_image' => 'required',
+                'youtube' => 'required',
+                'location' => 'required',
+                'description' => 'required',
+                'Order' => 'required|unique:communities,Order'
+            ]);
+
+            if ($validator->fails()) {
+                return ["success" => false, "message" => $validator->getMessageBag()->first()];
+            }
+
+            $community = Community::create([
+                'name' => $request->name,
+                'slug' => $request->slug,
+                'description' => $request->description,
+                'Order' => $request->Order,
+                'youtube' => $request->youtube,
+                'location' => $request->location,
+            ]);
+
+            // ✅ Cloudinary setup
+            $cloudName = "djd3y5gzw"; // Replace with your Cloudinary cloud name
+            $baseS3Url = "https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/";
+
+            // ✅ Upload main image
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $filename = uploadFile($file, 'areas');
+                $originalUrl = $baseS3Url . $filename;
+                $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
+                $community->update([
+                    'image' => $optimizedUrl
+                ]);
+            }
+
+            // ✅ Upload inner image
+            if ($request->hasFile('inner_image')) {
+                $file = $request->file('inner_image');
+                $filename = uploadFile($file, 'areas');
+                $originalUrl = $baseS3Url . $filename;
+                $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
+                $community->update([
+                    'inner_image' => $optimizedUrl
+                ]);
+            }
+
+            return ["success" => true, "message" => "Community added successfully"];
+        }
+
+        return view('admin.createnewcommunity');
+    }
+
     public function updatecommunity(Request $request)
     {
+        $community_id = $request->community_id;
 
-        $community_id =  $request->community_id;
-        $validator =  Validator::make($request->all(), [
-            'name' => ['required',Rule::unique('communities')->ignore($community_id)],
-            'slug' =>['required',Rule::unique('communities')->ignore($community_id)],
-            'description'=>'required',
-            'Order'=>['required',Rule::unique('communities')->ignore($community_id)],
-            'youtube'=>'required',
-            'location'=>'required',
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', Rule::unique('communities')->ignore($community_id)],
+            'slug' => ['required', Rule::unique('communities')->ignore($community_id)],
+            'description' => 'required',
+            'Order' => ['required', Rule::unique('communities')->ignore($community_id)],
+            'youtube' => 'required',
+            'location' => 'required',
         ]);
-        if ($validator->fails())
+
+        if ($validator->fails()) {
             return ["success" => false, "message" => $validator->getMessageBag()->first()];
+        }
 
+        $community = Community::find($community_id);
 
-       $community= Community::where('id', $community_id)->first();
-       $community->update([
+        $community->update([
             'name' => $request->name,
             'slug' => $request->slug,
             'description' => $request->description,
             'Order' => $request->Order,
-           'youtube'=>$request->youtube,
-           'location'=>$request->location,
+            'youtube' => $request->youtube,
+            'location' => $request->location,
         ]);
+
+        // ✅ Cloudinary setup
+        $cloudName = "djd3y5gzw"; // Replace with your Cloudinary cloud name
+        $baseS3Url = "https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/";
+
+        // ✅ Update main image
         if ($request->hasFile('image')) {
+            deleteFile($community->image);
+
             $file = $request->file('image');
-            deleteFile($community->image);
-            $filename=uploadFile($file ,'areas');
+            $filename = uploadFile($file, 'areas');
+            $originalUrl = $baseS3Url . $filename;
+            $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
             $community->update([
-                'image' => $filename
+                'image' => $optimizedUrl
             ]);
         }
 
+        // ✅ Update inner image
         if ($request->hasFile('inner_image')) {
+            deleteFile($community->inner_image);
+
             $file = $request->file('inner_image');
-            deleteFile($community->image);
-            $filename=uploadFile($file ,'areas');
+            $filename = uploadFile($file, 'areas');
+            $originalUrl = $baseS3Url . $filename;
+            $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
             $community->update([
-                'inner_image' => $filename
+                'inner_image' => $optimizedUrl
             ]);
         }
 
-        return ["success" => true, "message" => "Community updated succssfully"];
+        return ["success" => true, "message" => "Community updated successfully"];
     }
+
 
     public function updatesubcommunity(Request $request)
     {
