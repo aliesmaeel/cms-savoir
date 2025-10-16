@@ -14,11 +14,10 @@ class AddNewColumnsToInsightsTable extends Migration
     public function up()
     {
         Schema::table('insights', function (Blueprint $table) {
-            $table->integer('facebook')->default(0);
-            $table->integer('instagram')->default(0);
-            $table->integer('linkedin')->default(0);
+            $table->string('facebook')->default(0);
+            $table->string('instagram')->default(0);
+            $table->string('linkedin')->default(0);
             $table->integer('shares')->default(0);
-            $table->integer('copies')->default(0);
             $table->string('first_image',255)->nullable();
             $table->string('second_image',255)->nullable();
             $table->string('third_image',255)->nullable();

@@ -404,7 +404,7 @@
                         <label class="title-input" for="property">Facebook</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="number" required name="facebook" style="">
+                        <input type="text" required name="facebook" style="">
                     </div>
                 </div>
 
@@ -413,7 +413,7 @@
                         <label class="title-input" for="property">Instagram</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="number" required name="instagram" style="">
+                        <input type="text" required name="instagram" style="">
                     </div>
                 </div>
 
@@ -422,7 +422,7 @@
                         <label class="title-input" for="property">LinkedIn</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="number" required name="linkedin" style="">
+                        <input type="text" required name="linkedin" style="">
                     </div>
                 </div>
 
