@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Laravel\Scout\Searchable;
 
 
 class NewProperty extends Model
 {
-    use HasFactory;
+    use HasFactory,Searchable;
     protected $guarded = [];
 
     protected $casts = [
@@ -81,5 +82,21 @@ class NewProperty extends Model
     public function psubcommunity()
     {
         return $this->belongsTo(SubCommunity::class, 'sub_community');
+    }
+
+    public function toSearchableArray()
+    {
+        return [
+            'id' => $this->id,
+            'offering_type' => $this->offering_type,
+            'price' => $this->price,
+            'bedroom' => $this->bedroom,
+            'bathroom' => $this->bathroom,
+            'size' => $this->size,
+            'country' => $this->country,
+            'community' => $this->community,
+            'completion_status' => $this->completion_status,
+            'featured' => $this->featured,
+        ];
     }
 }

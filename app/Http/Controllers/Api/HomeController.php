@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\ListingSyndication;
 use App\Models\MarketingChannels;
+use App\Models\NewProperty;
 use App\Models\OffPlanProject;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class HomeController
@@ -48,16 +50,12 @@ class HomeController
             ];
         }
 
-        $properties = DB::table('new_properties')
-            ->select('id','offering_type','price','slug','bedroom','bathroom','size','parking','photo','completion_status')
-            ->where('featured', 1)
+        $properties = NewProperty::search('featured:true')
             ->whereIn('completion_status', ['off_plan', 'completed'])
-            ->where(function ($q) {
-                $q->whereNull('offering_type')
-                    ->orWhereIn('offering_type', ['RR', 'RS']);
-            })
-            ->orderByDesc('id')
-            ->get();
+            ->whereIn('offering_type', ['RR', 'RS'])
+            ->take(9) // limit results
+            ->get(['id','offering_type','price','slug','bedroom','bathroom','size','parking','photo','completion_status']);
+
 
         $grouped = [
             'off_plan' => $properties
@@ -94,16 +92,19 @@ class HomeController
         $marketChannels=MarketingChannels::select('id','image')->get();
         $listingSyndication=ListingSyndication::select('id','image')->get();
 
-        return response()->json([
-            'search' => $search,
-            'featured_properties' => $grouped,
-            'countries'=>$countries,
-            'insights'=>$insights,
-            'areas'=>$areas,
-            'testimonials'=>$testimonials,
-            'offplan_projects'=>$offplan_projects,
-            'marketChannels'=>$marketChannels,
-            'listingSyndications'=>$listingSyndication,
-        ]);
+        return Cache::remember('homepage_data', now()->addMinutes(10), function () use ($search, $grouped, $countries, $insights, $areas, $testimonials, $offplan_projects, $marketChannels, $listingSyndication) {
+            return [
+                'search' => $search,
+                'featured_properties' => $grouped,
+                'countries' => $countries,
+                'insights' => $insights,
+                'areas' => $areas,
+                'testimonials' => $testimonials,
+                'offplan_projects' => $offplan_projects,
+                'marketChannels' => $marketChannels,
+                'listingSyndications' => $listingSyndication,
+            ];
+        });
+
     }
 }
