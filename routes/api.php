@@ -30,3 +30,4 @@ Route::get('/getBuildings', [PropertyApiController::class, 'getBuildings'])->nam
 Route::get('/home', [\App\Http\Controllers\Api\HomeController::class, 'homePage']);
 Route::get('/news', [\App\Http\Controllers\Api\HomeController::class, 'news']);
 Route::get('/news/{slug}', [\App\Http\Controllers\Api\HomeController::class, 'newsDetails']);
+Route::get('/news/updateShares/{id}', [\App\Http\Controllers\Api\HomeController::class, 'updateShares']);

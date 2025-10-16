@@ -156,6 +156,15 @@ class HomeController
             'suggested_news' => $suggestedNews,
         ]);
     }
-
+    public function updateShares($id){
+        $insight = Insight::find($id);
+        if (!$insight) {
+            return response()->json(['message' => 'Insight not found'], 404);
+        }
+        $insight->shares = $insight->shares + 1;
+        $insight->copies = $insight->copies + 1;
+        $insight->save();
+        return response()->json(['message' => 'Shares updated successfully', 'shares' => $insight->shares]);
+    }
 
 }
