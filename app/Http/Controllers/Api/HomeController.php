@@ -13,14 +13,16 @@ class HomeController
 {
     public function homePage()
     {
+        // ✅ Get all countries (distinct names)
         $countries = DB::table('countries')
-                ->select('name','image')->distinct()->get();
+            ->select('name', 'image')
+            ->distinct()
+            ->get();
 
         $search = [];
 
-
         foreach ($countries as $country) {
-            // Get all communities in this country
+            // ✅ Get all communities in this country
             $communities = DB::table('communities')
                 ->whereIn('id', function ($query) use ($country) {
                     $query->select('community')
@@ -46,53 +48,68 @@ class HomeController
             $search[] = [
                 'country' => $country->name,
                 'communities' => $formattedCommunities,
-
             ];
         }
 
+        // ✅ Fetch featured properties from Meilisearch
+        // You can safely chain .whereIn() after search() in Scout
         $properties = NewProperty::search('featured:true')
             ->whereIn('completion_status', ['off_plan', 'completed'])
             ->whereIn('offering_type', ['RR', 'RS'])
-            ->take(9) // limit results
-            ->get(['id','offering_type','price','slug','bedroom','bathroom','size','parking','photo','completion_status']);
+            ->take(9)
+            ->get([
+                'id', 'offering_type', 'price', 'slug',
+                'bedroom', 'bathroom', 'size', 'parking',
+                'photo', 'completion_status'
+            ]);
 
-
+        // ✅ Group properties by type
         $grouped = [
             'off_plan' => $properties
                 ->where('completion_status', 'off_plan')
                 ->take(3)
                 ->values(),
-                'RR' => $properties
-                    ->where('completion_status', 'completed')
-                    ->where('offering_type', 'RR')
-                    ->take(3)
-                    ->values(),
-                'RS' => $properties
-                    ->where('completion_status', 'completed')
-                    ->where('offering_type', 'RS')
-                    ->take(3)
-                    ->values(),
-
+            'RR' => $properties
+                ->where('completion_status', 'completed')
+                ->where('offering_type', 'RR')
+                ->take(3)
+                ->values(),
+            'RS' => $properties
+                ->where('completion_status', 'completed')
+                ->where('offering_type', 'RS')
+                ->take(3)
+                ->values(),
         ];
+
+        // ✅ Fetch other homepage data
         $insights = DB::table('insights')
-            ->select('id', 'title', 'slug', 'image','description')
+            ->select('id', 'title', 'slug', 'image', 'description')
             ->take(4)
             ->get();
-        $areas=DB::table('communities')
-            ->orderBy('order','asc')
-            ->select('name','image')->take(6)->get();
+
+        $areas = DB::table('communities')
+            ->orderBy('order', 'asc')
+            ->select('name', 'image')
+            ->take(6)
+            ->get();
 
         $testimonials = DB::table('testimonials')
             ->select('id', 'name', 'position', 'image', 'message')
             ->get();
+
         $offplan_projects = OffPlanProject::select('id', 'image', 'link')
             ->orderBy('order', 'asc')
             ->take(5)
             ->get();
-        $marketChannels=MarketingChannels::select('id','image')->get();
-        $listingSyndication=ListingSyndication::select('id','image')->get();
 
-        return Cache::remember('homepage_data', now()->addMinutes(10), function () use ($search, $grouped, $countries, $insights, $areas, $testimonials, $offplan_projects, $marketChannels, $listingSyndication) {
+        $marketChannels = MarketingChannels::select('id', 'image')->get();
+        $listingSyndication = ListingSyndication::select('id', 'image')->get();
+
+        // ✅ Cache for 10 minutes
+        return Cache::remember('homepage_data', now()->addMinutes(10), function () use (
+            $search, $grouped, $countries, $insights, $areas,
+            $testimonials, $offplan_projects, $marketChannels, $listingSyndication
+        ) {
             return [
                 'search' => $search,
                 'featured_properties' => $grouped,
@@ -105,6 +122,6 @@ class HomeController
                 'listingSyndications' => $listingSyndication,
             ];
         });
-
     }
+
 }
