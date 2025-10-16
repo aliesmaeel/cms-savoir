@@ -349,7 +349,7 @@
                         <label class="title-input" for="slug">Slug</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" class="input_off_plan" placeholder="Enter slug" name="slug" id="slug" required style="border-right: 3px solid #9D865C!important">
+                        <input type="text" disabled class="input_off_plan" placeholder="Enter slug" name="slug" id="slug" required style="border-right: 3px solid #9D865C!important">
                     </div>
                 </div>
 
@@ -396,6 +396,78 @@
                     <div class="col-md-8">
                         <input type="checkbox" name="feature" style="">
 
+                    </div>
+                </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">Facebook</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="number" required name="facebook" style="">
+                    </div>
+                </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">Instagram</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="number" required name="instagram" style="">
+                    </div>
+                </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">LinkedIn</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="number" required name="linkedin" style="">
+                    </div>
+                </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">Shares</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="number" required name="shares" style="">
+                    </div>
+                </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">First Image</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="file" required placeholder="Enter Image" name="first_image"
+                               id="first_image"
+                               style="background: #fff!important">
+                    </div>
+                </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">Second Image</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="file" required placeholder="Enter Image" name="second_image"
+                               id="second_image"
+                               style="background: #fff!important">
+                    </div>
+                </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">Third Image</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="file" required placeholder="Enter Image" name="third_image"
+                               id="third_image"
+                               style="background: #fff!important">
                     </div>
                 </div>
 
@@ -509,6 +581,7 @@
     });
 
 
+
 </script>
     <script>
         $('#buttonsubmit').click(function(e) {
@@ -523,6 +596,22 @@
             if (singleImageInput.files.length > 0) {
                 formData.append('image', singleImageInput.files[0]);
             }
+            let singleImageInput1 = document.getElementById('first_image');
+            if (singleImageInput1.files.length > 0) {
+                formData.append('first_image', singleImageInput1.files[0]);
+            }
+
+            let singleImageInput2 = document.getElementById('second_image');
+            if (singleImageInput2.files.length > 0) {
+                formData.append('second_image', singleImageInput2.files[0]);
+            }
+
+            let singleImageInput3 = document.getElementById('third_image');
+            if (singleImageInput3.files.length > 0) {
+                formData.append('third_image', singleImageInput3.files[0]);
+            }
+
+            console.log(formData);
 
             var description = CKEDITOR.instances.features.getData();
             var link = $('#link').val();

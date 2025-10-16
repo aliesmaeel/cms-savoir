@@ -11,6 +11,7 @@ class InsightController extends Controller
 {
     public function insight_create(Request  $request)
     {
+
         if ($request->ajax()) {
 
             $validator= $request->validate(
@@ -26,6 +27,10 @@ class InsightController extends Controller
                 'youtube' => $request->link,
                 'isfeatured' => $request->feature == 'on' ? 1 : 0,
                 'slug' => $request->slug,
+                'facebook' => $request->facebook,
+                'instagram' => $request->instagram,
+                'linkedin' => $request->linkedin,
+                'shares' => $request->shares,
             ]);
 
             $cloudName = "djd3y5gzw";
@@ -40,6 +45,41 @@ class InsightController extends Controller
                     'image' => $store
                 ]);
             }
+
+            if ($request->hasFile('first_image')) {
+                $file = $request->file('first_image');
+                $filename =uploadFile($file  ,'insights');
+                $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/'.$filename;
+                $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
+                $insight->update([
+                    'first_image' => $store
+                ]);
+            }
+
+            if ($request->hasFile('second_image')) {
+                $file = $request->file('second_image');
+                $filename =uploadFile($file  ,'insights');
+                $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/'.$filename;
+                $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
+                $insight->update([
+                    'second_image' => $store
+                ]);
+            }
+
+            if ($request->hasFile('third_image')) {
+                $file = $request->file('third_image');
+                $filename =uploadFile($file  ,'insights');
+                $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/'.$filename;
+                $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
+                $insight->update([
+                    'third_image' => $store
+                ]);
+            }
+
+
 
             if ($insight != null)
                 return response()->json(['success' => true, 'message' => 'insight Project created successfully']);
@@ -88,46 +128,59 @@ class InsightController extends Controller
         }
     }
 
-    public function insight_list_update(Request $request,$id)
+    public function insight_list_update(Request $request, $id)
     {
-        $insight = Insight::find($id);
-
         if ($request->ajax()) {
 
-            if($insight){
-                $validator= $request->validate(
-                    [
-                        'title' => 'required',
-                        'description'=>'required',
-                    ]
-                );
-                $insight->update(
-                    [
-                        'title' => $request->title,
-                        'description' => $request->description,
-                        'youtube' => $request->link,
-                        'isfeatured' => $request->feature == 'on' ? 1 : 0,
-                        'slug' => $request->slug,
-                    ]
-                );
-                $cloudName = "djd3y5gzw";
-                if ($request->hasFile('image')) {
-                    deleteFile($insight->image);
-                    $file = $request->file('image');
-                    $filename=uploadFile($file ,'insights');
-                    $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/'.$filename;
-                    $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-                    $insight->update([
-                        'image' => $store
-                    ]);
-                }
-                return response()->json(['success' => true, 'message' => 'Insight Project updated successfully']);
+            $validator = $request->validate([
+                'title' => 'required',
+                'description' => 'required',
+            ]);
 
-            }else{
-                return response()->json(['success' => false, 'message' => 'Insight Project not found']);
-            }
+            $insight = Insight::findOrFail($id);
+
+            $insight->update([
+                'title' => $request->title,
+                'description' => $request->description,
+                'youtube' => $request->link,
+                'isfeatured' => $request->feature == 'on' ? 1 : 0,
+                'slug' => $request->slug,
+                'facebook' => $request->facebook,
+                'instagram' => $request->instagram,
+                'linkedin' => $request->linkedin,
+                'shares' => $request->shares,
+            ]);
+
+            $cloudName = "djd3y5gzw";
+
+            // Image update helper
+            $updateImage = function ($field) use ($request, $insight, $cloudName) {
+                if ($request->hasFile($field)) {
+                    $file = $request->file($field);
+                    $filename = uploadFile($file, 'insights');
+                    $originalUrl = 'https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/' . $filename;
+                    $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
+                    $insight->update([$field => $store]);
+                }
+            };
+
+            // Update each possible image
+            $updateImage('image');
+            $updateImage('first_image');
+            $updateImage('second_image');
+            $updateImage('third_image');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Insight project updated successfully'
+            ]);
         }
-        return view('admin.insights.update',compact('insight'));
+
+        // For GET request, load the edit page
+        $insight = Insight::findOrFail($id);
+        return view('admin.insights.update', compact('insight'));
     }
+
 
 }

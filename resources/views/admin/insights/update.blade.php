@@ -362,7 +362,7 @@
                         <input type="file" placeholder="Enter Image" name="image" id="image"
                                style="background: #fff!important">
                         <div class="holder mt-4">
-                            <img id="imgPreview" src="{{ config('services.cms_link').'/storage/'.$insight->image }}" alt="pic"
+                            <img id="imgPreview" src="{{ $insight->image }}" alt="pic"
                                  width="100" height="100" />
                         </div>
                     </div>
@@ -397,6 +397,77 @@
                         <input type="checkbox" {{$insight->isfeatured == 1 ? 'checked' : ''}} name="feature" style="">
                     </div>
                 </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">Facebook</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" placeholder="Enter Link" name="facebook" id="facebook" value="{{ $insight->facebook }}" required style="border-right: 3px solid #9D865C!important">
+                    </div>
+                </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">Linkedin</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" placeholder="Enter Link" name="linkedin" id="linkedin" value="{{ $insight->linkedin }}" required style="border-right: 3px solid #9D865C!important">
+                    </div>
+                </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">Instagram</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" placeholder="Enter Link" name="instagram" id="instagram" value="{{ $insight->instagram }}" required style="border-right: 3px solid #9D865C!important">
+                    </div>
+                </div>
+
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">Frist Image</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="file" placeholder="Enter Image" name="first_image" id="first_image"
+                               style="background: #fff!important">
+                        <div class="holder mt-4">
+                            <img id="imgPreview1" src="{{ $insight->first_image }}" alt="pic"
+                                 width="100" height="100" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">Second Image</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="file" placeholder="Enter Image" name="second_image" id="second_image"
+                               style="background: #fff!important">
+                        <div class="holder mt-4">
+                            <img id="imgPreview2" src="{{ $insight->second_image }}" alt="pic"
+                                 width="100" height="100" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">Third Image</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="file" placeholder="Enter Image" name="third_image" id="third_image"
+                               style="background: #fff!important">
+                        <div class="holder mt-4">
+                            <img id="imgPreview3" src="{{ $insight->third_image }}" alt="pic"
+                                 width="100" height="100" />
+                        </div>
+                    </div>
+                </div>
+
 
                 <div class="row mt-5">
                     <div class="col-md-12 text-center">
@@ -490,6 +561,22 @@
             if (singleImageInput.files.length > 0) {
                 formData.append('image', singleImageInput.files[0]);
             }
+
+            let firstImageInput = document.getElementById('first_image');
+            if (firstImageInput.files.length > 0) {
+                formData.append('first_image', firstImageInput.files[0]);
+            }
+
+            let secondImageInput = document.getElementById('second_image');
+            if (secondImageInput.files.length > 0) {
+                formData.append('second_image', secondImageInput.files[0]);
+            }
+
+            let thirdImageInput = document.getElementById('third_image');
+            if (thirdImageInput.files.length > 0) {
+                formData.append('third_image', thirdImageInput.files[0]);
+            }
+
 
             var description = CKEDITOR.instances.features.getData();
             var link = $('#link').val();

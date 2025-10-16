@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Insight;
 use App\Models\ListingSyndication;
 use App\Models\MarketingChannels;
 use App\Models\NewProperty;
@@ -123,5 +124,38 @@ class HomeController
             ];
         });
     }
+
+    public function news()
+    {
+        $news = DB::table('insights')
+            ->select('id', 'title', 'slug', 'image')
+            ->take(4)
+            ->get();
+
+        return response()->json($news);
+    }
+
+    public function newsDetails($slug)
+    {
+
+        $newsItem = Insight::where('slug', $slug)
+            ->first();
+
+        $suggestedNews = DB::table('insights')
+            ->where('slug', '!=', $slug)
+            ->select('id', 'title', 'slug', 'image')
+            ->take(5)
+            ->get();
+
+        if (!$newsItem) {
+            return response()->json(['message' => 'News item not found'], 404);
+        }
+
+        return response()->json([
+            'news_item' => $newsItem,
+            'suggested_news' => $suggestedNews,
+        ]);
+    }
+
 
 }
