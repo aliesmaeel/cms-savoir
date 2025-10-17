@@ -10,6 +10,7 @@ class Blog_image extends Model
     use HasFactory;
     protected $guarded = [];
 
+    protected $hidden = ['created_at', 'updated_at'];
     public function user_blog()
    {
        return $this->belongsTo('App\Models\Blog');

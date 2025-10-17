@@ -317,256 +317,152 @@
 @endpush
 
 @section('wrapper_content')
-    <!-- Content Wrapper -->
-    <div class="container-fluid" style="padding-left:0!important">
-        <div class="row">
-            <div class="col-lg-3 col-md-4 col-8">
-                <h3 class="top-title">Create Blog</h3>
-            </div>
-        </div>
-    </div>
     <div id="content-wrapper" class="d-flex flex-column">
         <img id="img-top" src="img/bg-top.png">
-        <!-- <h3 style="margin: auto" class="mt-4 mb-4">Create new agent</h3> -->
         <form id="maindata">
             <div class="container">
                 <span id="alertdata"></span>
-                {{-- //title 1--}}
+
+                {{-- Title Details --}}
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
-                        <label class="title-input" for="body">Title in Details Page</label>
+                        <label class="title-input" for="title_details">Title in Details Page</label>
                     </div>
                     <div class="col-md-8">
-                        <textarea type="text" class="ckeditor input-form" placeholder="Enter Title in Details Page" name="title_details" id="title_details" required
-                                  style="background: #fff!important"></textarea>
-                        {{-- <input type="text" placeholder="Enter BODY" name="body" id="body" required> --}}
-                    </div>
-                </div>
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="title">Title</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" placeholder="Enter Title" name="title"  id="title" required>
+                        <textarea class="ckeditor input-form" name="title_details" id="title_details" style="background: #fff!important"></textarea>
                     </div>
                 </div>
 
-                {{-- //slug --}}
+                {{-- Title --}}
                 <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="slug">Slug</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" placeholder="Enter Slug" name="slug" id="slug" required>
-                    </div>
-                </div>
-                {{-- posted_by 2--}}
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="posted_by">Bosted By</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" placeholder="Posted By" name="posted_by" id="posted_by" required>
-                    </div>
-                </div>
-                {{-- date 3--}}
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="date">Date</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="Date" placeholder="Enter DATA" name="date" id="date" required>
-                    </div>
-                </div>
-                {{-- BODY 4--}}
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="body">Body</label>
-                    </div>
-                    <div class="col-md-8">
-                        <textarea type="text" class="ckeditor input-form" placeholder="Enter BODY" name="body" id="body" required
-                        style="background: #fff!important"></textarea>
-                        {{-- <input type="text" placeholder="Enter BODY" name="body" id="body" required> --}}
-                    </div>
-                </div>
-                {{-- image 5--}}
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Image</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="file" placeholder="Enter Image" name="image[]" id="image" multiple
-                            style="background: #fff!important">
-                    </div>
+                    <div class="col-md-3"><label class="title-input" for="title">Title</label></div>
+                    <div class="col-md-8"><input type="text" name="title" id="title" placeholder="Enter Title" required></div>
                 </div>
 
+                {{-- Slug --}}
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="slug">Slug</label></div>
+                    <div class="col-md-8"><input type="text" name="slug" id="slug" placeholder="Enter Slug" required></div>
+                </div>
+
+                {{-- Posted By --}}
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="posted_by">Posted By</label></div>
+                    <div class="col-md-8"><input type="text" name="posted_by" id="posted_by" placeholder="Enter Posted By" required></div>
+                </div>
+
+                {{-- Date --}}
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="date">Date</label></div>
+                    <div class="col-md-8"><input type="date" name="date" id="date" required></div>
+                </div>
+
+                {{-- Description 1 --}}
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="description_one_title">Description 1 Title</label></div>
+                    <div class="col-md-8"><input type="text" name="description_one_title" id="description_one_title" placeholder="Enter Description 1 Title"></div>
+                </div>
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="description_one">Description 1</label></div>
+                    <div class="col-md-8"><textarea class="ckeditor input-form" name="description_one" id="description_one" style="background: #fff!important"></textarea></div>
+                </div>
+
+                {{-- Description 2 --}}
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="description_two_title">Description 2 Title</label></div>
+                    <div class="col-md-8"><input type="text" name="description_two_title" id="description_two_title" placeholder="Enter Description 2 Title"></div>
+                </div>
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="description_two">Description 2</label></div>
+                    <div class="col-md-8"><textarea class="ckeditor input-form" name="description_two" id="description_two" style="background: #fff!important"></textarea></div>
+                </div>
+
+                {{-- Description 3 --}}
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="description_three_title">Description 3 Title</label></div>
+                    <div class="col-md-8"><input type="text" name="description_three_title" id="description_three_title" placeholder="Enter Description 3 Title"></div>
+                </div>
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="description_three">Description 3</label></div>
+                    <div class="col-md-8"><textarea class="ckeditor input-form" name="description_three" id="description_three" style="background: #fff!important"></textarea></div>
+                </div>
+
+                {{-- Description 4 --}}
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="description_four_title">Description 4 Title</label></div>
+                    <div class="col-md-8"><input type="text" name="description_four_title" id="description_four_title" placeholder="Enter Description 4 Title"></div>
+                </div>
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="description_four">Description 4</label></div>
+                    <div class="col-md-8"><textarea class="ckeditor input-form" name="description_four" id="description_four" style="background: #fff!important"></textarea></div>
+                </div>
+
+                {{-- Main Image --}}
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="image">Main Image</label></div>
+                    <div class="col-md-8"><input type="file" name="image" id="image" style="background: #fff!important"></div>
+                </div>
+
+                {{-- Additional Images --}}
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="first_image">First Image</label></div>
+                    <div class="col-md-8"><input type="file" name="first_image" id="first_image" style="background: #fff!important"></div>
+                </div>
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="second_image">Second Image</label></div>
+                    <div class="col-md-8"><input type="file" name="second_image" id="second_image" style="background: #fff!important"></div>
+                </div>
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="third_image">Third Image</label></div>
+                    <div class="col-md-8"><input type="file" name="third_image" id="third_image" style="background: #fff!important"></div>
+                </div>
 
                 <div class="row mt-5">
                     <div class="col-md-12 text-center">
-                        <button id="buttonsubmit" class="btn " type="button">Create
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
-                        </button>
+                        <button id="buttonsubmit" class="btn" type="button">Create <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span></button>
                     </div>
                 </div>
             </div>
         </form>
-
-
-
-
     </div>
-    <!-- End of Content Wrapper -->
-@endsection
-
-@section('content')
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
 @endsection
 
 @push('scripts')
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
-
-    <!-- Page level plugins -->
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/demo/datatables-demo.js"></script>
+    <script src="//cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script>
+
         $(document).ready(function() {
-
-            $('select.custom-select').val($('select.custom-select > option:last').val()).change();
-
-        });
-    </script>
-
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <!-- Popper JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-
-    <!-- Latest compiled JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
-        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"
-        integrity="sha384-qlmct0AOBiA2VPZkMY3+2WqkHtIQ9lSdAsAn5RUJD/3vA5MKDgSGcdmIv4ycVxyn" crossorigin="anonymous">
-    </script>
-
- <script src="//cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
- <script type="text/javascript">
-     $(document).ready(function() {
-         $('.ckeditor').ckeditor();
-     });
- </script>
-
-    <script>
-        $('#buttonsubmit').click(function(e) {
-            e.preventDefault();
-            var formData = new FormData();
-
-            $('#maindata').serializeArray().forEach(function(field) {
-                formData.append(field.name, field.value);
+            // Auto slug
+            $('#title').on('keyup', function () {
+                let slug = $(this).val().toLowerCase().trim().replace(/\s+/g,'-').replace(/[^a-z\-]/g,'');
+                $('#slug').val(slug);
             });
 
-            formData.append("_token", "{{ csrf_token() }}");
 
-            let FloorPlan = $('#image')[0].files.length; //Total image
-            let floorplans = $('#image')[0];
-            for (let i = 0; i < FloorPlan; i++) {
-                formData.append('floorplans' + i, floorplans.files[i]);
-            }
-            formData.append('FloorPlan', FloorPlan);
-            var body = CKEDITOR.instances.body.getData();
-            var title_details = CKEDITOR.instances.title_details.getData();
-            formData.append('body', body);
-            formData.append('title_details', title_details);
+            $('#buttonsubmit').click(function(e){
+                e.preventDefault();
+                var formData = new FormData($('#maindata')[0]);
 
-            $.ajax({
-                method: 'post',
-                processData: false,
-                contentType: false,
-                cache: false,
-                data: formData,
-                enctype: 'multipart/form-data',
-                url: "{{ route('create_new_blog') }}",
-                beforeSend: function() {
-                    $('#buttonsubmit').attr('disabled', 'disabled');
-                    $('.spinner-border').removeAttr('hidden');
-                },
-                success: function(result) {
-                    console.log(result);
-                    if(result.success){
-                        $("#alertdata").empty();
-                        $("#alertdata").append("<div class= 'alert alert-success'>" + result.message +
-                            "</div>");
-                        $("#alertdata").attr('hidden', false);
-                        $("#maindata")[0].reset();
-                        $("#buttonsubmit").removeAttr('disabled');
-                        $('.spinner-border').attr('hidden', 'hidden');
-                        window.location.href = "{{ route('listblogindex') }}";
-                    }else{
-                        $("#alertdata").empty();
-                        $("#alertdata").append("<div class= 'alert alert-danger'>" + result.message +
-                            "</div>");
-                        $("#alertdata").attr('hidden', false);
-                        $("#buttonsubmit").removeAttr('disabled');
-                        $('.spinner-border').attr('hidden', 'hidden');
-                    }
-                },
-                error: function(error) {
-                    $("#alertdata").empty();
-                    $.each(error.responseJSON.errors, function(index, value) {
-                        $("#alertdata").append(
-                            "<div class= 'alert alert-danger'>" +
-                            "   " + value + "</div>");
-                    });
-                    $("#alertdata").attr('hidden', false);
-                    $("#buttonsubmit").removeAttr('disabled');
-                    $('.spinner-border').attr('hidden', 'hidden');
-                }
+                // CKEditor data
+                ['title_details','description_one','description_two','description_three','description_four'].forEach(id=>{
+                    formData.set(id, CKEDITOR.instances[id].getData());
+                });
+
+                $.ajax({
+                    url: "{{ route('create_new_blog') }}",
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend:function(){ $('#buttonsubmit').attr('disabled',true); $('.spinner-border').removeAttr('hidden'); },
+                    success:function(res){ alert(res.message); location.reload(); },
+                    error:function(err){ console.log(err); alert('Check form for errors'); $('#buttonsubmit').removeAttr('disabled'); $('.spinner-border').attr('hidden','hidden'); }
+                });
             });
+
+            $('.ckeditor').ckeditor();
         });
     </script>
-      <script>
-        function showCompanyName($value) {
-
-                var checkBox = document.getElementById("name");
-            var text = document.getElementById("company_input");
-            if($value == "3"){
-            text.style.display = "block";
-            }
-            else{
-                text.style.display = "none";
-            }
-        }
-
-
-    </script>
-
-    <script>
-        document.getElementById('title').addEventListener('keyup', function () {
-            let title = this.value;
-
-            let slug = title
-                .replace(/[0-9]/g, '')       // remove numbers
-                .toLowerCase()
-                .trim()
-                .replace(/\s+/g, '-')        // spaces to hyphens
-                .replace(/[^a-z\-]/g, '');   // keep only letters and hyphens
-
-            document.getElementById('slug').value = slug;
-        });
-    </script>
-
 @endpush

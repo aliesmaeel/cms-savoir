@@ -3,326 +3,30 @@
 @push('head')
     <title>Update Blog</title>
 
-    <!-- Custom fonts for this template -->
+    <!-- Custom fonts & styles -->
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
-
-    <!-- Custom styles for this template -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
-
-
-    <!-- Custom styles for this page -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.10.24/css/dataTables.semanticui.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('images/css/dash.css') }}">
 
     <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: white;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        /* Add padding to containers */
-        .container {
-            padding: 16px;
-            /*  background-color: white;*/
-        }
-
-        /* Full-width input fields */
-        input[type=text],
-        input[type=password] {
-            width: 100%;
-            padding: 15px;
-            margin: 5px 0 22px 0;
-            display: inline-block;
-            border: none;
-            background: #f1f1f1;
-        }
-
-        input[type=text]:focus,
-        input[type=password]:focus {
-            background-color: #ddd;
-            outline: none;
-        }
-
-        /* Overwrite default styles of hr */
-        hr {
-            border: 1px solid #f1f1f1;
-            margin-bottom: 25px;
-        }
-
-        /* Set a style for the submit button */
-        .registerbtn {
-            background-color: #70cacc;
-            color: white;
-            padding: 16px 20px;
-            margin: 8px 0;
-            border-radius: 20px;
-            border: none;
-            cursor: pointer;
-            width: 10%;
-            opacity: 0.9;
-        }
-
-        .center {
-            margin: 0 100 0 0;
-            position: absolute;
-            left: 50%;
-            -ms-transform: translateY(-50%);
-            transform: translateY(-50%);
-        }
-
-        .registerbtn:hover {
-            opacity: 1;
-        }
-
-        /* Add a blue text color to links */
-        a {
-            color: #ef2027;
-        }
-
-        /* Set a grey background color and center the text of the "sign in" section */
-        .signin {
-            background-color: #f1f1f1;
-            text-align: center;
-        }
-
-        .top-title {
-            font-family: 'Lato-Semibold';
-            font-size: 20px;
-            color: #9D865C;
-            height: 4rem;
-            padding: 14px 35px;
-
-            border-radius: 0 0px 55px 0;
-            /* background-image:linear-gradient(to right, #211706, #291d0a, #30230c, #39290f, #412f10, #503913, #5f4416, #6e4f19, #88621f, #a37526, #be892c, #db9d33); */
-        }
-
-        .sidebar-divider {
-            display: none;
-        }
-
-        .title-input {
-            color: #143e39;
-            font-family: 'Lato-Bold';
-            font-size: 13px;
-        }
-
-        #name,
-        #email,
-        #phone,
-        #password,
-        #password_confirm,
-        #websiteId,
-        #brn,
-        #Job_Description,
-        #bio,
-        #image,
-        #title,
-        #posted_by,
-        #date,
-        #body,
-        #slug,
-        #language {
-            font-family: 'Lato-Regular' !important;
-            font-size: 12px !important;
-            display: inline-block;
-            width: 100%;
-            height: calc(2.25rem + 2px);
-            padding: 0.375rem 1.75rem 0.375rem 0.75rem;
-            line-height: 1.5;
-            color: #878b8f;
-            vertical-align: middle;
-            border-radius: 0 !important;
-            background: #fff !important;
-            /* border: 1px solid #fff!important; */
-            text-align: left;
-            /* border-right: 3px solid #e4aa47!important; */
-            box-shadow: 0 4px 2px -2px #d9d1d1;
-        }
-
-        input[type=text],
-        input[type=password] {
-            margin: 0 !important;
-        }
-
-        #img-top {
-            position: absolute;
-            top: -4px;
-            right: 20px;
-            width: 16rem;
-        }
-        .cke_notification{
-            display: none;
-        }
-        #maindata {
-            /* box-shadow: 0px 0px 4px 1px #6c4d18; */
-            margin: 5px;
-            /* border: 1px solid #e4aa47; */
-            border-radius: 5px;
-            width: 65rem;
-            margin: 5rem auto;
-        }
-
-        @font-face {
-            font-family: 'Lato-Semibold';
-            src: url({{ asset('font/Lato-Semibold.ttf') }});
-        }
-
-        @font-face {
-            font-family: 'Lato-Bold';
-            src: url({{ asset('font/Lato-Bold.ttf') }});
-        }
-
-        @font-face {
-            font-family: 'Lato-Regular';
-            src: url({{ asset('font/Lato-Regular.ttf') }});
-        }
-
-        #buttonsubmit {
-            width: 10rem;
-            /* background: #6c4d18; */
-            padding: 5px 32px;
-            border-radius: 0;
-            font-family: 'Lato-Semibold';
-        }
-
-        /*responsive*/
-        @media(max-width: 1400px) {
-            #bookslist_filter label::before {
-                top: 133px;
-            }
-
-            #bookslist_filter label::after {
-                top: 127px;
-            }
-        }
-
-        @media(max-width: 1350px) and (min-width: 1200px) {
-            .top-title {
-                font-size: 16px;
-
-            }
-        }
-
-        #bg-top {
-            width: 116%;
-            margin-left: -2rem;
-            margin-top: -4rem;
-        }
-
-        #bookslist_filter label::after {
-            top: 121px;
-            right: 31px;
-        }
-
-        #bookslist_filter label::before {
-            top: 126px;
-            right: 281px;
-        }
-
-        .label h4 {
-            font-size: 15px;
-        }
-
-        .top-title {
-            font-size: 16px;
-        }
-
-        @media(max-width: 768px) {
-            #wrapper {
-                height: auto;
-            }
-
-            .group-button {
-                margin-top: 2rem;
-            }
-
-
-        }
-
-        #wrapper #content-wrapper {
-            padding-bottom: 3rem;
-        }
-
-        @media(max-width: 500px) {
-            .top-title {
-                font-size: 15px !important;
-
-            }
-
-            #maindata {
-                padding: 20px 0px;
-                width: auto;
-                margin: 3rem 1rem 2rem 1rem;
-            }
-
-            #wrapper {
-                height: 100%;
-            }
-
-            #bg-top {
-                width: 66%;
-                margin-left: 0;
-                margin-top: 0;
-            }
-
-            .group-button {
-                margin-top: 0rem !important;
-            }
-
-            #bookslist_filter label::before {
-                top: 405px !important;
-                right: 189px !important;
-            }
-        }
-
-        @media (max-width: 500px) {
-            #bookslist_filter label::after {
-                top: 10px !important;
-                right: 42px !important;
-                position: relative;
-            }
-
-            #bookslist_length {
-                background: transparent;
-            }
-
-            #img-top {
-                display: none;
-            }
-        }
-
-        @media (max-width: 1350px) and (min-width: 1200px) {
-            #bookslist_filter label::after {
-                top: 127px;
-            }
-        }
-
-        @media (max-width: 768px) and (min-width: 600px) {
-            #bookslist_filter label::after {
-                top: 128px;
-            }
-
-            #maindata {
-                padding: 20px 35px;
-                width: auto !important;
-                margin: 6rem 1rem !important;
-            }
-        }
-
-        /*end responsive*/
+        body { font-family: Arial, Helvetica, sans-serif; background-color: white; }
+        * { box-sizing: border-box; }
+        .container { padding: 16px; }
+        input[type=text], textarea { width: 100%; padding: 15px; margin: 5px 0 22px 0; border: none; background: #f1f1f1; }
+        input[type=text]:focus, textarea:focus { background-color: #ddd; outline: none; }
+        .registerbtn { background-color: #70cacc; color: white; padding: 16px 20px; margin: 8px 0; border-radius: 20px; border: none; cursor: pointer; width: 10%; opacity: 0.9; }
+        .registerbtn:hover { opacity: 1; }
+        .input_off_plan { font-family: 'Lato-Regular' !important; font-size: 12px !important; width: 100%; height: calc(2.25rem + 2px); padding: 0.375rem 1.75rem 0.375rem 0.75rem; line-height: 1.5; color: #878b8f; background: #fff !important; box-shadow: 0 4px 2px -2px #d9d1d1; border-radius: 0 !important; }
+        .top-title { font-size: 16px; font-family: 'Lato-Semibold'; color: #9D865C; height: 4rem; padding: 14px 35px; border-radius: 0 0 55px 0; }
+        #maindata { border-radius: 5px; padding: 20px 51px; width: 50rem; margin: 5rem auto; }
+        #img-top { position: absolute; top: -4px; right: 20px; width: 16rem; }
     </style>
 @endpush
 
 @section('wrapper_content')
-    <!-- Content Wrapper -->
     <div class="container-fluid" style="padding-left:0!important">
         <div class="row">
             <div class="col-lg-3 col-md-4 col-8">
@@ -330,222 +34,218 @@
             </div>
         </div>
     </div>
-    <div id="content-wrapper" class="d-flex flex-column">
 
-        <!-- <h3 style="margin: auto" class="mt-4 mb-4">Update agent</h3> -->
-        <form id="maindata">
+    <div id="content-wrapper" class="d-flex flex-column">
+        <img id="img-top" src="{{asset('/storage/img/bg-top.png')}}">
+
+        <form id="maindata" enctype="multipart/form-data">
+            @csrf
             <div class="container">
                 <span id="alertdata"></span>
 
-                {{-- //title 1--}}
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="body ">Title Details</label>
-                    </div>
-                    <div class="col-md-8">
-                        <textarea type="text" class="ckeditor input-form" placeholder="Enter Title in Details Page" name="title_details" id="title_details" required
-                                  style="background: #fff!important"> {!! $blogs->title_details !!}</textarea>
-                        {{-- <input type="text" placeholder="Enter BODY" name="body" id="body" required> --}}
-                    </div>
+                <!-- Title -->
+                <div class="row mt-4 mb-4 align-items-center">
+                    <div class="col-md-3"><label class="title-input">Title</label></div>
+                    <div class="col-md-8"><input type="text" value="{{ $blog->title }}" name="title" class="input_off_plan" required></div>
                 </div>
 
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
-                        <label class="title-input" for="title">Title</label>
+                        <label class="title-input" for="title_details">Title in Details Page</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" placeholder="Enter Title" name="title" value="{{ $blogs->title }}" id="title" required>
+                        <textarea class="ckeditor input-form" name="title_details" id="title_details" style="background: #fff!important">
+                            {{ $blog->title_details }}
+                        </textarea>
                     </div>
                 </div>
 
-                 {{-- //slug --}}
-                 <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="slug">Slug</label>
-                    </div>
+                <!-- Slug -->
+                <div class="row mt-4 mb-4 align-items-center">
+                    <div class="col-md-3"><label class="title-input">Slug</label></div>
+                    <div class="col-md-8"><input type="text" value="{{ $blog->slug }}" name="slug" id="slug" class="input_off_plan" required></div>
+                </div>
+
+                <!-- Posted By -->
+                <div class="row mt-4 mb-4 align-items-center">
+                    <div class="col-md-3"><label class="title-input">Posted By</label></div>
+                    <div class="col-md-8"><input type="text" value="{{ $blog->posted_by }}" name="posted_by" class="input_off_plan" required></div>
+                </div>
+
+                <!-- Date -->
+                <div class="row mt-4 mb-4 align-items-center">
+                    <div class="col-md-3"><label class="title-input">Date</label></div>
+                    <div class="col-md-8"><input type="date" value="{{ $blog->date }}" name="date" class="input_off_plan" required></div>
+                </div>
+
+                <!-- Main Image -->
+                <div class="row mt-4 mb-4 align-items-center">
+                    <div class="col-md-3"><label class="title-input">Main Image</label></div>
                     <div class="col-md-8">
-                        <input type="text" placeholder="Enter Slug" name="slug" value="{{ $blogs->slug }}" id="slug" required>
+                        <input type="file" name="image" id="image" style="background: #fff!important">
+                        <div class="holder mt-4">
+                            <img id="imgPreview" src="{{ $blog_image->url }}" width="100" height="100"/>
+                        </div>
                     </div>
                 </div>
-                {{-- posted_by 2--}}
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="posted_by">Bosted By</label>
+
+                <!-- Descriptions -->
+                @php
+                    $descriptions = ['one', 'two', 'three', 'four'];
+                @endphp
+
+                @foreach($descriptions as $desc)
+                    <div class="row mt-4 mb-4 align-items-center">
+                        <div class="col-md-3">
+                            <label class="title-input">Description {{ ucfirst($desc) }} Title</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text"
+                                   name="description_{{ $desc }}_title"
+                                   value="{{ $blog->{'description_'.$desc.'_title'} }}"
+                                   class="input_off_plan">
+                        </div>
                     </div>
-                    <div class="col-md-8">
-                        <input type="text" placeholder="Posted By" name="posted_by" value="{{ $blogs->posted_by }}" id="posted_by" required>
+
+                    <div class="row mt-4 mb-4 align-items-center">
+                        <div class="col-md-3">
+                            <label class="title-input">Description {{ ucfirst($desc) }}</label>
+                        </div>
+                        <div class="col-md-8">
+            <textarea name="description_{{ $desc }}"
+                      class="ckeditor input_off_plan">{{ $blog->{'description_'.$desc} }}</textarea>
+                        </div>
                     </div>
-                </div>
-                {{-- date 3--}}
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="date">Date</label>
+                @endforeach
+
+                <!-- Additional Images -->
+                @foreach(['first_image', 'second_image', 'third_image'] as $img)
+                    <div class="row mt-4 mb-4 align-items-center">
+                        <div class="col-md-3"><label class="title-input">{{ ucfirst(str_replace('_',' ',$img)) }}</label></div>
+                        <div class="col-md-8">
+                            <input type="file" name="{{ $img }}" id="{{ $img }}" style="background: #fff!important">
+                            <div class="holder mt-4">
+                                <img id="imgPreview_{{ $img }}" src="{{ $blog->$img }}" width="100" height="100"/>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-8">
-                        <input type="Date" placeholder="Enter DATA" name="date" value="{{ $blogs->date }}" id="date" required>
-                    </div>
-                </div>
-                {{-- BODY 4--}}
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="body ">Body</label>
-                    </div>
-                    <div class="col-md-8">
-                        <textarea type="text" class="ckeditor input-form" placeholder="Enter BODY" name="body" id="body" required
-                        style="background: #fff!important"> {!! $blogs->body !!}</textarea>
-                        {{-- <input type="text" placeholder="Enter BODY" name="body" id="body" required> --}}
-                    </div>
-                </div>
-                {{-- image 5--}}
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Image</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="file" placeholder="Enter Image" name="image[]" id="image" multiple
-                            style="background: #fff!important">
-                            @foreach ($blog_images as $blog_image)
-                            @if($blog_image->url)
-                            <img src="{{config('services.cms_link').'/storage/image/Blog/'. $blog_image->url }}"
-                                alt="" width="75px" height="75px">
-                            @endif
-                        @endforeach
-                    </div>
-                </div>
+                @endforeach
+
+
+
+
+                <!-- Update Button -->
                 <div class="row mt-5">
                     <div class="col-md-12 text-center">
-                        <button id="buttonsubmit" type="button" class="registerbtn">Update
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
-                                hidden></span>
+                        <button id="buttonsubmit" class="btn btn-primary" type="button">Update
+                            <span class="spinner-border spinner-border-sm" role="status" hidden></span>
                         </button>
                     </div>
                 </div>
             </div>
         </form>
-
     </div>
-    <!-- End of Content Wrapper -->
-@endsection
-
-@section('content')
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
 @endsection
 
 @push('scripts')
-    <!-- Bootstrap core JavaScript-->
-    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
-
-    <!-- Page level plugins -->
-    <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="{{ asset('js/demo/datatables-demo.js') }}"></script>
+    <script src="//cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script>
         $(document).ready(function() {
 
-            $('select.custom-select').val($('select.custom-select > option:last').val()).change();
 
-        });
-    </script>
-
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <!-- Popper JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-
-    <!-- Latest compiled JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
-        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"
-        integrity="sha384-qlmct0AOBiA2VPZkMY3+2WqkHtIQ9lSdAsAn5RUJD/3vA5MKDgSGcdmIv4ycVxyn" crossorigin="anonymous">
-    </script>
-
-<script src="//cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('.ckeditor').ckeditor();
-    });
-</script>
-    <script>
-        $('#buttonsubmit').click(function(e) {
-            e.preventDefault();
-            var formData = new FormData();
-
-            $('#maindata').serializeArray().forEach(function(field) {
-                formData.append(field.name, field.value);
+            // Generate slug from title
+            $('#title').change(function (){
+                let title = $(this).val();
+                $('#slug').val(title.toLowerCase().replace(/ /g, '-'));
             });
 
-            formData.append("_token", "{{ csrf_token() }}");
+            // Preview main image
+            $('#image').change(function() {
+                const file = this.files[0];
+                if(file){
+                    let reader = new FileReader();
+                    reader.onload = function(e){ $('#imgPreview').attr('src', e.target.result); }
+                    reader.readAsDataURL(file);
+                }
+            });
 
-            let FloorPlan = $('#image')[0].files.length; //Total image
-            let floorplans = $('#image')[0];
-            for (let i = 0; i < FloorPlan; i++) {
-                formData.append('floorplans' + i, floorplans.files[i]);
-            }
-            formData.append('FloorPlan', FloorPlan);
-            var body = CKEDITOR.instances.body.getData();
-            var title_details = CKEDITOR.instances.title_details.getData();
-             formData.append('body', body);
-             formData.append('title_details', title_details);
-            $.ajax({
-                method: 'post',
-                processData: false,
-                contentType: false,
-                cache: false,
-                data: formData,
-                enctype: 'multipart/form-data',
-                url: "{{ route('update_blog', $blogs->id) }}",
-                beforeSend: function() {
-                    $('#buttonsubmit').attr('disabled', 'disabled');
-                    $('.spinner-border').removeAttr('hidden');
-                },
-                success: function(result) {
-                    console.log(result);
-                    if(result.success){
+            // Preview additional images
+            @foreach(['first_image','second_image','third_image'] as $img)
+            $('#{{ $img }}').change(function() {
+                const file = this.files[0];
+                if(file){
+                    let reader = new FileReader();
+                    reader.onload = function(e){ $('#imgPreview_{{ $img }}').attr('src', e.target.result); }
+                    reader.readAsDataURL(file);
+                }
+            });
+            @endforeach
+
+            // Handle update AJAX
+            $('#buttonsubmit').click(function(e){
+                e.preventDefault();
+                let formData = new FormData($('#maindata')[0]);
+                formData.append('_token', '{{ csrf_token() }}');
+
+
+                ['title_details'].forEach(id=>{
+                    formData.set(id, CKEDITOR.instances[id].getData());
+                });
+
+                // Add CKEditor data
+                let descriptions = ['one', 'two', 'three', 'four'];
+                descriptions.forEach(function(desc) {
+                    if (CKEDITOR.instances['description_' + desc]) {
+                        formData.append('description_' + desc, CKEDITOR.instances['description_' + desc].getData());
+                    }
+                });
+
+
+                $.ajax({
+                    url: "{{ route('update_blog', $blog->id) }}",
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    enctype: 'multipart/form-data',
+                    beforeSend: function() {
+                        $('#buttonsubmit').attr('disabled', true);
+                        $('.spinner-border').removeAttr('hidden');
+                    },
+                    success: function(result) {
                         $("#alertdata").empty();
-                        $("#alertdata").append("<div class= 'alert alert-success'>" + result.message +
-                            "</div>");
-                        $("#alertdata").attr('hidden', false);
-                        $('#buttonsubmit').removeAttr('disabled');
-                        $('.spinner-border').attr('hidden', 'hidden');
-                        window.location.href = "{{ route('listblogindex') }}";
-                    }else{
+                        if (result.success) {
+                            $("#alertdata").append("<div class='alert alert-success'>" + result.message + "</div>");
+                            $('#buttonsubmit').removeAttr('disabled');
+                            $('.spinner-border').attr('hidden', 'hidden');
+                            window.location.href = "{{ route('listblogindex') }}";
+                        } else {
+                            $("#alertdata").append("<div class='alert alert-danger'>" + result.message + "</div>");
+                            $('#buttonsubmit').removeAttr('disabled');
+                            $('.spinner-border').attr('hidden', 'hidden');
+                        }
+                    },
+                    error: function(err) {
                         $("#alertdata").empty();
-                        $("#alertdata").append("<div class= 'alert alert-danger'>" + result.message +
-                            "</div>");
-                        $("#alertdata").attr('hidden', false);
+                        if (err.responseJSON && err.responseJSON.errors) {
+                            $.each(err.responseJSON.errors, function(field, messages) {
+                                $.each(messages, function(i, message) {
+                                    $("#alertdata").append("<div class='alert alert-danger'>" + field + ": " + message + "</div>");
+                                });
+                            });
+                        } else {
+                            $("#alertdata").append("<div class='alert alert-danger'>An unexpected error occurred.</div>");
+                        }
                         $('#buttonsubmit').removeAttr('disabled');
                         $('.spinner-border').attr('hidden', 'hidden');
                     }
+                });
 
-                },
-                error: function(error) {
-                    $("#alertdata").empty();
-                    $.each(error.responseJSON.errors, function(index, value) {
-                        $("#alertdata").append(
-                            "<div class= 'alert alert-danger'>" +
-                            index +
-                            "   " + value + "</div>");
-                    });
-                    $("#alertdata").attr('hidden', false);
-                    $('#buttonsubmit').removeAttr('disabled');
-                    $('.spinner-border').attr('hidden', 'hidden');
-                }
             });
+            $('.ckeditor').ckeditor();
         });
     </script>
-
-
 @endpush

@@ -583,74 +583,98 @@ class EventController extends Controller
 
     public function create_new_blog(Request $request)
     {
-        $request->validate(
-            [
-                'title' => 'required',
-                'title_details' => 'required',
-                'slug' => 'required',
-                'posted_by' => 'required',
-                'date' => 'required',
-                'body' => 'required',
-                'user_id' => 'user_id',
-            ]
-        );
-        // replace non letter or digits by divider
-        $text = preg_replace('~[^\pL\d]+~u', '-', $request->slug);
-        // transliterate
-        $text = iconv('utf-8', 'utf-8//IGNORE', $text);
 
-        // trim
-        $text = trim($text, '-');
+        // Validate the request
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'title_details' => 'required|string',
+            'slug' => 'required|string|max:255',
+            'posted_by' => 'required|string|max:255',
+            'date' => 'required|date',
+            'description_one_title' => 'nullable|string',
+            'description_one' => 'nullable|string',
+            'description_two_title' => 'nullable|string',
+            'description_two' => 'nullable|string',
+            'description_three_title' => 'nullable|string',
+            'description_three' => 'nullable|string',
+            'description_four_title' => 'nullable|string',
+            'description_four' => 'nullable|string',
+            'first_image' => 'nullable|image',
+            'second_image' => 'nullable|image',
+            'third_image' => 'nullable|image',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
+        ]);
 
-        // remove duplicate divider
-        $text = preg_replace('~-+~', '-', $text);
+        // Sanitize slug
+        $slug = preg_replace('~[^\pL\d]+~u', '-', $request->slug);
+        $slug = iconv('utf-8', 'utf-8//IGNORE', $slug);
+        $slug = trim($slug, '-');
+        $slug = preg_replace('~-+~', '-', $slug);
+        $slug = strtolower($slug);
 
-        // lowercase
-        $text = strtolower($text);
-
-        if (empty($text)) {
-            $text = 'n-a';
-        }else{
-            $slug = Blog::where('slug',$text)->get();
-            if(count($slug) > 0){
-                return response()->json(['success' => false, 'message' => 'This sulg already exists']);
-            }
+        if (empty($slug)) {
+            $slug = 'n-a';
+        } elseif (Blog::where('slug', $slug)->exists()) {
+            return response()->json(['success' => false, 'message' => 'This slug already exists']);
         }
 
+        // Create the blog
         $blog = Blog::create([
             'title' => $request->title,
             'title_details' => $request->title_details,
-            'slug' => $text,
+            'slug' => $slug,
             'posted_by' => $request->posted_by,
             'date' => $request->date,
-            'body' => $request->body,
+            'description_one_title' => $request->description_one_title,
+            'description_one' => $request->description_one,
+            'description_two_title' => $request->description_two_title,
+            'description_two' => $request->description_two,
+            'description_three_title' => $request->description_three_title,
+            'description_three' => $request->description_three,
+            'description_four_title' => $request->description_four_title,
+            'description_four' => $request->description_four,
             'user_id' => auth()->user()->id,
-
-
-
         ]);
-        if ($request->FloorPlan > 0) {
-            for ($x = 0; $x < $request->FloorPlan; $x++) {
-                if ($request->hasFile('floorplans' . $x)) {
-                    $file = $request->file('floorplans' . $x);
-                    $imageName=uploadFile($file ,'image/Blog',false);
-                }
-                DB::table('blog_images')->insert(
-                    array(
-                        'url' =>$imageName,
-                        'blog_id' => $blog->id,
-                        'created_at' => Carbon::now(),
-                        'updated_at' => Carbon::now(),
-                    )
-                );
+
+        $cloudName = "djd3y5gzw"; // Replace with your Cloudinary cloud name
+        $uploadedImages = [];
+
+        // Helper function to upload and optimize images
+        $uploadAndOptimize = function($file) use ($cloudName) {
+            $filename = uploadFile($file, 'blog'); // Upload to S3
+            $originalUrl = 'https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/' . $filename;
+            return "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+        };
+
+        // Handle main image
+        if ($request->hasFile('image')) {
+            $optimizedUrl = $uploadAndOptimize($request->file('image'));
+            $uploadedImages['image'] = $optimizedUrl;
+
+            Blog_image::create([
+                'blog_id' => $blog->id,
+                'url' => $optimizedUrl,
+            ]);
+        }
+
+        // Handle additional images
+        $imageFields = ['first_image', 'second_image', 'third_image'];
+        foreach ($imageFields as $field) {
+            if ($request->hasFile($field)) {
+                $optimizedUrl = $uploadAndOptimize($request->file($field));
+                $uploadedImages2[$field] = $optimizedUrl;
             }
         }
 
-        if ($blog != null)
-            return response()->json(['success' => true, 'message' => 'Blog created successfully']);
-        else
-            return response()->json(['success' => false, 'message' => 'Error in creating new Blog']);
+        // Update blog with image URLs
+        if (!empty($uploadedImages2)) {
+            $blog->update($uploadedImages2);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Blog created successfully']);
     }
+
+
 
     public function listblogindex(Request $request)
     {
@@ -659,6 +683,7 @@ class EventController extends Controller
 
     public function list_blog(Request $request)
     {
+
         if (Auth::user()->isadmin() || Auth::user()->issuperAdmin()) {
             $Blog = Blog::get();
             return DataTables::of($Blog)
@@ -688,87 +713,107 @@ class EventController extends Controller
     public function upnewblog($id)
     {
         $blogs = Blog::find($id);
-        $blog_images = Blog_image::where('blog_id', $blogs->id)->get();
+        $blog_image = Blog_image::where('blog_id', $blogs->id)->first();
 
-        return view('blogs.update_blogs', ['blogs' => $blogs, 'blog_images' => $blog_images]);
+        return view('blogs.update_blogs', ['blog' => $blogs, 'blog_image' => $blog_image]);
     }
     public function update_blog(Request $request, $id)
     {
-        $roles = [];
-        $roles['title'] = 'required';
-        $roles['title_details'] = 'required';
-        $roles['slug'] = 'required';
-        $roles['posted_by'] = 'required';
-        $roles['date'] = 'required';
-        $roles['body'] = 'required';
-
-        $request->validate($roles);
-
-        try {
-            $blog = Blog::where('id', $id)->first();
-            // replace non letter or digits by divider
-            $text = preg_replace('~[^\pL\d]+~u', '-', $request->slug);
-            // transliterate
-            $text = iconv('utf-8', 'utf-8//IGNORE', $text);
-
-            // trim
-            $text = trim($text, '-');
-
-            // remove duplicate divider
-            $text = preg_replace('~-+~', '-', $text);
-
-            // lowercase
-            $text = strtolower($text);
-
-            if (empty($text)) {
-                $text = 'n-a';
-            }else{
-                $slug = Blog::where('slug',$text)->where('id','!=',$blog->id)->get();
-                if(count($slug) > 0){
-                    return response()->json(['success' => false, 'message' => 'This sulg already exists']);
-                }
-            }
-            $blog->title = $request->title;
-            $blog->title_details = $request->title_details;
-            $blog->slug = $text;
-            $blog->posted_by = $request->posted_by;
-            $blog->date = $request->date;
-            $blog->body = $request->body;
-            $blog->user_id = $blog->user_id;
+        $blog = Blog::findOrFail($id);
 
 
-            if ($request->FloorPlan > 0) {
-                $blog_images= Blog_image::where('blog_id', $id)->get();
-                foreach($blog_images as $img){
-                    deleteFile($img->url);
-                    $img->delete();
-                }
-                for ($x = 0; $x < $request->FloorPlan; $x++) {
-                    if ($request->hasFile('floorplans' . $x)) {
-                        $file = $request->file('floorplans' . $x);
-                        $imageName=uploadFile($file ,'image/Blog',false);
-                    }
-                    DB::table('blog_images')->insert(
-                        array(
-                            'url' => $imageName,
-                            'blog_id' => $blog->id,
-                            'created_at' => Carbon::now(),
-                            'updated_at' => Carbon::now(),
-                        )
-                    );
-                }
-            }
-            $blog->save();
+        // Validate the request
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'title_details' => 'required|string',
+            'slug' => 'required|string|max:255',
+            'posted_by' => 'required|string|max:255',
+            'date' => 'required|date',
+            'description_one_title' => 'nullable|string',
+            'description_one' => 'nullable|string',
+            'description_two_title' => 'nullable|string',
+            'description_two' => 'nullable|string',
+            'description_three_title' => 'nullable|string',
+            'description_three' => 'nullable|string',
+            'description_four_title' => 'nullable|string',
+            'description_four' => 'nullable|string',
+            'first_image' => 'nullable|image',
+            'second_image' => 'nullable|image',
+            'third_image' => 'nullable|image',
+        ]);
 
+        // Sanitize slug
+        $slug = preg_replace('~[^\pL\d]+~u', '-', $request->slug);
+        $slug = iconv('utf-8', 'utf-8//IGNORE', $slug);
+        $slug = trim($slug, '-');
+        $slug = preg_replace('~-+~', '-', $slug);
+        $slug = strtolower($slug);
 
-            if ($blog)
-                return response()->json(['success' => true, 'message' => 'Blog updated successfully']);
-            else
-                return response()->json(['success' => false, 'message' => 'Error in updating Blog data']);
-        } catch (Exception $ex) {
-            dd($ex->getMessage());
+        if (empty($slug)) {
+            $slug = 'n-a';
+        } elseif (Blog::where('slug', $slug)->where('id', '!=', $blog->id)->exists()) {
+            return response()->json(['success' => false, 'message' => 'This slug already exists']);
         }
+
+        // Update blog fields
+        $blog->update([
+            'title' => $request->title,
+            'title_details' => $request->title_details,
+            'slug' => $slug,
+            'posted_by' => $request->posted_by,
+            'date' => $request->date,
+            'description_one_title' => $request->description_one_title,
+            'description_one' => $request->description_one,
+            'description_two_title' => $request->description_two_title,
+            'description_two' => $request->description_two,
+            'description_three_title' => $request->description_three_title,
+            'description_three' => $request->description_three,
+            'description_four_title' => $request->description_four_title,
+            'description_four' => $request->description_four,
+        ]);
+
+        $cloudName = "djd3y5gzw"; // Replace with your Cloudinary cloud name
+        $uploadedImages = [];
+
+        // Helper function to upload and optimize images
+        $uploadAndOptimize = function($file) use ($cloudName) {
+            $filename = uploadFile($file, 'blog'); // Upload to S3
+            $originalUrl = 'https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/' . $filename;
+            return "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+        };
+
+        // Update main image if provided
+        if ($request->hasFile('image')) {
+            $optimizedUrl = $uploadAndOptimize($request->file('image'));
+            $uploadedImages['image'] = $optimizedUrl;
+
+            // Update main Blog_image entry
+            $blogImage = Blog_image::where('blog_id', $blog->id)->first();
+            if ($blogImage) {
+                $blogImage->update(['url' => $optimizedUrl]);
+            } else {
+                Blog_image::create(['blog_id' => $blog->id, 'url' => $optimizedUrl]);
+            }
+        }
+
+        // Update additional images
+        $imageFields = ['first_image', 'second_image', 'third_image'];
+        foreach ($imageFields as $field) {
+            if ($request->hasFile($field)) {
+                $optimizedUrl = $uploadAndOptimize($request->file($field));
+                $uploadedImages2[$field] = $optimizedUrl;
+            }
+        }
+
+        if (!empty($uploadedImages2)) {
+            $blog->update($uploadedImages2);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Blog updated successfully']);
     }
+
+
+
 
     public function delete_blog(Request $request)
     {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Blog;
 use App\Models\Insight;
 use App\Models\ListingSyndication;
 use App\Models\MarketingChannels;
@@ -165,5 +166,34 @@ class HomeController
         $insight->save();
         return response()->json(['message' => 'Shares updated successfully', 'shares' => $insight->shares]);
     }
+    public function blogs()
+    {
+        $blogs = Blog::with('blog_image')
+            ->select('id', 'title', 'slug','created_at', 'posted_by', 'title_details')
+            ->paginate(9);
 
+        return response()->json($blogs);
+    }
+
+    public function blogDetails($slug)
+    {
+        $blog = Blog::with('blog_image')
+            ->where('slug', $slug)
+            ->first();
+
+        $suggestedBlogs = Blog::with('blog_image')
+            ->where('slug', '!=', $slug)
+            ->select('id', 'title', 'slug','date', 'posted_by', 'title_details')
+            ->take(5)
+            ->get();
+
+        if (!$blog) {
+            return response()->json(['message' => 'Blog not found'], 404);
+        }
+
+        return response()->json([
+            'blog' => $blog,
+            'suggested_blogs' => $suggestedBlogs,
+        ]);
+    }
 }
