@@ -40,5 +40,6 @@ Route::post('/search', [\App\Http\Controllers\Api\HomeController::class, 'search
 Route::post('/subscribe', [\App\Http\Controllers\Api\HomeController::class, 'subscribe']);
 Route::post('/downloadBrochure', [\App\Http\Controllers\Api\HomeController::class, 'downloadBrochure']);
 Route::post('/talk-to-expert', [\App\Http\Controllers\Api\HomeController::class, 'talkToExpert']);
+Route::post('/contact-us', [\App\Http\Controllers\Api\HomeController::class, 'contactUs']);
 
 

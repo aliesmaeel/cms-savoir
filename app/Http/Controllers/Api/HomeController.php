@@ -249,6 +249,16 @@ class HomeController
 
     public function talkToExpert(Request $request)
     {
+        return $this->handleContactRequest($request, 'talk_to_expert');
+    }
+
+    public function contactUs(Request $request)
+    {
+        return $this->handleContactRequest($request, 'contact_us');
+    }
+
+    private function handleContactRequest(Request $request, string $type)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email',
@@ -262,17 +272,21 @@ class HomeController
             ], 422);
         }
 
-        DB::table('talk_to_experts')->insert([
+        DB::table('emails')->insert([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
             'message' => $request->message,
+            'type' => $type,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        return response()->json(['message' => 'Your request has been submitted successfully. Our expert will contact you soon.']);
+        return response()->json([
+            'message' => 'Your request has been submitted successfully. Our team will contact you soon.'
+        ]);
     }
+
 
     public function search(Request $request)
     {

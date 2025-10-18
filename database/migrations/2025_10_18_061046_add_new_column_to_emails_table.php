@@ -14,7 +14,9 @@ class AddNewColumnToEmailsTable extends Migration
     public function up()
     {
         Schema::table('emails', function (Blueprint $table) {
-            $table->enum('email_type', ['talk_to_expert','contact_us', 'to_agent','register_with_us'])->default('contact_us');
+            $table->enum('type', ['talk_to_expert','contact_us', 'to_agent','register_with_us'])->default('contact_us');
+            $table->text('message')->nullable()->change();
+            $table->boolean('is_read')->default(false);
         });
     }
 
