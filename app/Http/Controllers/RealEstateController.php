@@ -93,7 +93,7 @@ class RealEstateController extends Controller
                 'pdf' => $slugifiedFileName
             ]);
         }
-        
+
         if ($off_plan){
             $off_plan->delete();
             return response()->json(['success' => true, 'message' => 'Real Estate has been deleted successfully']);

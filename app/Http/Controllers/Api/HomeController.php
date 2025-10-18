@@ -8,8 +8,11 @@ use App\Models\ListingSyndication;
 use App\Models\MarketingChannels;
 use App\Models\NewProperty;
 use App\Models\OffPlanProject;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+
 
 class HomeController
 {
@@ -128,10 +131,9 @@ class HomeController
 
     public function news()
     {
-        $news = DB::table('insights')
-            ->select('id', 'title', 'slug', 'image')
-            ->take(4)
-            ->get();
+        $news = Insight::
+            select('id', 'title', 'slug', 'image','created_at')
+            ->paginate(6);
 
         return response()->json($news);
     }
@@ -142,9 +144,9 @@ class HomeController
         $newsItem = Insight::where('slug', $slug)
             ->first();
 
-        $suggestedNews = DB::table('insights')
-            ->where('slug', '!=', $slug)
-            ->select('id', 'title', 'slug', 'image')
+        $suggestedNews =Insight::
+            where('slug', '!=', $slug)
+            ->select('id', 'title', 'slug', 'image','created_at')
             ->take(5)
             ->get();
 
@@ -195,5 +197,53 @@ class HomeController
             'blog' => $blog,
             'suggested_blogs' => $suggestedBlogs,
         ]);
+    }
+    public function subscribe(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:subscriptions,email',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $subscription = DB::table('subscriptions')->insert([
+            'email' => $request->email,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        return response()->json(['message' => 'Subscribed successfully']);
+    }
+
+    public function downloadBrochure(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        DB::table('downloaded_brochures')->insert([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'brochure_name' => $request->brochure_name,
+        ]);
+        //lest assume brochure exists in public/brochures/ i want to return it as download
+        $brochurePath = public_path('/storage/realestatepdf/' . $request->brochure_name);
+
+        if (file_exists($brochurePath)) {
+            return response()->download($brochurePath);
+        } else {
+            return response()->json(['message' => 'Brochure not found'], 404);
+        }
+
     }
 }

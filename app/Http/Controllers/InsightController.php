@@ -9,93 +9,78 @@ use Yajra\DataTables\Facades\DataTables;
 
 class InsightController extends Controller
 {
-    public function insight_create(Request  $request)
+    public function insight_create(Request $request)
     {
-
         if ($request->ajax()) {
 
-            $validator= $request->validate(
-                [
-                    'title' => 'required',
-                    'description'=>'required',
-                ]
-            );
+            // Validate required fields
+            $validator = $request->validate([
+                'title' => 'required',
+                'slug' => 'required',
+                'facebook' => 'required',
+                'instagram' => 'required',
+                'linkedin' => 'required',
+                'shares' => 'required|integer',
+                // Optionally validate description titles/texts
+                'description_one_title' => 'required',
+                'description_one' => 'required',
+                'description_two_title' => 'required',
+                'description_two' => 'required',
+                'description_three_title' => 'required',
+                'description_three' => 'required',
+                'description_four_title' => 'required',
+                'description_four' => 'required',
+            ]);
 
-            $insight= Insight::create([
+            // Create Insight
+            $insight = Insight::create([
                 'title' => $request->title,
-                'description' => $request->description,
-                'youtube' => $request->link,
-                'isfeatured' => $request->feature == 'on' ? 1 : 0,
                 'slug' => $request->slug,
+                'isfeatured' => $request->feature == 'on' ? 1 : 0,
                 'facebook' => $request->facebook,
                 'instagram' => $request->instagram,
                 'linkedin' => $request->linkedin,
                 'shares' => $request->shares,
+                'title_details' => $request->title_details ?? null,
+                'description_one_title' => $request->description_one_title,
+                'description_one' => $request->description_one,
+                'description_two_title' => $request->description_two_title,
+                'description_two' => $request->description_two,
+                'description_three_title' => $request->description_three_title,
+                'description_three' => $request->description_three,
+                'description_four_title' => $request->description_four_title,
+                'description_four' => $request->description_four,
             ]);
 
             $cloudName = "djd3y5gzw";
 
-            if ($request->hasFile('image')) {
-                $file = $request->file('image');
-                $filename =uploadFile($file  ,'insights');
-                $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/'.$filename;
-                $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+            $imageFields = ['image', 'first_image', 'second_image', 'third_image'];
+            foreach ($imageFields as $field) {
+                if ($request->hasFile($field)) {
+                    $file = $request->file($field);
+                    $filename = uploadFile($file, 'insights');
+                    $originalUrl = 'https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/' . $filename;
+                    $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
 
-                $insight->update([
-                    'image' => $store
-                ]);
+                    $insight->update([$field => $store]);
+                }
             }
 
-            if ($request->hasFile('first_image')) {
-                $file = $request->file('first_image');
-                $filename =uploadFile($file  ,'insights');
-                $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/'.$filename;
-                $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-
-                $insight->update([
-                    'first_image' => $store
-                ]);
-            }
-
-            if ($request->hasFile('second_image')) {
-                $file = $request->file('second_image');
-                $filename =uploadFile($file  ,'insights');
-                $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/'.$filename;
-                $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-
-                $insight->update([
-                    'second_image' => $store
-                ]);
-            }
-
-            if ($request->hasFile('third_image')) {
-                $file = $request->file('third_image');
-                $filename =uploadFile($file  ,'insights');
-                $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/'.$filename;
-                $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-
-                $insight->update([
-                    'third_image' => $store
-                ]);
-            }
-
-
-
-            if ($insight != null)
-                return response()->json(['success' => true, 'message' => 'insight Project created successfully']);
-            else
-                return response()->json(['success' => false, 'message' => 'Error in creating insight Project']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Insight Project created successfully'
+            ]);
         }
 
         return view('admin.insights.create');
-
     }
+
 
     public function insight_list(Request $request)
     {
 
         if ($request->ajax()) {
-            $data = Insight::select(['id', 'title', 'slug', 'image', 'youtube', 'isfeatured'])
+            $data = Insight::select(['id', 'title', 'slug', 'image', 'isfeatured'])
                 ->orderBy('id', 'DESC')
                 ->get();
 
@@ -103,7 +88,7 @@ class InsightController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('image', function ($row) {
-                    $image = '<img src="'.config('services.cms_link').'/storage/'.$row->image.'" width="100px" height="100px">';
+                    $image = '<img src="'.$row->image.'" width="100px" height="100px">';
                     return $image;
                 })
                 ->addColumn('action', function ($row) {
@@ -130,31 +115,51 @@ class InsightController extends Controller
 
     public function insight_list_update(Request $request, $id)
     {
+        $insight = Insight::findOrFail($id);
         if ($request->ajax()) {
 
             $validator = $request->validate([
                 'title' => 'required',
-                'description' => 'required',
+                'slug' => 'required',
+                'facebook' => 'required',
+                'instagram' => 'required',
+                'linkedin' => 'required',
+                'shares' => 'required|integer',
+                'description_one_title' => 'required',
+                'description_one' => 'required',
+                'description_two_title' => 'required',
+                'description_two' => 'required',
+                'description_three_title' => 'required',
+                'description_three' => 'required',
+                'description_four_title' => 'required',
+                'description_four' => 'required',
             ]);
 
-            $insight = Insight::findOrFail($id);
+
 
             $insight->update([
                 'title' => $request->title,
-                'description' => $request->description,
-                'youtube' => $request->link,
-                'isfeatured' => $request->feature == 'on' ? 1 : 0,
                 'slug' => $request->slug,
+                'isfeatured' => $request->feature == 'on' ? 1 : 0,
                 'facebook' => $request->facebook,
                 'instagram' => $request->instagram,
                 'linkedin' => $request->linkedin,
                 'shares' => $request->shares,
+                'title_details' => $request->title_details ?? null,
+                'description_one_title' => $request->description_one_title,
+                'description_one' => $request->description_one,
+                'description_two_title' => $request->description_two_title,
+                'description_two' => $request->description_two,
+                'description_three_title' => $request->description_three_title,
+                'description_three' => $request->description_three,
+                'description_four_title' => $request->description_four_title,
+                'description_four' => $request->description_four,
             ]);
 
             $cloudName = "djd3y5gzw";
+            $imageFields = ['image', 'first_image', 'second_image', 'third_image'];
 
-            // Image update helper
-            $updateImage = function ($field) use ($request, $insight, $cloudName) {
+            foreach ($imageFields as $field) {
                 if ($request->hasFile($field)) {
                     $file = $request->file($field);
                     $filename = uploadFile($file, 'insights');
@@ -163,24 +168,17 @@ class InsightController extends Controller
 
                     $insight->update([$field => $store]);
                 }
-            };
-
-            // Update each possible image
-            $updateImage('image');
-            $updateImage('first_image');
-            $updateImage('second_image');
-            $updateImage('third_image');
+            }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Insight project updated successfully'
+                'message' => 'Insight Project updated successfully'
             ]);
         }
 
-        // For GET request, load the edit page
-        $insight = Insight::findOrFail($id);
         return view('admin.insights.update', compact('insight'));
     }
+
 
 
 }

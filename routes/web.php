@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DownloadedBrochureController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\InsightController;
 use App\Http\Controllers\MarketingController;
@@ -489,3 +490,9 @@ Route::controller(CountryController::class)->prefix('cities')->group(function ()
 Route::get('/emails', [SignatureController::class, 'showEmails'])->name('emails.show');
 Route::post('/emails', [SignatureController::class, 'processEmails'])->name('emails.process');
 Route::post('/emails/delete', [SignatureController::class, 'delete'])->name('emails.delete');
+
+
+Route::controller(DownloadedBrochureController::class)->prefix('Brochure')->group(function () {
+    Route::match(['post', 'get'], '/', 'index')->name('downloadedBrochures');
+    Route::post('/delete-downloadedBrochure', 'delete')->name('delete_downloadedBrochure');
+});

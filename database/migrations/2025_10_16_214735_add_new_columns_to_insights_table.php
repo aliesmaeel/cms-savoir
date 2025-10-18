@@ -21,6 +21,17 @@ class AddNewColumnsToInsightsTable extends Migration
             $table->string('first_image',255)->nullable();
             $table->string('second_image',255)->nullable();
             $table->string('third_image',255)->nullable();
+            $table->dropColumn('youtube');
+            $table->dropColumn('description');
+            $table->text('title_details')->nullable();
+            $table->text('description_one_title')->nullable();
+            $table->text('description_one')->nullable();
+            $table->text('description_two_title')->nullable();
+            $table->text('description_two')->nullable();
+            $table->text('description_three_title')->nullable();
+            $table->text('description_three')->nullable();
+            $table->text('description_four_title')->nullable();
+            $table->text('description_four')->nullable();
         });
     }
 

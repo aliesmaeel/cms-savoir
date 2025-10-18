@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @push('head')
-    <title>Create Off-Plan Project</title>
+    <title>Create Insight</title>
 
     <!-- Custom fonts for this template -->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -19,6 +19,9 @@
     <link rel="stylesheet" href="images/css/dash.css">
 
     <style>
+        .cke_notifications_area{
+            display: none;
+        }
         body {
             font-family: Arial, Helvetica, sans-serif;
             background-color: white;
@@ -323,7 +326,7 @@
     <div class="container-fluid" style="padding-left:0!important">
         <div class="row">
             <div class="col-lg-3 col-md-4 col-8">
-                <h3 class="top-title">Create Off-Plan Project</h3>
+                <h3 class="top-title">Create Insight</h3>
             </div>
         </div>
     </div>
@@ -349,7 +352,7 @@
                         <label class="title-input" for="slug">Slug</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" disabled class="input_off_plan" placeholder="Enter slug" name="slug" id="slug" required style="border-right: 3px solid #9D865C!important">
+                        <input type="text" readonly class="input_off_plan" placeholder="Enter slug" name="slug" id="slug" required style="border-right: 3px solid #9D865C!important">
                     </div>
                 </div>
 
@@ -369,25 +372,36 @@
                     </div>
                 </div>
 
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Youtube</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" placeholder="Enter Link" name="link" id="link" required style="border-right: 3px solid #9D865C!important">
-                    </div>
-                </div>
+                @php
+                    $descriptions = ['one', 'two', 'three', 'four'];
+                @endphp
 
-
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Description</label>
+                @foreach($descriptions as $index => $desc)
+                    <div class="row mt-4 mb-4 align-items-center">
+                        <div class="col-md-3">
+                            <label class="title-input" for="description_{{ $desc }}_title">Description {{ $index + 1 }} Title</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text"
+                                   name="description_{{ $desc }}_title"
+                                   class="input_off_plan"
+                                   placeholder="Enter Description {{ $index + 1 }} Title">
+                        </div>
                     </div>
-                    <div class="col-md-8">
-                        <textarea type="text" class="ckeditor input-form" placeholder="Enter Description" name="description" id="features" style="background: rgb(255, 255, 255) !important; visibility: hidden; display: none;"></textarea>
+
+                    <div class="row mt-4 mb-4 align-items-center">
+                        <div class="col-md-3">
+                            <label class="title-input" for="description_{{ $desc }}">Description {{ $index + 1 }}</label>
+                        </div>
+                        <div class="col-md-8">
+            <textarea name="description_{{ $desc }}"
+                      id="description_{{ $desc }}"
+                      class="ckeditor input_off_plan"
+                      placeholder="Enter Description {{ $index + 1 }}"></textarea>
+                        </div>
                     </div>
-                </div>
+                @endforeach
+
 
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
@@ -549,24 +563,6 @@
         $('#slug').val(slug);
     })
 
-     $('#header_images').change(function() {
-         const files = this.files;
-
-         if (files) {
-             for (let i = 0; i < files.length; i++) {
-                 let reader = new FileReader();
-
-                 reader.onload = function(event) {
-                     $('#imgholder').append(`
-                    <img id="imgPreviewHeader${i}" src="${event.target.result}" alt="pic" width="100" height="100" hidden />
-                `);
-                     $(`#imgPreviewHeader${i}`).attr('hidden', false);
-                 };
-
-                 reader.readAsDataURL(files[i]);
-             }
-         }
-     });
 
     $('#image').change(function() {
         const file = this.files[0];
@@ -592,33 +588,25 @@
             });
             formData.append("_token", "{{ csrf_token() }}");
 
-            let singleImageInput = document.getElementById('image');
-            if (singleImageInput.files.length > 0) {
-                formData.append('image', singleImageInput.files[0]);
-            }
-            let singleImageInput1 = document.getElementById('first_image');
-            if (singleImageInput1.files.length > 0) {
-                formData.append('first_image', singleImageInput1.files[0]);
-            }
+            // Append images
+            ['image','first_image','second_image','third_image'].forEach(function(id) {
+                let input = document.getElementById(id);
+                if (input.files.length > 0) {
+                    formData.append(id, input.files[0]);
+                }
+            });
 
-            let singleImageInput2 = document.getElementById('second_image');
-            if (singleImageInput2.files.length > 0) {
-                formData.append('second_image', singleImageInput2.files[0]);
+            // Append CKEditor descriptions
+            for (let i = 1; i <= 4; i++) {
+                let titleField = `description_${['one','two','three','four'][i-1]}_title`;
+                let descField = `description_${['one','two','three','four'][i-1]}`;
+
+                // Get CKEditor instance by ID
+                if (CKEDITOR.instances[descField]) {
+                    formData.append(titleField, $(`input[name="${titleField}"]`).val());
+                    formData.append(descField, CKEDITOR.instances[descField].getData());
+                }
             }
-
-            let singleImageInput3 = document.getElementById('third_image');
-            if (singleImageInput3.files.length > 0) {
-                formData.append('third_image', singleImageInput3.files[0]);
-            }
-
-            console.log(formData);
-
-            var description = CKEDITOR.instances.features.getData();
-            var link = $('#link').val();
-            var slug = $('#slug').val();
-            formData.append('description', description);
-            formData.append('link', link);
-            formData.append('slug', slug);
 
             $.ajax({
                 method: 'post',
@@ -633,10 +621,8 @@
                     $('.spinner-border').removeAttr('hidden');
                 },
                 success: function(result) {
-                    console.log(result);
                     $("#alertdata").empty();
-                    $("#alertdata").append("<div class= 'alert alert-success'>" + result.message +
-                        "</div>");
+                    $("#alertdata").append("<div class='alert alert-success'>" + result.message + "</div>");
                     $("#alertdata").attr('hidden', false);
                     $("#maindata")[0].reset();
                     $("#buttonsubmit").removeAttr('disabled');
@@ -646,16 +632,19 @@
                 },
                 error: function(error) {
                     $("#alertdata").empty();
-                    $.each(error.responseJSON.errors, function(index, value) {
-                        $("#alertdata").append(
-                            "<div class= 'alert alert-danger'>" +
-                            "   " + value + "</div>");
-                    });
+                    if(error.responseJSON && error.responseJSON.errors){
+                        $.each(error.responseJSON.errors, function(index, value) {
+                            $("#alertdata").append("<div class='alert alert-danger'>" + value + "</div>");
+                        });
+                    } else {
+                        $("#alertdata").append("<div class='alert alert-danger'>An unexpected error occurred.</div>");
+                    }
                     $("#alertdata").attr('hidden', false);
                     $("#buttonsubmit").removeAttr('disabled');
                     $('.spinner-border').attr('hidden', 'hidden');
                 }
             });
         });
+
     </script>
 @endpush

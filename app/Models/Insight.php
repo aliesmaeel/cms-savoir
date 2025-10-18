@@ -10,6 +10,10 @@ class Insight extends Model
     use HasFactory;
     protected $guarded=[];
 
-    protected $hidden = ['created_at', 'updated_at','youtube'];
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d',
+    ];
+
+    protected $hidden = ['updated_at'];
     protected $table = 'insights';
 }

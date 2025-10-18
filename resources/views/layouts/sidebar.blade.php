@@ -425,6 +425,9 @@
                 <li id="sbitem22_1"><a href="{{ route('subscriptions') }}"><i class="fas fa-ad"></i>Subscriptions List
                     </a>
                 </li>
+                <li id="sbitem22_2"><a href="{{ route('downloadedBrochures') }}"><i class="fas fa-ad"></i>Downloaded Brochures
+                    </a>
+                </li>
             </ul>
         </li>
         {{-- Off-Plan Projects Section --}}
