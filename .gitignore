@@ -21,3 +21,4 @@ npm-debug.log
 yarn-error.log
 composer.lock
 storage/logs/laravel.log
+/public/usefulcommands.txt

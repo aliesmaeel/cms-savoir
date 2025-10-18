@@ -85,20 +85,46 @@ class NewProperty extends Model
     }
 
 
-    public function toSearchableArray()
+    use Searchable;
+
+    protected $table = 'new_properties';
+
+    public function toSearchableArray(): array
     {
         return [
             'id' => $this->id,
+            'title_en' => $this->title_en,
+            'title_ar' => $this->title_ar,
+            'city' => $this->city,
+            'community' => $this->community,
+            'sub_community' => $this->sub_community,
+            'property_type' => $this->property_type,
+            'completion_status' => $this->completion_status,
             'offering_type' => $this->offering_type,
-            'price' => $this->price,
             'bedroom' => $this->bedroom,
             'bathroom' => $this->bathroom,
-            'size' => $this->size,
-            'country' => $this->country,
-            'community' => optional($this->pcommunity)->name,
-            'sub_community' => optional($this->psubcommunity)->name,
-            'completion_status' => $this->completion_status,
-            'featured' => $this->featured,
+            'price' => $this->price,
+        ];
+    }
+
+    public function searchableSettings(): array
+    {
+        return [
+            'filterableAttributes' => [
+                'offering_type',
+                'completion_status',
+                'property_type',
+                'bedroom',
+                'price',
+                'city',
+                'community',
+                'sub_community',
+            ],
+            'sortableAttributes' => [
+                'price',
+                'bedroom',
+                'bathroom',
+            ],
         ];
     }
 }

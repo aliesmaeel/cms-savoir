@@ -276,25 +276,85 @@ class HomeController
 
     public function search(Request $request)
     {
+        $keywords = $request->input('query', []); // array of keywords
+        $filters = [
+            'interested_in' => $request->input('interested_in'),
+            'completion_status' => $request->input('completion_status'),
+            'type' => $request->input('type'),
+            'bedroom' => $request->input('bedroom'),
+            'bathroom' => $request->input('bathroom'),
+            'min_price' => $request->input('min_price'),
+            'max_price' => $request->input('max_price'),
+        ];
 
-        $keywords = $request->input('query');
-        $results = collect();
+        // Generate a unique cache key
+        $cacheKey = 'search:' . md5(json_encode(['q' => $keywords, 'f' => $filters]));
 
-        foreach ($keywords as $word) {
-            $found = NewProperty::search($word)->get();
-            if ($found->isNotEmpty()) {
-                $results->push([
-                    'count' => $found->count(),
-                    'data' => $found,
-                ]);
+        $results = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($keywords, $filters) {
+
+            $combinedResults = []; // Use a plain array to fix the Collection modification issue
+
+            foreach ($keywords as $word) {
+
+                // Build Meilisearch filter string
+                $filterConditions = [];
+
+                if (!empty($filters['interested_in'])) {
+                    $filterConditions[] = 'offering_type = "' . $filters['interested_in'] . '"';
+                }
+                if (!empty($filters['completion_status'])) {
+                    $filterConditions[] = 'completion_status = "' . $filters['completion_status'] . '"';
+                }
+                if (!empty($filters['type'])) {
+                    $filterConditions[] = 'property_type = "' . $filters['type'] . '"';
+                }
+                if (is_numeric($filters['bedroom'])) {
+                    $filterConditions[] = 'bedroom = ' . $filters['bedroom'];
+                }
+                if (is_numeric($filters['bathroom'])) {
+                    $filterConditions[] = 'bathroom = ' . $filters['bathroom'];
+                }
+
+                if (is_numeric($filters['min_price']) && is_numeric($filters['max_price'])) {
+                    $filterConditions[] = 'price >= ' . $filters['min_price'] . ' AND price <= ' . $filters['max_price'];
+                } elseif (is_numeric($filters['min_price'])) {
+                    $filterConditions[] = 'price >= ' . $filters['min_price'];
+                } elseif (is_numeric($filters['max_price'])) {
+                    $filterConditions[] = 'price <= ' . $filters['max_price'];
+                }
+
+                $filterString = implode(' AND ', $filterConditions);
+
+                // Perform the search with Meilisearch
+                $found = NewProperty::search($word, function ($meilisearch, $query, $options) use ($filterString) {
+                    if ($filterString) {
+                        $options['filter'] = $filterString;
+                    }
+                    return $meilisearch->search($query, $options);
+                })->get();
+
+                foreach ($found as $item) {
+                    $id = $item->id;
+                    if (!isset($combinedResults[$id])) {
+                        $combinedResults[$id] = ['count' => 0, 'data' => $item];
+                    }
+                    $combinedResults[$id]['count']++;
+                }
             }
-        }
-        $sorted = collect($results)->sortByDesc('count')->map(fn($r) => $r['data'])->values();
 
-        return response()->json([
-            'count' => $sorted->count(),
-            'data' => $sorted,
-        ]);
+            // Sort by the number of keyword matches (highest first)
+            $sorted = collect($combinedResults)
+                ->sortByDesc('count')
+                ->map(fn($r) => $r['data'])
+                ->values();
 
+            return [
+                'count' => $sorted->count(),
+                'data' => $sorted,
+            ];
+        });
+
+        return response()->json($results);
     }
+
 }
