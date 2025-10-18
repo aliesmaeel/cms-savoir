@@ -278,7 +278,7 @@ class HomeController
     {
         $keywords = $request->input('query', []); // array of keywords
         $filters = [
-            'interested_in' => $request->input('interested_in'),
+            'offering_type' => $request->input('offering_type'),
             'completion_status' => $request->input('completion_status'),
             'type' => $request->input('type'),
             'bedroom' => $request->input('bedroom'),
@@ -287,49 +287,51 @@ class HomeController
             'max_price' => $request->input('max_price'),
         ];
 
-        // Generate a unique cache key
-        $cacheKey = 'search:' . md5(json_encode(['q' => $keywords, 'f' => $filters]));
+        // 🧭 Pagination setup
+        $page = max(1, (int)$request->input('page', 1));
+        $limit = min(1000, (int)$request->input('limit', 20)); // Meilisearch allows up to 1000 per query
+        $offset = ($page - 1) * $limit;
 
-        $results = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($keywords, $filters) {
+        // 🧩 Build Meilisearch filter string
+        $filterConditions = [];
 
-            $combinedResults = []; // Use a plain array to fix the Collection modification issue
+        if (!empty($filters['offering_type'])) {
+            $filterConditions[] = 'offering_type = "' . $filters['offering_type'] . '"';
+        }
+        if (!empty($filters['completion_status'])) {
+            $filterConditions[] = 'completion_status = "' . $filters['completion_status'] . '"';
+        }
+        if (!empty($filters['type'])) {
+            $filterConditions[] = 'property_type = "' . $filters['type'] . '"';
+        }
+        if (is_numeric($filters['bedroom'])) {
+            $filterConditions[] = 'bedroom = ' . $filters['bedroom'];
+        }
+        if (is_numeric($filters['bathroom'])) {
+            $filterConditions[] = 'bathroom = ' . $filters['bathroom'];
+        }
 
+        if (is_numeric($filters['min_price']) && is_numeric($filters['max_price'])) {
+            $filterConditions[] = 'price >= ' . $filters['min_price'] . ' AND price <= ' . $filters['max_price'];
+        } elseif (is_numeric($filters['min_price'])) {
+            $filterConditions[] = 'price >= ' . $filters['min_price'];
+        } elseif (is_numeric($filters['max_price'])) {
+            $filterConditions[] = 'price <= ' . $filters['max_price'];
+        }
+
+        $filterString = implode(' AND ', $filterConditions);
+
+        $combinedResults = [];
+
+        // 🟢 If there are keywords, search each one
+        if (!empty($keywords)) {
             foreach ($keywords as $word) {
-
-                // Build Meilisearch filter string
-                $filterConditions = [];
-
-                if (!empty($filters['interested_in'])) {
-                    $filterConditions[] = 'offering_type = "' . $filters['interested_in'] . '"';
-                }
-                if (!empty($filters['completion_status'])) {
-                    $filterConditions[] = 'completion_status = "' . $filters['completion_status'] . '"';
-                }
-                if (!empty($filters['type'])) {
-                    $filterConditions[] = 'property_type = "' . $filters['type'] . '"';
-                }
-                if (is_numeric($filters['bedroom'])) {
-                    $filterConditions[] = 'bedroom = ' . $filters['bedroom'];
-                }
-                if (is_numeric($filters['bathroom'])) {
-                    $filterConditions[] = 'bathroom = ' . $filters['bathroom'];
-                }
-
-                if (is_numeric($filters['min_price']) && is_numeric($filters['max_price'])) {
-                    $filterConditions[] = 'price >= ' . $filters['min_price'] . ' AND price <= ' . $filters['max_price'];
-                } elseif (is_numeric($filters['min_price'])) {
-                    $filterConditions[] = 'price >= ' . $filters['min_price'];
-                } elseif (is_numeric($filters['max_price'])) {
-                    $filterConditions[] = 'price <= ' . $filters['max_price'];
-                }
-
-                $filterString = implode(' AND ', $filterConditions);
-
-                // Perform the search with Meilisearch
-                $found = NewProperty::search($word, function ($meilisearch, $query, $options) use ($filterString) {
+                $found = NewProperty::search($word, function ($meilisearch, $query, $options) use ($filterString, $limit, $offset) {
                     if ($filterString) {
                         $options['filter'] = $filterString;
                     }
+                    $options['limit'] = $limit;
+                    $options['offset'] = $offset;
                     return $meilisearch->search($query, $options);
                 })->get();
 
@@ -341,20 +343,39 @@ class HomeController
                     $combinedResults[$id]['count']++;
                 }
             }
+        }
+        // 🟢 Otherwise: do a filter-only search
+        else {
+            $found = NewProperty::search('', function ($meilisearch, $query, $options) use ($filterString, $limit, $offset) {
+                if ($filterString) {
+                    $options['filter'] = $filterString;
+                }
+                $options['limit'] = $limit;
+                $options['offset'] = $offset;
+                return $meilisearch->search($query, $options);
+            })->get();
 
-            // Sort by the number of keyword matches (highest first)
-            $sorted = collect($combinedResults)
-                ->sortByDesc('count')
-                ->map(fn($r) => $r['data'])
-                ->values();
+            foreach ($found as $item) {
+                $combinedResults[$item->id] = ['count' => 1, 'data' => $item];
+            }
+        }
 
-            return [
-                'count' => $sorted->count(),
-                'data' => $sorted,
-            ];
-        });
+        // 🧮 Sort by relevance
+        $sorted = collect($combinedResults)
+            ->sortByDesc('count')
+            ->map(fn($r) => $r['data'])
+            ->values();
 
-        return response()->json($results);
+        // 🧾 Response
+        return response()->json([
+            'page' => $page,
+            'limit' => $limit,
+            'count' => $sorted->count(),
+            'data' => $sorted,
+        ]);
     }
+
+
+
 
 }

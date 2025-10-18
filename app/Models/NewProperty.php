@@ -115,6 +115,7 @@ class NewProperty extends Model
                 'completion_status',
                 'property_type',
                 'bedroom',
+                'bathroom',
                 'price',
                 'city',
                 'community',
