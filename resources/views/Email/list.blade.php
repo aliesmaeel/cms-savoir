@@ -815,6 +815,19 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
+    <style>
+
+
+        /* Row colors based on read status */
+        .bg-read {
+            background-color: #d4edda !important; /* light green */
+        }
+
+        .bg-unread {
+            background-color: #f8d7da !important; /* light red */
+        }
+
+    </style>
 
     {{-- swal alert --}}
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
@@ -875,8 +888,7 @@
                                     <th><span class="table-title">Name</span></th>
                                     <th><span class="table-title">Email</span></th>
                                     <th><span class="table-title">Phone</span></th>
-                                    <th><span class="table-title">Company</span></th>
-                                    <th><span class="table-title">Message</span></th>
+                                    <th><span class="table-title">Type</span></th>
                                     <th><span class="table-title">Action</span></th>
                                 </tr>
                                 </thead>
@@ -928,6 +940,7 @@
                     let table = $('#dataTable').DataTable({
                         processing: true,
                         serverSide: true,
+                        stripeClasses: [], // remove gray/white stripes
                         scrollY: 500,
                         scrollX: true,
                         scrollCollapse: true,
@@ -935,52 +948,43 @@
                         ajax: {
                             url: "{{ route('emails.process') }}",
                             type: "POST",
-                            data: {
-                                _token: "{{ csrf_token() }}",
-                            },
+                            data: { _token: "{{ csrf_token() }}" },
                             beforeSend: function () {
-                                $("#parent").LoadingOverlay("show", {
-                                    background: "rgba(78, 115, 223, 0.5)",
-                                });
+                                $("#parent").LoadingOverlay("show", { background: "rgba(78, 115, 223, 0.5)" });
                             },
                             complete: function () {
                                 $("#parent").LoadingOverlay("hide", true);
                             },
                         },
                         columns: [
-                            { data: "name", name: "name", width: "200px" },
-                            { data: "email", name: "email", width: "200px" },
-                            { data: "phone", name: "phone", width: "150px" },
-                            { data: "company", name: "company", width: "150px" },
-                            { data: "message", name: "message", width: "300px" },
-                            {
-                                data: "action",
-                                name: "action",
-                                orderable: false,
-                                searchable: false,
-                                width: "150px",
-                            },
+                            { data: "name", name: "name", width: "10%" },
+                            { data: "email", name: "email", width: "20%" },
+                            { data: "phone", name: "phone", width: "20%" },
+                            { data: "type", name: "type", width: "10%" },
+                            { data: "action", name: "action", orderable: false, searchable: false, width: "20%" },
                         ],
-                        language: {
-                            searchPlaceholder: "Type and press Enter",
-                        },
+                        language: { searchPlaceholder: "Type and press Enter" },
                         dom: "lftipB",
                         buttons: [
                             { extend: "excel", text: "Export to Excel" },
                             { extend: "csv", text: "Export to CSV" },
                         ],
+
+                        // Highlight row color based on read status
+                        createdRow: function (row, data) {
+                            if (data.is_read == 1) $(row).css("background-color", "#d4edda"); // green
+                            else $(row).css("background-color", "#f8d7da"); // red
+                        },
                     });
 
-                    // Allow searching with Enter key
+                    // Search on Enter
                     $("div.dataTables_filter input")
                         .unbind()
                         .keyup(function (e) {
-                            if (e.keyCode === 13) {
-                                table.search(this.value).draw();
-                            }
+                            if (e.keyCode === 13) table.search(this.value).draw();
                         });
 
-                    // Handle delete button
+                    // Delete action
                     $("body").on("click", ".delete", function () {
                         const id = table.row($(this).closest("tr")).data()["id"];
                         swal({
@@ -990,30 +994,41 @@
                             buttons: ["Cancel", "Yes!"],
                         }).then((value) => {
                             if (value) {
-                                $.ajax({
-                                    url: "{{ route('emails.delete') }}",
-                                    type: "POST",
-                                    data: { id: id, _token: "{{ csrf_token() }}" },
-                                    success: function (response) {
-                                        if (response.success) {
-                                            table.ajax.reload();
-                                            alert(response.message);
-                                        } else {
-                                            alert(response.message);
-                                        }
-                                    },
-                                    error: function (error) {
-                                        console.error("Error:", error);
-                                        alert("Something went wrong!");
-                                    },
+                                $.post("{{ route('emails.delete') }}", { id, _token: "{{ csrf_token() }}" }, function (response) {
+                                    if (response.success) table.ajax.reload(null, false);
+                                    alert(response.message);
+                                }).fail(function () {
+                                    alert("Something went wrong!");
                                 });
                             }
                         });
                     });
+
+                    // Mark as Read action
+                    $("body").on("click", ".mark-read", function () {
+                        const id = table.row($(this).closest("tr")).data()["id"];
+                        $.post("{{ route('emails.markRead') }}", { id, _token: "{{ csrf_token() }}" }, function (response) {
+                            if (response.success) table.ajax.reload(null, false);
+                            else alert(response.message);
+                        }).fail(function () {
+                            alert("Something went wrong!");
+                        });
+                    });
+
+                    // ✅ Show message in popup when clicking a row
+                    $('#dataTable tbody').on('click', 'tr', function (e) {
+                        // Avoid triggering when clicking action buttons
+                        if (!$(e.target).closest('.delete, .mark-read').length) {
+                            const rowData = table.row(this).data();
+                            swal({
+                                text: rowData.message,
+                            });
+                        }
+                    });
                 });
 
-
             </script>
+
 
 
             <!-- jQuery library -->

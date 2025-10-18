@@ -227,6 +227,16 @@
             background: #fff;
         }
 
+        nav ul .email-show.show {
+            display: block;
+            height: auto;
+            overflow-y: auto;
+            width: 100%;
+            border-radius: 0px 3px 3px 0;
+            box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
+            background: #fff;
+        }
+
         nav ul .au-show.show {
             display: block;
             height: auto;
@@ -706,12 +716,14 @@
             #sbitem3_3,
             #sbitem3_4,
             #sbitem3_5,
+            #sbitem32_2
             #sbitem3_6 {
                 line-height: 17px !important;
                 margin-bottom: 10px !important;
             }
 
             #sbitem3_1 a,
+            #sbitem32_2 a,
             #sbitem3_2 a,
             #sbitem3_3 a,
             #sbitem3_4 a,
@@ -909,6 +921,12 @@
             padding-left: 13px;
             font-size: 12px;
         }
+
+            .email-show li a {
+                line-height: 2;
+                padding-left: 13px;
+                font-size: 12px;
+            }
 
         nav ul .pm-show.show {
             height: 10rem;
@@ -1197,6 +1215,8 @@
                 $('nav ul .data-show20').removeClass('show');
                 $('nav ul .data-show2').removeClass('show');
                 $('nav ul .report-show').removeClass('show');
+                $('nav ul .email-show').removeClass('show');
+
                 $('nav ul .au-show').removeClass('show');
                 $('nav ul .pm-event').removeClass('show');
                 $('nav ul .pm-show').removeClass('show');
@@ -1263,6 +1283,8 @@
                 $('nav ul .data-show20').removeClass('show');
                 $('nav ul .data-show2').removeClass('show');
                 $('nav ul .report-show').removeClass('show');
+                $('nav ul .email-show').removeClass('show');
+
                 $('nav ul .au-show').removeClass('show');
                 $('nav ul .pm-event').removeClass('show');
                 $('nav ul .pm-show').removeClass('show');
@@ -1296,7 +1318,8 @@
                 "{{ request()->route()->getName() }}" == 'leader_board_index' ||
                 "{{ request()->route()->getName() }}" == 'officetime' ||
                 "{{ request()->route()->getName() }}" == 'Success' ||
-                "{{ request()->route()->getName() }}" == 'reportassignedagentsleads'
+                "{{ request()->route()->getName() }}" == 'reportassignedagentsleads'||
+                "{{ request()->route()->getName() }}" == 'emails.show'
             ) {
                 $('#sbitem3').find('a:first').toggleClass('selected');
                 if ("{{ request()->route()->getName() }}" == 'getcharts')
@@ -1305,7 +1328,8 @@
                     $('#sbitem3_2').addClass('active');
                 else if ("{{ request()->route()->getName() }}" == 'leader_board_index')
                     $('#sbitem3_5').addClass('active');
-
+                else if  ("{{ request()->route()->getName() }}" == 'emails.show')
+                    $('#sbitem32_2').addClass('active');
                 else if ("{{ request()->route()->getName() }}" == 'officetime')
                     $('#sbitem3_8').addClass('active');
                 else if ("{{ request()->route()->getName() }}" == 'Success')
@@ -1321,6 +1345,8 @@
                 $('nav ul .data-show20').removeClass('show');
                 $('nav ul .data-show2').removeClass('show');
                 $('nav ul .report-show').toggleClass('show');
+                $('nav ul .email-show').toggleClass('show');
+
                 $('nav ul .au-show').removeClass('show');
                 $('nav ul .pm-event').removeClass('show');
                 $('nav ul .pm-show').removeClass('show');
@@ -1386,6 +1412,8 @@
                 $('nav ul .data-show20').removeClass('show');
                 $('nav ul .data-show2').removeClass('show');
                 $('nav ul .report-show').removeClass('show');
+                $('nav ul .email-show').removeClass('show');
+
                 $('nav ul .au-show').toggleClass('show');
                 $('nav ul .pm-event').removeClass('show');
                 $('nav ul .pm-show').removeClass('show');
@@ -1439,6 +1467,8 @@
                 $('nav ul .data-show20').removeClass('show');
                 $('nav ul .data-show2').removeClass('show');
                 $('nav ul .report-show').removeClass('show');
+                $('nav ul .email-show').removeClass('show');
+
                 $('nav ul .au-show').removeClass('show');
                 $('nav ul .pm-event').removeClass('show');
                 $('nav ul .pm-show').removeClass('show');

@@ -88,13 +88,24 @@ class SignatureController extends Controller
     {
         if ($request->ajax()) {
             // Fetch the data
-            $data = Email::query()->select(['id', 'name', 'email', 'phone', 'company', 'message']);
+            $data = Email::query()->select(['id', 'name', 'email', 'phone', 'company', 'message','type','is_read']);
 
             // Use DataTables to process the response
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    return '<a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
+                    $buttons = '<a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
+
+                    // Add Mark as Read button only if email is not read
+                    if ($row->is_read == 0) {
+                        $buttons .= ' <a href="javascript:void(0)" class="mark-read btn btn-success btn-sm">Mark as Read</a>';
+                    }
+
+                    return $buttons;
+                })
+                ->setRowClass(function ($row) {
+                    // Set row background color based on is_read
+                    return $row->is_read ? 'bg-read' : 'bg-unread';
                 })
                 ->rawColumns(['action']) // Allow raw HTML for the action buttons
                 ->make(true);
@@ -102,6 +113,7 @@ class SignatureController extends Controller
 
         return response()->json(['message' => 'Invalid request'], 400);
     }
+
 
 
     public function delete(Request $request)

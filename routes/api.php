@@ -41,5 +41,6 @@ Route::post('/subscribe', [\App\Http\Controllers\Api\HomeController::class, 'sub
 Route::post('/downloadBrochure', [\App\Http\Controllers\Api\HomeController::class, 'downloadBrochure']);
 Route::post('/talk-to-expert', [\App\Http\Controllers\Api\HomeController::class, 'talkToExpert']);
 Route::post('/contact-us', [\App\Http\Controllers\Api\HomeController::class, 'contactUs']);
+Route::post('/emails/mark-read', [\App\Http\Controllers\Api\HomeController::class, 'markAsRead'])->name('emails.markRead');
 
 

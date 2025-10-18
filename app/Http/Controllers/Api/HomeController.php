@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Blog;
+use App\Models\Email;
 use App\Models\Insight;
 use App\Models\ListingSyndication;
 use App\Models\MarketingChannels;
@@ -389,6 +390,18 @@ class HomeController
         ]);
     }
 
+    public function markAsRead(Request $request)
+    {
+        $email = Email::find($request->id);
+        if (!$email) {
+            return response()->json(['success' => false, 'message' => 'Email not found.']);
+        }
+
+        $email->is_read = 1;
+        $email->save();
+
+        return response()->json(['success' => true, 'message' => 'Email marked as read successfully.']);
+    }
 
 
 

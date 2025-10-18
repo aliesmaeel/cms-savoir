@@ -488,7 +488,7 @@
                 <span class="left-title">Emails</span>
                 <span class="fas fa-caret-down off-plan32"></span>
             </a>
-            <ul class="off-plan-show32" style="display: none;">
+            <ul class="email-show" >
                 <li id="sbitem32_2">
                     <a href="{{ route('emails.show') }}">
                         <i class="fas fa-fw fa-table"></i> Show Emails
