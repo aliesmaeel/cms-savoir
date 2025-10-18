@@ -333,6 +333,12 @@ class GoyzerIntegrationConroller extends Controller
                         );
                     }
                 }
+                $photo =$newproperty->photo;
+                $webpUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($photo);
+                $newproperty->update([
+                    'photo' => $webpUrl,
+                ]);
+
 
         } catch (\Throwable $th) {
             Log::channel('fetching_properties')->alert($th->getMessage());

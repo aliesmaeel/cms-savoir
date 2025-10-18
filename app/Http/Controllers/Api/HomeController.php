@@ -88,7 +88,7 @@ class HomeController
 
         // ✅ Fetch other homepage data
         $insights = DB::table('insights')
-            ->select('id', 'title', 'slug', 'image', 'description')
+            ->select('id', 'title', 'slug', 'image', 'title_details')
             ->take(4)
             ->get();
 
