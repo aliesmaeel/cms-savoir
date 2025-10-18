@@ -35,6 +35,10 @@ Route::get('/news/updateShares/{id}', [\App\Http\Controllers\Api\HomeController:
 Route::get('/blogs', [\App\Http\Controllers\Api\HomeController::class, 'blogs']);
 Route::get('/blogs/{slug}', [\App\Http\Controllers\Api\HomeController::class, 'blogDetails']);
 
+Route::post('/search', [\App\Http\Controllers\Api\HomeController::class, 'search']);
+
 Route::post('/subscribe', [\App\Http\Controllers\Api\HomeController::class, 'subscribe']);
 Route::post('/downloadBrochure', [\App\Http\Controllers\Api\HomeController::class, 'downloadBrochure']);
+Route::post('/talk-to-expert', [\App\Http\Controllers\Api\HomeController::class, 'talkToExpert']);
+
 

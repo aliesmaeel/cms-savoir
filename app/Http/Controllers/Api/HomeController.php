@@ -246,4 +246,55 @@ class HomeController
         }
 
     }
+
+    public function talkToExpert(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|string|max:20',
+            'message' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        DB::table('talk_to_experts')->insert([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'message' => $request->message,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return response()->json(['message' => 'Your request has been submitted successfully. Our expert will contact you soon.']);
+    }
+
+    public function search(Request $request)
+    {
+
+        $keywords = $request->input('query');
+        $results = collect();
+
+        foreach ($keywords as $word) {
+            $found = NewProperty::search($word)->get();
+            if ($found->isNotEmpty()) {
+                $results->push([
+                    'count' => $found->count(),
+                    'data' => $found,
+                ]);
+            }
+        }
+        $sorted = collect($results)->sortByDesc('count')->map(fn($r) => $r['data'])->values();
+
+        return response()->json([
+            'count' => $sorted->count(),
+            'data' => $sorted,
+        ]);
+
+    }
 }

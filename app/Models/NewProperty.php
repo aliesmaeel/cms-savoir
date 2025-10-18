@@ -84,6 +84,7 @@ class NewProperty extends Model
         return $this->belongsTo(SubCommunity::class, 'sub_community');
     }
 
+
     public function toSearchableArray()
     {
         return [
@@ -94,7 +95,8 @@ class NewProperty extends Model
             'bathroom' => $this->bathroom,
             'size' => $this->size,
             'country' => $this->country,
-            'community' => $this->community,
+            'community' => optional($this->pcommunity)->name,
+            'sub_community' => optional($this->psubcommunity)->name,
             'completion_status' => $this->completion_status,
             'featured' => $this->featured,
         ];
