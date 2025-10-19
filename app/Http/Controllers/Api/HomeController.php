@@ -406,29 +406,31 @@ class HomeController
 
     public function searchSuggestions()
     {
-        $properties = NewProperty::with(['pcommunity:id,name', 'psubcommunity:id,name'])
-            ->select('country', 'community', 'sub_community')
-            ->get();
+        return Cache::remember('search_suggestions', now()->addMinutes(30), function () {
+            $properties = NewProperty::with(['pcommunity:id,name', 'psubcommunity:id,name'])
+                ->select('country', 'community', 'sub_community')
+                ->get();
 
-        $countries = $properties->pluck('country')->filter()->unique()->toArray();
+            $countries = $properties->pluck('country')->filter()->unique()->toArray();
 
-        $communities = $properties
-            ->pluck('pcommunity.name')
-            ->filter()
-            ->unique()
-            ->toArray();
+            $communities = $properties
+                ->pluck('pcommunity.name')
+                ->filter()
+                ->unique()
+                ->toArray();
 
-        $subCommunities = $properties
-            ->pluck('psubcommunity.name')
-            ->filter()
-            ->unique()
-            ->toArray();
+            $subCommunities = $properties
+                ->pluck('psubcommunity.name')
+                ->filter()
+                ->unique()
+                ->toArray();
 
-        // ✅ Merge all names into one flat array
-        $allNames = array_values(array_unique(array_merge($countries, $communities, $subCommunities)));
+            $allNames = array_values(array_unique(array_merge($countries, $communities, $subCommunities)));
 
-        return response()->json($allNames);
+            return response()->json($allNames);
+        });
     }
+
 
 
 
