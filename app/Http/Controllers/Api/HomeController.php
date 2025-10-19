@@ -404,5 +404,51 @@ class HomeController
     }
 
 
+    public function searchSuggestions()
+    {
+        $countries = DB::table('countries')
+            ->select('name', 'image')
+            ->distinct()
+            ->get();
+
+        $search = [];
+
+        foreach ($countries as $country) {
+            $communities = DB::table('communities')
+                ->whereIn('id', function ($query) use ($country) {
+                    $query->select('community')
+                        ->from('new_properties')
+                        ->where('country', $country->name);
+                })
+                ->get();
+
+            $formattedCommunities = [];
+
+            foreach ($communities as $community) {
+                $subCommunities = DB::table('sub_communities')
+                    ->where('community_id', $community->id)
+                    ->get(['id', 'name']);
+
+                $formattedCommunities[] = [
+                    'id' => $community->id,
+                    'name' => $community->name,
+                    'sub_communities' => $subCommunities,
+                ];
+            }
+
+            $search[] = [
+                'country' => $country->name,
+                'communities' => $formattedCommunities,
+            ];
+        }
+
+        // ✅ Optional: cache for performance
+        return Cache::remember('search_suggestions', now()->addMinutes(30), function () use ($search) {
+            return response()->json([
+                'status' => true,
+                'data' => $search,
+            ]);
+        });
+    }
 
 }
