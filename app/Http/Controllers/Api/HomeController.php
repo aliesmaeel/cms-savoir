@@ -407,48 +407,32 @@ class HomeController
     public function searchSuggestions()
     {
         $countries = DB::table('countries')
-            ->select('name', 'image')
+            ->select('name')
             ->distinct()
-            ->get();
+            ->pluck('name')
+            ->toArray();
 
-        $search = [];
+        $communities = DB::table('communities')
+            ->select('name')
+            ->pluck('name')
+            ->toArray();
 
-        foreach ($countries as $country) {
-            $communities = DB::table('communities')
-                ->whereIn('id', function ($query) use ($country) {
-                    $query->select('community')
-                        ->from('new_properties')
-                        ->where('country', $country->name);
-                })
-                ->get();
+        $subCommunities = DB::table('sub_communities')
+            ->select('name')
+            ->pluck('name')
+            ->toArray();
 
-            $formattedCommunities = [];
+        // ✅ Merge all names into one array
+        $allNames = array_merge($countries, $communities, $subCommunities);
 
-            foreach ($communities as $community) {
-                $subCommunities = DB::table('sub_communities')
-                    ->where('community_id', $community->id)
-                    ->get(['id', 'name']);
+        // ✅ Remove duplicates and reindex
+        $uniqueNames = array_values(array_unique($allNames));
 
-                $formattedCommunities[] = [
-                    'id' => $community->id,
-                    'name' => $community->name,
-                    'sub_communities' => $subCommunities,
-                ];
-            }
-
-            $search[] = [
-                'country' => $country->name,
-                'communities' => $formattedCommunities,
-            ];
-        }
-
-        // ✅ Optional: cache for performance
-        return Cache::remember('search_suggestions', now()->addMinutes(30), function () use ($search) {
-            return response()->json([
-                'status' => true,
-                'data' => $search,
-            ]);
+        // ✅ Cache for performance (optional)
+        return Cache::remember('search_suggestions', now()->addMinutes(30), function () use ($uniqueNames) {
+            return response()->json($uniqueNames);
         });
     }
+
 
 }
