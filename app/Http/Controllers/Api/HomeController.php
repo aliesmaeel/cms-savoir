@@ -406,33 +406,31 @@ class HomeController
 
     public function searchSuggestions()
     {
-        $countries = DB::table('countries')
-            ->select('name')
-            ->distinct()
-            ->pluck('name')
+        $properties = NewProperty::with(['pcommunity:id,name', 'psubcommunity:id,name'])
+            ->select('country', 'community', 'sub_community')
+            ->get();
+
+        $countries = $properties->pluck('country')->filter()->unique()->toArray();
+
+        $communities = $properties
+            ->pluck('pcommunity.name')
+            ->filter()
+            ->unique()
             ->toArray();
 
-        $communities = DB::table('communities')
-            ->select('name')
-            ->pluck('name')
+        $subCommunities = $properties
+            ->pluck('psubcommunity.name')
+            ->filter()
+            ->unique()
             ->toArray();
 
-        $subCommunities = DB::table('sub_communities')
-            ->select('name')
-            ->pluck('name')
-            ->toArray();
+        // ✅ Merge all names into one flat array
+        $allNames = array_values(array_unique(array_merge($countries, $communities, $subCommunities)));
 
-        // ✅ Merge all names into one array
-        $allNames = array_merge($countries, $communities, $subCommunities);
-
-        // ✅ Remove duplicates and reindex
-        $uniqueNames = array_values(array_unique($allNames));
-
-        // ✅ Cache for performance (optional)
-        return Cache::remember('search_suggestions', now()->addMinutes(30), function () use ($uniqueNames) {
-            return response()->json($uniqueNames);
-        });
+        return response()->json($allNames);
     }
+
+
 
 
 }
