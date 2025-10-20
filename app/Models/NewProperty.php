@@ -124,6 +124,8 @@ class NewProperty extends Model
             ],
             'sortableAttributes' => [
                 'price',
+                'bedroom',
+                'bathroom',
                 'updated_at',
                 'title_en',
             ],

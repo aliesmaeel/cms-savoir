@@ -12,6 +12,8 @@ $index->updateFilterableAttributes([
     'offering_type',
     'property_type',
     'completion_status',
+    'bedroom',
+    'bathroom',
     'price',
 ]);
 
