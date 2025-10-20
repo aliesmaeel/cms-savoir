@@ -349,6 +349,7 @@ class HomeController
             return [
                 'id' => $item->id,
                 'title' => $item->title_en,
+                'offering_type' => $item->offering_type,
                 'price' => $item->price,
                 'bedrooms' => $item->bedrooms,
                 'bathrooms' => $item->bathrooms,
