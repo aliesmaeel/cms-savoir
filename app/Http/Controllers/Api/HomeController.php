@@ -423,6 +423,7 @@ class HomeController
                 'price' => $item->price,
                 'updated_at' => $item->updated_at,
                 'added_date' => Carbon::make($item->updated_at)->diffForHumans(),
+                'photo'=>$item->photo,
                 'user' => $item->user ? [
                     'name' => $item->user->name,
                     'email' => $item->user->email,
