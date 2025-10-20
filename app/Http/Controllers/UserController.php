@@ -83,14 +83,19 @@ class UserController extends Controller
                      'publish_to_web_site' => '1',
                  ]);
              }
+             $cloudName = "djd3y5gzw";
+
              if ($request->FloorPlan > 0) {
                  for ($x = 0; $x < $request->FloorPlan; $x++) {
                      if ($request->hasFile('floorplans' . $x)) {
-                         $file = $request->file('floorplans' . $x);
-                         $imageName=uploadFile( $file,'image/Agent',false);
+                         $file = $request->file('floorplans');
+                         $filename =uploadFile($file ,'image/Agent',false);
+                         $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/image/Agent/'.$filename;
+                         $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
                      }
                      $user->update([
-                         'image' => $imageName
+                         'image' => $store
                      ]);
                  }
              }
@@ -204,6 +209,7 @@ class UserController extends Controller
 
             try {
                 $customer = User::where('id', $request->user_id)->first();
+
                 // replace non letter or digits by divider
                 $text = preg_replace('~[^\pL\d]+~u', '-', $request->slug);
                 // transliterate
@@ -253,15 +259,21 @@ class UserController extends Controller
                 }
                 // dd($customer);
                 // DB::table('user')->where('id', $id)->delete();
+                $cloudName = "djd3y5gzw";
+
                 if ($request->FloorPlan > 0) {
-                    deleteFile($customer->image);
                     for ($x = 0; $x < $request->FloorPlan; $x++) {
                         if ($request->hasFile('floorplans' . $x)) {
-                            $file = $request->file('floorplans' . $x);
-                            $imageName=uploadFile($file ,'image/Agent',false);
+
+                            $file = $request->file('floorplans'.$x);
+                            $filename =uploadFile($file ,'image/Agent',false);
+                            $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/image/Agent/'.$filename;
+
+                            $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
                         }
                         $customer->update([
-                            'image' => $imageName
+                            'image' => $store
                         ]);
                     }
                 }
