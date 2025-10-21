@@ -343,6 +343,18 @@
             background: #fff;
         }
 
+        nav ul .email-show  {
+            display: block;
+            height: auto;
+            overflow-y: auto;
+            width: 100%;
+            border-radius: 0px 3px 3px 0;
+            box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
+            background: #fff;
+        }
+
+
+
           nav ul .off-plan-show31.show {
             display: block;
             height: auto;
