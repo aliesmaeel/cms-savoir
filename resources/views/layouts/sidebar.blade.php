@@ -482,6 +482,20 @@
             </ul>
         </li>
 
+        <li id="sbitem57">
+            <a href="#" class="link-content data-btn57"><span class="left-title">FAQ</span><span
+                    class="fas fa-caret-down off-plan57"></span></a>
+            <ul class="off-plan-show57">
+                <li id="sbitem57_1"><a href="{{ route('faq_create') }}"><i class="fas fa-ad"></i>
+                        Create FAQ</a></li>
+                <li id="sbitem57_2"><a href="{{ route('faq_list') }}"><i class="fas fa-fw fa-table"></i>
+                        FAQ List</a>
+                </li>
+            </ul>
+        </li>
+
+
+
 
         <li id="sbitem32">
             <a href="#" class="link-content data-btn32">

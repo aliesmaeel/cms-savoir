@@ -485,7 +485,17 @@ class HomeController
         });
     }
 
+    public function faqs(Request $request)
+    {
 
+        $type = $request->type;
+        $faqs = DB::table('faqs')
+            ->where('type', $type)
+            ->select('id', 'question', 'answer')
+            ->get();
+
+        return response()->json($faqs);
+    }
 
 
 

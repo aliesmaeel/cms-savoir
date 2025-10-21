@@ -43,4 +43,4 @@ Route::post('/talk-to-expert', [\App\Http\Controllers\Api\HomeController::class,
 Route::post('/contact-us', [\App\Http\Controllers\Api\HomeController::class, 'contactUs']);
 Route::post('/emails/mark-read', [\App\Http\Controllers\Api\HomeController::class, 'markAsRead'])->name('emails.markRead');
 
-
+Route::get('/faqs', [\App\Http\Controllers\Api\HomeController::class, 'faqs']);

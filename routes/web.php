@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DownloadedBrochureController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\InsightController;
 use App\Http\Controllers\MarketingController;
@@ -496,3 +497,7 @@ Route::controller(DownloadedBrochureController::class)->prefix('Brochure')->grou
     Route::match(['post', 'get'], '/', 'index')->name('downloadedBrochures');
     Route::post('/delete-downloadedBrochure', 'delete')->name('delete_downloadedBrochure');
 });
+Route::match(['post', 'get'], '/faq_create', [FaqController::class,'faq_create'])->name('faq_create');
+Route::match(['post', 'get'], '/faq_list', [FaqController::class,'faq_list'])->name('faq_list');
+Route::match(['post', 'get'], '/faq_list_update/{id}', [FaqController::class,'faq_list_update'])->name('faq_update');
+Route::post('/faq_delete', [FaqController::class,'faq_delete'])->name('faq_delete');
