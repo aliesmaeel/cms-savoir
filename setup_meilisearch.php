@@ -52,6 +52,7 @@ $documents = $allProperties->map(function ($p) {
         'city' => $p->city,
         'community' => $p->community,
         'sub_community' => $p->sub_community,
+        'country'=> $p->country,
     ];
 })->toArray();
 

@@ -98,6 +98,7 @@ class NewProperty extends Model
             'city' => $this->city,
             'community' => $this->community,
             'sub_community' => $this->sub_community,
+            'country'=> $this->country,
             'property_type' => $this->property_type,
             'completion_status' => $this->completion_status,
             'offering_type' => $this->offering_type,
