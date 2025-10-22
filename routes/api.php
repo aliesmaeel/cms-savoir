@@ -44,3 +44,5 @@ Route::post('/contact-us', [\App\Http\Controllers\Api\HomeController::class, 'co
 Route::post('/emails/mark-read', [\App\Http\Controllers\Api\HomeController::class, 'markAsRead'])->name('emails.markRead');
 
 Route::get('/faqs', [\App\Http\Controllers\Api\HomeController::class, 'faqs']);
+Route::get('/teams', [\App\Http\Controllers\Api\HomeController::class, 'teams']);
+Route::get('/teams/{slug}', [\App\Http\Controllers\Api\HomeController::class, 'teamDetails']);

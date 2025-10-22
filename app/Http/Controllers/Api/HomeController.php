@@ -9,6 +9,7 @@ use App\Models\ListingSyndication;
 use App\Models\MarketingChannels;
 use App\Models\NewProperty;
 use App\Models\OffPlanProject;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -497,6 +498,28 @@ class HomeController
         return response()->json($faqs);
     }
 
+    public function teams()
+    {
+        $teams = User::where('publish_to_web_site', true)->get();
+        return response()->json($teams);
+    }
+
+    public function teamDetails($slug)
+    {
+
+        $team = User::where('slug', $slug)->first();
+        $otherTeams = User::where('publish_to_web_site', true)
+            ->where('slug', '!=', $slug)
+            ->get();
+
+        if (!$team) {
+            return response()->json(['message' => 'Team member not found'], 404);
+        }
+        return response()->json([
+            'team' => $team,
+            'other_teams' => $otherTeams,
+        ]);
+    }
 
 
 }
