@@ -133,14 +133,7 @@ class HomeController
         });
     }
 
-    public function news()
-    {
-        $news = Insight::
-            select('id', 'title', 'slug', 'image','created_at')
-            ->paginate(6);
 
-        return response()->json($news);
-    }
 
     public function newsDetails($slug)
     {
@@ -172,14 +165,48 @@ class HomeController
         $insight->save();
         return response()->json(['message' => 'Shares updated successfully', 'shares' => $insight->shares]);
     }
-    public function blogs()
-    {
-        $blogs = Blog::with('blog_image')
-            ->select('id', 'title', 'slug','created_at', 'posted_by', 'title_details')
-            ->paginate(9);
 
-        return response()->json($blogs);
+    public function blogs(Request $request)
+    {
+        $limit = $request->input('limit', 9);
+
+        $blogs = Blog::with('blog_image')
+            ->select('id', 'title', 'slug', 'created_at', 'posted_by', 'title_details')
+            ->paginate($limit);
+
+        return response()->json([
+            'data' => $blogs->items(),
+            'pagination' => [
+                'total' => $blogs->total(),          // total number of items
+                'per_page' => $blogs->perPage(),     // items per page
+                'current_page' => $blogs->currentPage(), // current page number
+                'last_page' => $blogs->lastPage(),   // total number of pages
+                'from' => $blogs->firstItem(),       // first item number on this page
+                'to' => $blogs->lastItem(),          // last item number on this page
+            ]
+        ]);
     }
+
+    public function news(Request $request)
+    {
+        $limit = $request->input('limit', 6);
+
+        $news = Insight::select('id', 'title', 'slug', 'image', 'created_at')
+            ->paginate($limit);
+
+        return response()->json([
+            'data' => $news->items(),
+            'pagination' => [
+                'total' => $news->total(),
+                'per_page' => $news->perPage(),
+                'current_page' => $news->currentPage(),
+                'last_page' => $news->lastPage(),
+                'from' => $news->firstItem(),
+                'to' => $news->lastItem(),
+            ]
+        ]);
+    }
+
 
     public function blogDetails($slug)
     {
