@@ -331,222 +331,121 @@
         <img id="img-top" src="{{asset('/storage/img/bg-top.png')}}">
         <!-- <h3 style="margin: auto" class="mt-4 mb-4">Create new agent</h3> -->
         <form id="maindata" enctype="multipart/form-data">
-            <div class="container" >
+            <div class="container">
                 <span id="alertdata"></span>
 
+                <!-- Main Image -->
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
-                        <label class="title-input" for="property">Image</label>
+                        <label class="title-input" for="image">Image</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="file" placeholder="Enter Image" name="image" id="image"
-                               style="background: #fff!important">
+                        <input type="file" name="image" id="image" style="background: #fff!important">
                         <div class="holder mt-4">
-                            <img id="imgPreview" src="{{ config('services.cms_link').'/storage/'.$off_plan->image }}" alt="pic"
-                                 width="100" height="100" />
+                            <img id="imgPreview" src="{{ $off_plan->image }}" alt="pic" width="100" height="100" />
                         </div>
                     </div>
                 </div>
 
+                <!-- Header Images -->
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
-                        <label class="title-input" for="property">Header Images</label>
+                        <label class="title-input" for="header_images">Header Images</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="file"  placeholder="Enter Image" name="header_images[]" id="header_images"
-                               style="background: #fff!important" multiple="multiple" accept="image/*">
+                        <input type="file" name="header_images[]" id="header_images" multiple accept="image/*" style="background: #fff!important">
                         <div class="holder mt-4" id="imgholder">
-                            @if($off_plan->header_images )
-                            @foreach($off_plan->header_images as $image)
-                            <img id="imgPreviewHeader" src="{{ config('services.cms_link').'/storage/'.$image   }}" alt="pic"
-                                 width="100" height="100" />
-                            @endforeach
+                            @if($off_plan->header_images)
+                                @foreach($off_plan->header_images as $image)
+                                    <img src="{{ $image }}" alt="pic" width="100" height="100" />
+                                @endforeach
                             @endif
                         </div>
                     </div>
                 </div>
 
+                <!-- Title -->
+                <x-input-row label="Title" name="title" value="{{$off_plan->title}}" placeholder="Enter Title"/>
+
+                <!-- Area -->
+                <x-input-row label="Area" name="area" value="{{$off_plan->area}}" placeholder="Enter Area"/>
+
+                <!-- Order -->
+                <x-input-row label="Order" name="order" value="{{$off_plan->order}}" placeholder="Enter Order"/>
+
+                <!-- Link -->
+                <x-input-row label="Link" name="link" value="{{$off_plan->link}}" placeholder="Enter Link"/>
+
+                <!-- Location -->
+                <x-input-row label="Location" name="location" value="{{$off_plan->location}}" placeholder="Enter Location"/>
+
+                <!-- First Installment -->
+                <x-input-row label="First Installment" name="first_installment" value="{{$off_plan->first_installment}}" placeholder="Enter First Installment"/>
+
+                <!-- During Construction -->
+                <x-input-row label="During Construction" name="during_construction" value="{{$off_plan->during_construction}}" placeholder="Enter During Construction"/>
+
+                <!-- On Handover -->
+                <x-input-row label="On Handover" name="on_handover" value="{{$off_plan->on_handover}}" placeholder="Enter On Handover"/>
+
+                <!-- Completion Date -->
+                <x-input-row label="Completion Date" name="completion_date" value="{{$off_plan->completion_date}}" placeholder="Enter Completion Date"/>
+
+                <!-- Developer -->
+                <x-input-row label="Developer" name="developer" value="{{$off_plan->developer}}" placeholder="Enter Developer"/>
+
+                <!-- Starting Price -->
+                <x-input-row label="Starting Price" name="starting_price" value="{{$off_plan->starting_price}}" placeholder="Enter Starting Price"/>
+
+                <!-- Project Size -->
+                <x-input-row label="Project Size" name="project_size" value="{{$off_plan->project_size}}" placeholder="Enter Project Size"/>
+
+                <!-- Lifestyle -->
+                <x-input-row label="Lifestyle" name="lifestyle" value="{{$off_plan->lifestyle}}" placeholder="Enter Lifestyle"/>
+
+                <!-- Title Type -->
+                <x-input-row label="Title Type" name="title_type" value="{{$off_plan->title_type}}" placeholder="Enter Title Type"/>
+
+                <!-- Features -->
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
-                        <label class="title-input" for="property">Title</label>
+                        <label class="title-input" for="features">Features</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text"  value="{{$off_plan->title}}"
-                               class="input_off_plan"  placeholder="Enter Title" name="title"
-                               id="title" required style="border-right: 3px solid #9D865C!important">
+                        <textarea name="features" id="features" class="ckeditor input-form" placeholder="Enter Features" style="background: #fff!important; visibility: hidden; display: none;">{{$off_plan->features}}</textarea>
+                    </div>
+                </div>
+
+                <!-- Lat & Lng -->
+                <x-input-row label="Lat" type="number" name="lat" value="{{$off_plan->lat}}" placeholder="Enter Lat"/>
+                <x-input-row label="Lng" type="number" name="lng" value="{{$off_plan->lng}}" placeholder="Enter Lng"/>
+
+                <!-- Description -->
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="description">Description</label></div>
+                    <div class="col-md-8">
+                        <textarea name="description" id="description" required placeholder="Enter Description" class="input_off_plan" style="border-right: 3px solid #9D865C!important">{{$off_plan->description}}</textarea>
                     </div>
                 </div>
 
                 <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Area</label>
-                    </div>
+                    <div class="col-md-3"><label class="title-input" for="youtube_link">YouTube Link</label></div>
                     <div class="col-md-8">
-                        <input type="text" value="{{$off_plan->area}}" class="input_off_plan" placeholder="Enter Area" name="area"  required style="border-right: 3px solid #9D865C!important">
+                        <input type="text" name="youtube_link" id="youtube_link" value="{{$off_plan->youtube_link}}" placeholder="Enter YouTube Link" class="input_off_plan"/>
                     </div>
                 </div>
 
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Order</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" value="{{$off_plan->order}}" class="input_off_plan" placeholder="Enter Order" name="order"  required style="border-right: 3px solid #9D865C!important">
-                    </div>
-                </div>
-
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Details</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text"  placeholder="Enter Details" name="details" id="details" value="{{ $off_plan->details }}" required style="border-right: 3px solid #9D865C!important">
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Link</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" placeholder="Enter Link" name="link" id="link" value="{{ $off_plan->link }}" required style="border-right: 3px solid #9D865C!important">
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Location</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" placeholder="Enter location" name="location" id="location" value="{{ $off_plan->location }}" required style="border-right: 3px solid #9D865C!important">
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">During Construction</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" value="{{$off_plan->during_construction}}" class="input_off_plan" placeholder="Enter During Construction" name="during_construction" required style="border-right: 3px solid #9D865C!important">
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">on Handover</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" value="{{$off_plan->on_handover}}" class="input_off_plan" placeholder="Enter on Handover" name="on_handover"  required style="border-right: 3px solid #9D865C!important">
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Features</label>
-                    </div>
-                    <div class="col-md-8">
-                        <textarea type="text" class="ckeditor input-form" placeholder="Enter Description" name="features" id="features" style="background: rgb(255, 255, 255) !important; visibility: hidden; display: none;">
-                            {{$off_plan->features}}
-                        </textarea>
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Lat</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="number" value="{{$off_plan->lat}}" class="input_off_plan" placeholder="Enter Lat" name="lat"  required style="border-right: 3px solid #9D865C!important">
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Lng</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="number" value="{{$off_plan->lng}}" class="input_off_plan" placeholder="Enter Lng" name="lng"  required style="border-right: 3px solid #9D865C!important">
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Description</label>
-                    </div>
-                    <div class="col-md-8">
-                        <textarea type="text" class="input_off_plan" placeholder="Enter Description" name="description" id="description" required style="border-right: 3px solid #9D865C!important">
-                            {{$off_plan->description}}
-                        </textarea>
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Description Image</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="file" class="input_off_plan" placeholder="Enter Image" name="description_image"
-                               id="description_image"
-                               style="background: #fff!important">
-                        <div class="holder mt-4">
-                            <img id="imgPreviewdescription_image" src="{{ config('services.cms_link').'/storage/'. $off_plan->description_image }}" alt="pic" width="100"
-                                 height="100"  />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Area Guide Description</label>
-                    </div>
-                    <div class="col-md-8">
-                        <textarea type="text" class="input_off_plan" placeholder="Enter Area Guide Description" name="area_guide_description" id="area_guide_description" required style="border-right: 3px solid #9D865C!important">
-                            {{$off_plan->area_guide_description}}
-                        </textarea>
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Area Guide Description Image</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="file" class="input_off_plan" placeholder="Enter Image" name="area_guide_image"
-                               id="area_guide_image"
-                               style="background: #fff!important">
-                        <div class="holder mt-4">
-                            <img id="imgPreviewarea_guide_image" src="{{ config('services.cms_link').'/storage/'.$off_plan->area_guide_image }}" alt="pic" width="100"
-                                 height="100"  />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Above Footer Image </label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="file" class="input_off_plan" placeholder="Enter Image" name="last_image"
-                               id="last_image"
-                               style="background: #fff!important">
-                        <div class="holder mt-4">
-                            <img id="imgPreviewlast_image" src="{{ config('services.cms_link').'/storage/'.$off_plan->last_image }}" alt="pic" width="100"
-                                 height="100"  />
-                        </div>
-                    </div>
-                </div>
-
+                <!-- Submit Button -->
                 <div class="row mt-5">
                     <div class="col-md-12 text-center">
                         <button id="buttonsubmit" class="btn btn-primary" type="button">Update
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
-                                hidden></span>
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
                         </button>
                     </div>
                 </div>
             </div>
         </form>
+
 
 
 
@@ -637,44 +536,6 @@
              reader.readAsDataURL(file);
          }
      });
-
-     $('#description_image').change(function() {
-         const file = this.files[0];
-         if (file) {
-             let reader = new FileReader();
-             reader.onload = function(event) {
-                 $('#imgPreviewdescription_image').attr('src', event.target.result);
-                 $('#imgPreviewdescription_image').attr('hidden', false);
-             }
-             reader.readAsDataURL(file);
-         }
-     });
-
-
-     $('#area_guide_image').change(function() {
-         const file = this.files[0];
-         if (file) {
-             let reader = new FileReader();
-             reader.onload = function(event) {
-                 $('#imgPreviewarea_guide_image').attr('src', event.target.result);
-                 $('#imgPreviewarea_guide_image').attr('hidden', false);
-             }
-             reader.readAsDataURL(file);
-         }
-     });
-
-
-     $('#last_image').change(function() {
-         const file = this.files[0];
-         if (file) {
-             let reader = new FileReader();
-             reader.onload = function(event) {
-                 $('#imgPreviewlast_image').attr('src', event.target.result);
-                 $('#imgPreviewlast_image').attr('hidden', false);
-             }
-             reader.readAsDataURL(file);
-         }
-     });
 </script>
     <script>
         $('#buttonsubmit').click(function(e) {
@@ -695,18 +556,7 @@
             if (singleImageInput.files.length > 0) {
                 formData.append('image', singleImageInput.files[0]);
             }
-            let last_image = document.getElementById('last_image');
-            if (last_image.files.length > 0) {
-                formData.append('last_image', last_image.files[0]);
-            }
-            let area_guide_image = document.getElementById('area_guide_image');
-            if (area_guide_image.files.length > 0) {
-                formData.append('area_guide_image', area_guide_image.files[0]);
-            }
-            let description_image = document.getElementById('description_image');
-            if (description_image.files.length > 0) {
-                formData.append('description_image', description_image.files[0]);
-            }
+
 
             var feature = CKEDITOR.instances.features.getData();
 

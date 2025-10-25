@@ -333,214 +333,187 @@
         <form id="maindata" enctype="multipart/form-data">
             <div class="container">
                 <span id="alertdata"></span>
+
+                <!-- Main Image -->
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
-                        <label class="title-input" for="property">Image</label>
+                        <label class="title-input" for="image">Image</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="file" placeholder="Enter Image" name="image"
-                               id="image"
-                               style="background: #fff!important">
+                        <input type="file" name="image" id="image" style="background: #fff!important">
                         <div class="holder mt-4">
-                            <img id="imgPreview" src="#" alt="pic" width="100"
-                                 height="100" hidden />
+                            <img id="imgPreview" src="#" alt="pic" width="100" height="100" hidden />
                         </div>
                     </div>
                 </div>
 
+                <!-- Header Images -->
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
-                        <label class="title-input" for="property">Header Images</label>
+                        <label class="title-input" for="header_images">Header Images</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="file"  placeholder="Enter Image" name="header_images[]" id="header_images"
-                               style="background: #fff!important" multiple="multiple" accept="image/*">
-                        <div class="holder mt-4" id="imgholder">
-                        </div>
+                        <input type="file" name="header_images[]" id="header_images" multiple accept="image/*" style="background: #fff!important">
+                        <div class="holder mt-4" id="imgholder"></div>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="title">Title</label></div>
+                    <div class="col-md-8">
+                        <input type="text" name="title" id="title" required class="input_off_plan" placeholder="Enter Title" style="border-right: 3px solid #9D865C!important">
+                    </div>
+                </div>
+
+                <!-- Area -->
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="area">Area</label></div>
+                    <div class="col-md-8">
+                        <input type="text" name="area" required class="input_off_plan" placeholder="Enter Area" style="border-right: 3px solid #9D865C!important">
+                    </div>
+                </div>
+
+                <!-- Order -->
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="order">Order</label></div>
+                    <div class="col-md-8">
+                        <input type="text" name="order" required class="input_off_plan" placeholder="Enter Order" style="border-right: 3px solid #9D865C!important">
+                    </div>
+                </div>
+
+                <!-- Link -->
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="link">Link</label></div>
+                    <div class="col-md-8">
+                        <input type="text" name="link" id="link" required placeholder="Enter Link" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="location">Location</label></div>
+                    <div class="col-md-8">
+                        <input type="text" name="location" required placeholder="Enter Location" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
                     </div>
                 </div>
 
                 <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Title</label>
-                    </div>
+                    <div class="col-md-3"><label class="title-input" for="first_installment">First Installment</label></div>
                     <div class="col-md-8">
-                        <input type="text" class="input_off_plan" placeholder="Enter Title" name="title" id="title" required style="border-right: 3px solid #9D865C!important">
+                        <input type="text" name="first_installment" required placeholder="Enter First Installment" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
+                    </div>
+                </div>
+
+                <!-- During Construction -->
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="during_construction">During Construction</label></div>
+                    <div class="col-md-8">
+                        <input type="text" name="during_construction" required placeholder="Enter During Construction" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
+                    </div>
+                </div>
+
+                <!-- On Handover -->
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="on_handover">On Handover</label></div>
+                    <div class="col-md-8">
+                        <input type="text" name="on_handover" required placeholder="Enter On Handover" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
                     </div>
                 </div>
 
                 <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Area</label>
-                    </div>
+                    <div class="col-md-3"><label class="title-input" for="completion_date">Completion Date</label></div>
                     <div class="col-md-8">
-                        <input type="text" class="input_off_plan" placeholder="Enter Area" name="area"  required style="border-right: 3px solid #9D865C!important">
+                        <input type="text" name="completion_date" required placeholder="Enter Completion Date" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
                     </div>
                 </div>
 
                 <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Order</label>
-                    </div>
+                    <div class="col-md-3"><label class="title-input" for="developer">Developer</label></div>
                     <div class="col-md-8">
-                        <input type="text" class="input_off_plan" placeholder="Enter Order" name="order"  required style="border-right: 3px solid #9D865C!important">
-                    </div>
-                </div>
-
-
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Details</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" placeholder="Enter Details" name="details" id="details" required style="border-right: 3px solid #9D865C!important">
-                    </div>
-                </div>
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Link</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" placeholder="Enter Link" name="link" id="link" required style="border-right: 3px solid #9D865C!important">
+                        <input type="text" name="developer" required placeholder="Enter Developer" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
                     </div>
                 </div>
 
                 <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Location</label>
-                    </div>
+                    <div class="col-md-3"><label class="title-input" for="starting_price">Starting Price</label></div>
                     <div class="col-md-8">
-                        <input type="text" placeholder="Enter location" name="location" id="location" required style="border-right: 3px solid #9D865C!important">
-                    </div>
-                </div>
-
-
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">During Construction</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" class="input_off_plan" placeholder="Enter During Construction" name="during_construction" required style="border-right: 3px solid #9D865C!important">
+                        <input type="text" name="starting_price" required placeholder="Enter Starting Price" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
                     </div>
                 </div>
 
                 <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">on Handover</label>
-                    </div>
+                    <div class="col-md-3"><label class="title-input" for="project_size">Project Size</label></div>
                     <div class="col-md-8">
-                        <input type="text" class="input_off_plan" placeholder="Enter on Handover" name="on_handover"  required style="border-right: 3px solid #9D865C!important">
-                    </div>
-                </div>
-
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Features</label>
-                    </div>
-                    <div class="col-md-8">
-                        <textarea type="text" class="ckeditor input-form" placeholder="Enter Description" name="features" id="features" style="background: rgb(255, 255, 255) !important; visibility: hidden; display: none;"></textarea>
-                    </div>
-                </div>
-
-
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Lat</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="number" class="input_off_plan" placeholder="Enter Lat" name="lat"  required style="border-right: 3px solid #9D865C!important">
+                        <input type="text" name="project_size" required placeholder="Enter Project Size" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
                     </div>
                 </div>
 
                 <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Lng</label>
-                    </div>
+                    <div class="col-md-3"><label class="title-input" for="lifestyle">Lifestyle</label></div>
                     <div class="col-md-8">
-                        <input type="number" class="input_off_plan" placeholder="Enter Lng" name="lng"  required style="border-right: 3px solid #9D865C!important">
+                        <input type="text" name="lifestyle" required placeholder="Enter Lifestyle" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
                     </div>
                 </div>
-
                 <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Description</label>
-                    </div>
+                    <div class="col-md-3"><label class="title-input" for="title_type">Title Type</label></div>
                     <div class="col-md-8">
-                        <textarea type="text" class="input_off_plan" placeholder="Enter Description" name="description" id="description" required style="border-right: 3px solid #9D865C!important"></textarea>
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Description Image</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="file" class="input_off_plan" placeholder="Enter Image" name="description_image"
-                               id="description_image"
-                               style="background: #fff!important">
-                        <div class="holder mt-4">
-                            <img id="imgPreviewdescription_image" src="#" alt="pic" width="100"
-                                 height="100" hidden />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Area Guide Description</label>
-                    </div>
-                    <div class="col-md-8">
-                        <textarea type="text" class="input_off_plan" placeholder="Enter Area Guide Description" name="area_guide_description" id="area_guide_description" required style="border-right: 3px solid #9D865C!important"></textarea>
-                    </div>
-                </div>
-
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Area Guide Description Image</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="file" class="input_off_plan" placeholder="Enter Image" name="area_guide_image"
-                               id="area_guide_image"
-                               style="background: #fff!important">
-                        <div class="holder mt-4">
-                            <img id="imgPreviewarea_guide_image" src="#" alt="pic" width="100"
-                                 height="100" hidden />
-                        </div>
+                        <input type="text" name="title_type" required placeholder="Enter Title Type" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
                     </div>
                 </div>
 
 
 
+                <!-- Features -->
                 <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3">
-                        <label class="title-input" for="property">Above Footer Image </label>
-                    </div>
+                    <div class="col-md-3"><label class="title-input" for="features">Features</label></div>
                     <div class="col-md-8">
-                        <input type="file" class="input_off_plan" placeholder="Enter Image" name="last_image"
-                               id="last_image"
-                               style="background: #fff!important">
-                        <div class="holder mt-4">
-                            <img id="imgPreviewlast_image" src="#" alt="pic" width="100"
-                                 height="100" hidden />
-                        </div>
+                        <textarea name="features" id="features" class="ckeditor input-form" placeholder="Enter Features" style="background: #fff!important; visibility: hidden; display: none;"></textarea>
                     </div>
                 </div>
 
+                <!-- Lat -->
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="lat">Lat</label></div>
+                    <div class="col-md-8">
+                        <input type="number" name="lat" required placeholder="Enter Lat" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
+                    </div>
+                </div>
 
+                <!-- Lng -->
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="lng">Lng</label></div>
+                    <div class="col-md-8">
+                        <input type="number" name="lng" required placeholder="Enter Lng" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="description">Description</label></div>
+                    <div class="col-md-8">
+                        <textarea name="description" id="description" required placeholder="Enter Description" class="input_off_plan" style="border-right: 3px solid #9D865C!important"></textarea>
+                    </div>
+                </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="youtube_link">YouTube Link</label></div>
+                    <div class="col-md-8">
+                        <input type="text" name="youtube_link" required placeholder="Enter YouTube Link" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
                 <div class="row mt-5">
                     <div class="col-md-12 text-center">
                         <button id="buttonsubmit" class="btn btn-primary" type="button">Create
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
-                                hidden></span>
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
                         </button>
                     </div>
                 </div>
             </div>
         </form>
+
 
 
 
@@ -635,43 +608,6 @@
         }
     });
 
-     $('#description_image').change(function() {
-         const file = this.files[0];
-         if (file) {
-             let reader = new FileReader();
-             reader.onload = function(event) {
-                 $('#imgPreviewdescription_image').attr('src', event.target.result);
-                 $('#imgPreviewdescription_image').attr('hidden', false);
-             }
-             reader.readAsDataURL(file);
-         }
-     });
-
-
-     $('#area_guide_image').change(function() {
-         const file = this.files[0];
-         if (file) {
-             let reader = new FileReader();
-             reader.onload = function(event) {
-                 $('#imgPreviewarea_guide_image').attr('src', event.target.result);
-                 $('#imgPreviewarea_guide_image').attr('hidden', false);
-             }
-             reader.readAsDataURL(file);
-         }
-     });
-
-
-     $('#last_image').change(function() {
-         const file = this.files[0];
-         if (file) {
-             let reader = new FileReader();
-             reader.onload = function(event) {
-                 $('#imgPreviewlast_image').attr('src', event.target.result);
-                 $('#imgPreviewlast_image').attr('hidden', false);
-             }
-             reader.readAsDataURL(file);
-         }
-     });
 
 </script>
     <script>
@@ -692,18 +628,7 @@
             if (singleImageInput.files.length > 0) {
                 formData.append('image', singleImageInput.files[0]);
             }
-            let last_image = document.getElementById('last_image');
-            if (last_image.files.length > 0) {
-                formData.append('last_image', last_image.files[0]);
-            }
-            let area_guide_image = document.getElementById('area_guide_image');
-            if (area_guide_image.files.length > 0) {
-                formData.append('area_guide_image', area_guide_image.files[0]);
-            }
-            let description_image = document.getElementById('description_image');
-            if (description_image.files.length > 0) {
-                formData.append('description_image', description_image.files[0]);
-            }
+
 
             var feature = CKEDITOR.instances.features.getData();
 

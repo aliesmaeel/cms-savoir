@@ -70,26 +70,33 @@ class OffPlanProjectController extends Controller
     {
         if ($request->ajax()) {
 
+            // ✅ Validate only the fields that exist in the new DB
             $validator = $request->validate([
                 'title' => 'required',
                 'link' => 'required',
-                'details' => 'required',
                 'area' => 'required',
                 'description' => 'required',
                 'during_construction' => 'required',
                 'on_handover' => 'required',
-                'area_guide_description' => 'required',
+                'features' => 'required',
                 'lat' => 'required',
                 'lng' => 'required',
-                'features' => 'required',
                 'location' => 'required',
-                'order' => 'required'
+                'order' => 'required',
+                'developer' => 'nullable',
+                'starting_price' => 'nullable',
+                'completion_date' => 'nullable',
+                'project_size' => 'nullable',
+                'lifestyle' => 'nullable',
+                'title_type' => 'nullable',
+                'first_installment' => 'nullable',
+                'youtube_link' => 'nullable',
             ]);
 
+            // ✅ Create the project
             $off_plan = OffPlanProject::create($validator);
 
-            // ✅ Cloudinary setup
-            $cloudName = "djd3y5gzw"; // Replace with your actual Cloudinary cloud name
+            $cloudName = "djd3y5gzw";
             $baseS3Url = "https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/";
 
             // ✅ Handle multiple header images
@@ -98,8 +105,6 @@ class OffPlanProjectController extends Controller
                 foreach ($request->file('header_images') as $image) {
                     $filename = uploadFile($image, 'offplan');
                     $originalUrl = $baseS3Url . $filename;
-
-                    // Cloudinary optimized URL
                     $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
                     $filenames[] = $optimizedUrl;
                 }
@@ -121,52 +126,17 @@ class OffPlanProjectController extends Controller
                 ]);
             }
 
-            // ✅ Handle last image
-            if ($request->hasFile('last_image')) {
-                $file = $request->file('last_image');
-                $filename = uploadFile($file, 'offplan');
-                $originalUrl = $baseS3Url . $filename;
-                $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-
-                $off_plan->update([
-                    'last_image' => $optimizedUrl
-                ]);
-            }
-
-            // ✅ Handle description image
-            if ($request->hasFile('description_image')) {
-                $file = $request->file('description_image');
-                $filename = uploadFile($file, 'offplan');
-                $originalUrl = $baseS3Url . $filename;
-                $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-
-                $off_plan->update([
-                    'description_image' => $optimizedUrl
-                ]);
-            }
-
-            // ✅ Handle area guide image
-            if ($request->hasFile('area_guide_image')) {
-                $file = $request->file('area_guide_image');
-                $filename = uploadFile($file, 'offplan');
-                $originalUrl = $baseS3Url . $filename;
-                $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-
-                $off_plan->update([
-                    'area_guide_image' => $optimizedUrl
-                ]);
-            }
-
             // ✅ Response
-            if ($off_plan != null)
-                return response()->json(['success' => true, 'message' => 'Off-Plan Project created successfully']);
-            else
-                return response()->json(['success' => false, 'message' => 'Error in creating Off-Plan Project']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Off-Plan Project created successfully'
+            ]);
         }
 
         $off_plan_projects = OffPlanProject::pluck('id')->unique()->toArray();
         return view('offPlanProject.create', compact('off_plan_projects'));
     }
+
 
     public function off_plan_project_delete(Request $request)
     {
@@ -194,26 +164,33 @@ class OffPlanProjectController extends Controller
         if ($request->ajax()) {
 
             if ($off_plan) {
+                // ✅ Validate only existing fields
                 $validator = $request->validate([
                     'title' => 'required',
                     'link' => 'required',
-                    'details' => 'required',
                     'area' => 'required',
                     'description' => 'required',
                     'during_construction' => 'required',
                     'on_handover' => 'required',
-                    'area_guide_description' => 'required',
+                    'features' => 'required',
                     'lat' => 'required',
                     'lng' => 'required',
-                    'features' => 'required',
                     'location' => 'required',
-                    'order' => 'required'
+                    'order' => 'required',
+                    'developer' => 'nullable',
+                    'starting_price' => 'nullable',
+                    'completion_date' => 'nullable',
+                    'project_size' => 'nullable',
+                    'lifestyle' => 'nullable',
+                    'title_type' => 'nullable',
+                    'first_installment' => 'nullable',
+                    'youtube_link' => 'nullable',
                 ]);
 
+                // ✅ Update the project
                 $off_plan->update($validator);
 
-                // ✅ Cloudinary setup
-                $cloudName = "djd3y5gzw"; // Replace with your Cloudinary cloud name
+                $cloudName = "djd3y5gzw";
                 $baseS3Url = "https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/";
 
                 // ✅ Update header images
@@ -244,52 +221,10 @@ class OffPlanProjectController extends Controller
                     $file = $request->file('image');
                     $filename = uploadFile($file, 'offplan');
                     $originalUrl = $baseS3Url . $filename;
-                    $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+                    $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/f_fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
 
                     $off_plan->update([
                         'image' => $optimizedUrl
-                    ]);
-                }
-
-                // ✅ Update last image
-                if ($request->hasFile('last_image')) {
-                    deleteFile($off_plan->last_image);
-
-                    $file = $request->file('last_image');
-                    $filename = uploadFile($file, 'offplan');
-                    $originalUrl = $baseS3Url . $filename;
-                    $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-
-                    $off_plan->update([
-                        'last_image' => $optimizedUrl
-                    ]);
-                }
-
-                // ✅ Update description image
-                if ($request->hasFile('description_image')) {
-                    deleteFile($off_plan->description_image);
-
-                    $file = $request->file('description_image');
-                    $filename = uploadFile($file, 'offplan');
-                    $originalUrl = $baseS3Url . $filename;
-                    $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-
-                    $off_plan->update([
-                        'description_image' => $optimizedUrl
-                    ]);
-                }
-
-                // ✅ Update area guide image
-                if ($request->hasFile('area_guide_image')) {
-                    deleteFile($off_plan->area_guide_image);
-
-                    $file = $request->file('area_guide_image');
-                    $filename = uploadFile($file, 'offplan');
-                    $originalUrl = $baseS3Url . $filename;
-                    $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-
-                    $off_plan->update([
-                        'area_guide_image' => $optimizedUrl
                     ]);
                 }
 
@@ -302,5 +237,6 @@ class OffPlanProjectController extends Controller
         $off_plan_projects = OffPlanProject::pluck('id')->unique()->toArray();
         return view('offPlanProject.update', compact('off_plan', 'off_plan_projects'));
     }
+
 
 }

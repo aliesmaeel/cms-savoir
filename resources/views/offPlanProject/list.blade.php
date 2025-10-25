@@ -874,7 +874,7 @@ content: "";
                                     <thead style="background: #70cacc;color: aliceblue;">
                                         <tr>
                                             <th><span class="table-title">Image</span></th>
-                                            <th><span class="table-title">Details</span></th>
+                                            <th><span class="table-title">title</span></th>
                                             <th><span class="table-title">lat</span></th>
                                             <th><span class="table-title">lng</span></th>
                                             <th><span class="table-title">Link</span></th>
@@ -959,7 +959,7 @@ content: "";
                             width: '250px'
                         },
                         {
-                            data: "details",
+                            data: "title",
                             width: '200px'
                         },
                         {

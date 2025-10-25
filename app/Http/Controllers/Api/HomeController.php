@@ -132,8 +132,37 @@ class HomeController
             ];
         });
     }
+    public function offplanProjects(Request $request)
+    {
+        $limit = (int) $request->input('limit', 9);
 
+        // 🧠 Use only selected columns for pagination (faster query)
+        $offplan_projects = OffPlanProject::query()
+            ->select('id', 'image', 'title', 'link as slug', 'developer', 'completion_date', 'location')
+            ->paginate($limit);
 
+        // 🧠 Retrieve distinct filters in one query (if filters are needed)
+        $filters = OffPlanProject::select('developer', 'completion_date', 'location')->get();
+
+        $searchFilters = [
+            'developers' => $filters->pluck('developer')->unique()->values(),
+            'completion_date' => $filters->pluck('completion_date')->unique()->values(),
+            'locations' => $filters->pluck('location')->unique()->values(),
+        ];
+
+        return response()->json([
+            'filters' => $searchFilters,
+            'data' => $offplan_projects->items(),
+            'pagination' => [
+                'total' => $offplan_projects->total(),
+                'per_page' => $offplan_projects->perPage(),
+                'current_page' => $offplan_projects->currentPage(),
+                'last_page' => $offplan_projects->lastPage(),
+                'from' => $offplan_projects->firstItem(),
+                'to' => $offplan_projects->lastItem(),
+            ],
+        ]);
+    }
 
     public function newsDetails($slug)
     {
@@ -472,6 +501,92 @@ class HomeController
         ]);
     }
 
+    public function searchOffplan(Request $request)
+    {
+        $filters = [
+            'developers' => $request->input('developers', []), // array
+            'completion_date' => $request->input('completion_date'), // string (ex: Q4 2029)
+            'locations' => $request->input('locations', []), // array
+        ];
+
+        // 🧭 Pagination setup
+        $page = max(1, (int)$request->input('page', 1));
+        $limit = min(100, (int)$request->input('limit', 20));
+        $offset = ($page - 1) * $limit;
+
+        // 🧮 Sorting setup
+        $sortField = $request->input('sort_field', 'updated_at');
+        $sortOrder = strtolower($request->input('sort_order', 'desc'));
+        $sortOrder = in_array($sortOrder, ['asc', 'desc']) ? $sortOrder : 'desc';
+
+        $allowedSorts = [
+            'name' => 'title',
+            'date' => 'updated_at',
+            'price' => 'price',
+        ];
+        $sortField = $allowedSorts[$sortField] ?? 'updated_at';
+
+        // 🧩 Build Meilisearch filter string
+        $filterConditions = [];
+
+        if (!empty($filters['developers'])) {
+            $devFilters = collect($filters['developers'])
+                ->map(fn($dev) => 'developer = "' . addslashes($dev) . '"')
+                ->join(' OR ');
+            $filterConditions[] = "($devFilters)";
+        }
+
+        if (!empty($filters['completion_date'])) {
+            $filterConditions[] = 'completion_date = "' . addslashes($filters['completion_date']) . '"';
+        }
+
+        if (!empty($filters['locations'])) {
+            $locFilters = collect($filters['locations'])
+                ->map(fn($loc) => 'location = "' . addslashes($loc) . '"')
+                ->join(' OR ');
+            $filterConditions[] = "($locFilters)";
+        }
+
+        $filterString = implode(' AND ', $filterConditions);
+
+        // 🧭 Perform Meilisearch query
+        $results = OffPlanProject::search('', function ($meilisearch, $query, $options) use ($filterString, $limit, $offset, $sortField, $sortOrder) {
+            if (!empty($filterString)) {
+                $options['filter'] = $filterString;
+            }
+            $options['limit'] = $limit;
+            $options['offset'] = $offset;
+            $options['sort'] = [$sortField . ':' . $sortOrder];
+            return $meilisearch->search($query, $options);
+        })->get();
+
+        // 🧾 Format response
+        $data = $results->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'title' => $item->title,
+                'slug' => $item->link,
+                'image' => $item->image,
+                'developer' => $item->developer,
+                'completion_date' => $item->completion_date,
+                'location' => $item->location,
+                'price' => $item->starting_price,
+                'updated_at' => $item->updated_at,
+            ];
+        });
+
+        return response()->json([
+            'page' => $page,
+            'limit' => $limit,
+            'count' => $data->count(),
+            'sort_by' => $sortField,
+            'sort_order' => $sortOrder,
+            'data' => $data,
+        ]);
+    }
+
+
+
     public function markAsRead(Request $request)
     {
         $email = Email::find($request->id);
@@ -548,5 +663,18 @@ class HomeController
         ]);
     }
 
+    public function offplanProjectDetails($slug)
+    {
+        $offplan = OffPlanProject::where('link', $slug)
+            ->select('id', 'title', 'link', 'image', 'developer', 'completion_date', 'location', 'starting_price',
+                'project_size', 'lifestyle', 'title_type',
+                'first_installment', 'area', 'description',
+                'during_construction', 'on_handover', 'features', 'lat', 'lng', 'order','youtube_link')
+            ->first();
+        if (!$offplan) {
+            return response()->json(['message' => 'Off-Plan Project not found'], 404);
+        }
+        return response()->json($offplan);
+    }
 
 }

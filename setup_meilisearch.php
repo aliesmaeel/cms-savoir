@@ -60,3 +60,34 @@ $documents = $allProperties->map(function ($p) {
 $index->addDocuments($documents);
 
 echo "✅ Meilisearch reindex complete.\n";
+
+
+$index = $client->index('off_plan_projects');
+
+$index->updateFilterableAttributes([
+    'developer',
+    'completion_date',
+    'location',
+    'price'
+]);
+
+$index->updateSortableAttributes([
+    'updated_at',
+    'title'
+]);
+
+$index->addDocuments(
+    \App\Models\OffPlanProject::all()->map(function ($p) {
+        return [
+            'id' => $p->id,
+            'title' => $p->title,
+            'link' => $p->link,
+            'image'=> $p->image,
+            'location' => $p->location,
+            'developer' => $p->developer,
+            'completion_date' => $p->completion_date,
+            'price' => $p->starting_price,
+            'updated_at' => $p->updated_at->toIso8601String(),
+        ];
+    })->toArray()
+);
