@@ -669,7 +669,7 @@ class HomeController
             ->select('id', 'title', 'link', 'image', 'developer', 'completion_date', 'location', 'starting_price',
                 'project_size', 'lifestyle', 'title_type',
                 'first_installment', 'area', 'description',
-                'during_construction', 'on_handover', 'features', 'lat', 'lng', 'order','youtube_link')
+                'during_construction', 'on_handover', 'features', 'lat', 'lng', 'order','youtube_link','header_images')
             ->first();
         if (!$offplan) {
             return response()->json(['message' => 'Off-Plan Project not found'], 404);
