@@ -21,7 +21,7 @@ class AddColumnsToOffPlanProjectsTable extends Migration
             $table->string('lifestyle')->nullable()->after('project_size');
             $table->string('title_type')->nullable()->after('lifestyle');
             $table->string('first_installment')->nullable()->after('title_type');
-            $table->text('youtube_link')->nullable()->after('last_image');
+            $table->text('youtube_link')->nullable()->after('location');
 
         });
     }
