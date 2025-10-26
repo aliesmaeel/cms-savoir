@@ -417,6 +417,24 @@
                     <div class="col-md-8"><input type="file" name="third_image" id="third_image" style="background: #fff!important"></div>
                 </div>
 
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="facebook">Facebook Link</label></div>
+                    <div class="col-md-8"><input type="text" name="facebook" id="facebook" placeholder="Enter Facebook Link"></div>
+                </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="instagram">Instagram Link</label></div>
+                    <div class="col-md-8"><input type="text" name="instagram" id="instagram" placeholder="Enter Instagram Link"></div>
+                </div>
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="linkedin">LinkedIn Link</label></div>
+                    <div class="col-md-8"><input type="text" name="linkedin" id="linkedin" placeholder="Enter LinkedIn Link"></div>
+                </div>
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3"><label class="title-input" for="shares">Shares</label></div>
+                    <div class="col-md-8"><input type="number" name="shares" id="shares" placeholder="Enter Shares"></div>
+                </div>
+
                 <div class="row mt-5">
                     <div class="col-md-12 text-center">
                         <button id="buttonsubmit" class="btn" type="button">Create <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span></button>

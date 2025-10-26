@@ -603,6 +603,11 @@ class EventController extends Controller
             'second_image' => 'nullable|image',
             'third_image' => 'nullable|image',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
+            'facebook'=>'nullable',
+            'instagram'=>'nullable',
+            'linkedin'=>'nullable',
+            'shares'=>'nullable',
+
         ]);
 
         // Sanitize slug
@@ -634,6 +639,10 @@ class EventController extends Controller
             'description_four_title' => $request->description_four_title,
             'description_four' => $request->description_four,
             'user_id' => auth()->user()->id,
+            'facebook' => $request->facebook,
+            'instagram' => $request->instagram,
+            'linkedin' => $request->linkedin,
+            'shares' => $request->shares,
         ]);
 
         $cloudName = "djd3y5gzw"; // Replace with your Cloudinary cloud name
@@ -740,6 +749,10 @@ class EventController extends Controller
             'first_image' => 'nullable|image',
             'second_image' => 'nullable|image',
             'third_image' => 'nullable|image',
+            'facebook'=>'nullable',
+            'instagram'=>'nullable',
+            'linkedin'=>'nullable',
+            'shares'=>'nullable',
         ]);
 
         // Sanitize slug
@@ -770,6 +783,10 @@ class EventController extends Controller
             'description_three' => $request->description_three,
             'description_four_title' => $request->description_four_title,
             'description_four' => $request->description_four,
+            'facebook' => $request->facebook,
+            'instagram' => $request->instagram,
+            'linkedin' => $request->linkedin,
+            'shares' => $request->shares,
         ]);
 
         $cloudName = "djd3y5gzw"; // Replace with your Cloudinary cloud name

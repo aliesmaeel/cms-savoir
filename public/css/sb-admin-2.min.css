@@ -11873,3 +11873,7 @@ label#mobile {
 .select2-selection__rendered{
     display: flex!important;
 }
+
+.cke_notifications_area{
+    display: none;
+}

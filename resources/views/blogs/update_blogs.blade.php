@@ -130,6 +130,22 @@
                         </div>
                     </div>
                 @endforeach
+                <div class="row mt-4 mb-4 align-items-center">
+                    <div class="col-md-3"><label class="title-input">Facebook</label></div>
+                    <div class="col-md-8"><input type="text" value="{{ $blog->facebook }}" name="facebook" class="input_off_plan" required></div>
+                </div>
+                <div class="row mt-4 mb-4 align-items-center">
+                    <div class="col-md-3"><label class="title-input">LinkedIn</label></div>
+                    <div class="col-md-8"><input type="text" value="{{ $blog->linkedin }}" name="linkedin" class="input_off_plan" required></div>
+                </div>
+                <div class="row mt-4 mb-4 align-items-center">
+                    <div class="col-md-3"><label class="title-input">Instagram</label></div>
+                    <div class="col-md-8"><input type="text" value="{{ $blog->instagram }}" name="instagram" class="input_off_plan" required></div>
+                </div>
+                <div class="row mt-4 mb-4 align-items-center">
+                    <div class="col-md-3"><label class="title-input">Shares</label></div>
+                    <div class="col-md-8"><input type="text" value="{{ $blog->shares }}" name="shares" class="input_off_plan" required></div>
+                </div>
 
 
 

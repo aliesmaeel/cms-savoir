@@ -185,15 +185,34 @@ class HomeController
             'suggested_news' => $suggestedNews,
         ]);
     }
-    public function updateShares($id){
-        $insight = Insight::find($id);
-        if (!$insight) {
-            return response()->json(['message' => 'Insight not found'], 404);
+    public function updateShares(Request $request, $id)
+    {
+
+        switch ($request->type) {
+            case 'blog':
+                $model = \App\Models\Blog::find($id);
+                break;
+            case 'news':
+                $model = \App\Models\Insight::find($id);
+                break;
+            default:
+                $model = \App\Models\Insight::find($id);
+                break;
         }
-        $insight->shares = $insight->shares + 1;
-        $insight->save();
-        return response()->json(['message' => 'Shares updated successfully', 'shares' => $insight->shares]);
+
+        if (!$model) {
+            return response()->json(['message' => ucfirst($request->type) . ' not found'], 404);
+        }
+
+        $model->shares = $model->shares + 1;
+        $model->save();
+
+        return response()->json([
+            'message' => ucfirst($request->type) . ' shares updated successfully',
+            'shares' => $model->shares,
+        ]);
     }
+
 
     public function blogs(Request $request)
     {
