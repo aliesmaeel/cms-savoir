@@ -366,6 +366,19 @@
         </li>
     @endif
 
+    <li id="sbitem78">
+        <a href="#" class="link-content data-btn78"><span class="left-title">Global Projects</span><span
+                class="fas fa-caret-down twenty"></span></a>
+        <ul class="data-show78">
+            <li id="sbitem78_1"><a href="{{ route('create_global') }}"><i class="fas fa-fw fa-table"></i>
+                    Create Global Project</a></li>
+            <li id="sbitem78_2"><a href="{{ route('list_globals') }}"><i class="fas fa-fw fa-table"></i>
+                    List Global Projects</a>
+            </li>
+
+        </ul>
+    </li>
+
     @if (Auth::user()->isadmin() || Auth::user()->issuperAdmin())
         {{-- Blog Section --}}
         <li id="sbitem15">

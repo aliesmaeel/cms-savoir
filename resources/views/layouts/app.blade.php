@@ -197,6 +197,16 @@
             background: #fff;
         }
 
+        nav ul .data-show78.show {
+            display: block;
+            height: auto;
+            /* overflow-y: scroll; */
+            width: 100%;
+            border-radius: 0px 3px 3px 0;
+            box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
+            background: #fff;
+        }
+
         nav ul .data-show3.show {
             display: block;
             height: auto;
@@ -448,8 +458,10 @@
         #sbitem30 .link-content,
         #sbitem56 .link-content,
         #sbitem57 .link-content,
+        #sbitem87 .link-content,
+        #sbitem63 .link-content,
+        #sbitem78 .link-content
 
-        #sbitem63 .link-content
         {
             height: 4rem;
             padding: 9px 20px;
@@ -1805,11 +1817,7 @@
                 $('nav ul .data-show').removeClass('show');
                 $('nav ul .report-show').removeClass('show');
                 $('nav ul .subscriptions-show').removeClass('show');
-                // $('nav ul .au-show').removeClass('show');
-                // $('nav ul .pm-show').removeClass('show');
-                // $('nav ul .setting-show').removeClass('show');
-                // $('nav ul .pm-event').toggleClass('show');
-                // $('nav ul .pm-events').toggleClass('rotate');
+
 
             } else if (
                 "{{ request()->route()->getName() }}" == 'home' ||
@@ -1853,16 +1861,6 @@
                 $('nav ul .off-plan30').removeClass('rotate');
                 $('nav ul .off-plan-show30').removeClass('show');
 
-
-                // $('nav ul .leads-show').removeClass('show');
-                // $('nav ul .asd-show').removeClass('show');
-                // $('nav ul .report-show').removeClass('show');
-                // $('nav ul .au-show').removeClass('show');
-                // $('nav ul .pm-show').removeClass('show');
-                // $('nav ul .pm-event').removeClass('show');
-                // $('nav ul .setting-show').removeClass('show');
-                // $('nav ul .data-show').toggleClass('show');
-                // $('nav ul .eight').toggleClass('rotate');
 
             } else if (
                 "{{ request()->route()->getName() }}" == 'create_blog' ||
@@ -1920,6 +1918,12 @@
                 else if ("{{ request()->route()->getName() }}" == 'listdeveloperindex')
                     $('#sbitem20_2').addClass('active');
 
+                $('#sbitem78').find('a:first').toggleClass('selected');
+                if ("{{ request()->route()->getName() }}" == 'create_global')
+                    $('#sbitem78_1').addClass('active');
+                else if ("{{ request()->route()->getName() }}" == 'list_globals')
+                    $('#sbitem78_2').addClass('active');
+
 
 
 
@@ -1966,6 +1970,13 @@
                     $('#sbitem16_1').addClass('active');
                 else if ("{{ request()->route()->getName() }}" == 'listbuildingindex')
                     $('#sbitem16_2').addClass('active');
+
+                $('#sbitem78').find('a:first').toggleClass('selected');
+                if ("{{ request()->route()->getName() }}" == 'create_global')
+                    $('#sbitem78_1').addClass('active');
+                else if ("{{ request()->route()->getName() }}" == 'list_globals')
+                    $('#sbitem78_2').addClass('active');
+
 
 
                 $('nav ul .asd-show').removeClass('show');
@@ -2095,6 +2106,12 @@
                     $('#sbitem20_1').addClass('active');
                 else if ("{{ request()->route()->getName() }}" == 'listdeveloperindex')
                     $('#sbitem20_2').addClass('active');
+
+                $('#sbitem78').find('a:first').toggleClass('selected');
+                if ("{{ request()->route()->getName() }}" == 'create_global')
+                    $('#sbitem78_1').addClass('active');
+                else if ("{{ request()->route()->getName() }}" == 'list_globals')
+                    $('#sbitem78_2').addClass('active');
 
 
 
@@ -2424,6 +2441,30 @@
             $('nav ul .subscriptions-show').removeClass('show');
             $('nav ul .off-plan30').removeClass('rotate');
             $('nav ul .off-plan-show30').removeClass('show');
+        });
+
+        $('.data-btn78').click(function() {
+            $('nav ul .asd-show').removeClass('show');
+            $('nav ul .comments-show').removeClass('show');
+            $('nav ul .data-show').removeClass('show');
+            $('nav ul .data-show3').removeClass('show');
+            $('nav ul .data-show78').toggleClass('show');
+            $('nav ul .data-show2').removeClass('show');
+            $('nav ul .report-show').removeClass('show');
+            $('nav ul .au-show').removeClass('show');
+            $('nav ul .pm-event').removeClass('show');
+            $('nav ul .pm-show').removeClass('show');
+            $('nav ul .ap-show').removeClass('show');
+            $('nav ul .meet-show').removeClass('show');
+            $('nav ul .setting-show').removeClass('show');
+            $('nav ul .sync-show').removeClass('show');
+            $('nav ul .leads-show').removeClass('show');
+            $('nav ul .twenty').toggleClass('rotate');
+            $('nav ul .data-show21').removeClass('show');
+            $('nav ul .contact_us21').removeClass('rotate');
+            $('nav ul .subscriptions-show').removeClass('show');
+            $('nav ul .off-plan30').removeClass('rotate');
+            $('nav ul .off-plan-show30').removeClass('show');
 
             // $('nav ul .leads-show').removeClass('show');
             // $('nav ul .asd-show').removeClass('show');
@@ -2436,6 +2477,7 @@
             // $('nav ul .meet-event').removeClass('show');
             // $('nav ul .setting-show').removeClass('show');
         });
+
         $('.data-btn3').click(function() {
 
             $('nav ul .asd-show').removeClass('show');
