@@ -501,3 +501,8 @@ Route::match(['post', 'get'], '/faq_create', [FaqController::class,'faq_create']
 Route::match(['post', 'get'], '/faq_list', [FaqController::class,'faq_list'])->name('faq_list');
 Route::match(['post', 'get'], '/faq_list_update/{id}', [FaqController::class,'faq_list_update'])->name('faq_update');
 Route::post('/faq_delete', [FaqController::class,'faq_delete'])->name('faq_delete');
+
+Route::match(['post', 'get'], '/global_project_create', [FaqController::class,'global_project_create'])->name('create_global');
+Route::match(['post', 'get'], '/global_project_list', [FaqController::class,'global_project_list'])->name('list_globals');
+Route::match(['post', 'get'], '/global_project_update/{id}', [FaqController::class,'global_project_update'])->name('global_project_update');
+Route::post('/global_project_delete', [FaqController::class,'global_project_delete'])->name('global_project_delete');
