@@ -550,16 +550,18 @@
             </ul>
         </li>
     @endif
+    <li id="sbitem21">
+        <a href="#" class="link-content data-btn21"><span class="left-title">Contact Us</span><span
+                class="fas fa-caret-down contact_us21"></span></a>
+        <ul class="data-show21">
+            <li id="sbitem21_1"><a href="{{ route('contact_us_list') }}"><i class="fas fa-fw fa-table"></i>
+                    Contact Us List</a></li>
+        </ul>
+    </li>
+
     {{-- Contact Us Section --}}
     {{-- @if (Auth::user()->isadmin() || Auth::user()->issuperAdmin())
-        <li id="sbitem21">
-            <a href="#" class="link-content data-btn21"><span class="left-title">Contact Us</span><span
-                    class="fas fa-caret-down contact_us21"></span></a>
-            <ul class="data-show21">
-                <li id="sbitem21_1"><a href="{{ route('contact_us_list') }}"><i class="fas fa-fw fa-table"></i>
-                        Contact Us List</a></li>
-            </ul>
-        </li>
+
     @endif --}}
     {{-- @if (Auth::user()->isPhotographer() || Auth::user()->isagent() || Auth::user()->isadmin())
         <li id="sbitem11"><a href="{{ route('get_calender') }}"><span class="left-title">Calender</span></a>

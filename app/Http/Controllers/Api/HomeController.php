@@ -730,4 +730,35 @@ class HomeController
             'suggested_properties'=>$suggestedProperties,
         ]);
     }
+
+    public function career(Request $request)
+    {
+        // 1️⃣ Validate the incoming data
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'cv' => 'required|file|mimes:pdf|max:2048', // max 2MB
+        ]);
+
+        if ($request->hasFile('cv')) {
+            $cvPath = $request->file('cv')->store('cvs', 'public');
+        }
+
+        DB::table('contact_us')->insert([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'reason_to_contact' => 'Career application',
+            'cv' => $cvPath ?? null,
+        ]);
+
+        return response()->json([
+            'message' => 'Career application submitted successfully!',
+            'data' => [
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'cv' => asset('storage/' . $cvPath),
+            ]
+        ], 201);
+    }
+
 }

@@ -12,9 +12,7 @@ class ContactUs extends Model
     protected $fillable=[
         'name',
         'email',
-        'company',
-        'mobile',
         'reason_to_contact',
-        'message'
+        'cv',
     ];
 }
