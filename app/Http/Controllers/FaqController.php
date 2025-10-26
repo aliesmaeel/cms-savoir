@@ -35,7 +35,9 @@ class FaqController extends Controller
 
     public function faq_list(Request $request)
     {
+
         if ($request->ajax()) {
+
             $data = FAQ::query()->orderBy('id', 'DESC');
 
             return DataTables::of($data)

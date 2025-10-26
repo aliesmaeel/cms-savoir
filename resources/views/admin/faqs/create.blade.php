@@ -347,7 +347,8 @@
                     <select name="type">
                         <option value="rent" >Rent</option>
                         <option value="buy" >Buy</option>
-                        <option value="offplan" >offplan</option>
+                        <option value="offplan" >Offplan</option>
+                        <option value="area">Area</option>
                     </select>
                 </div>
 

@@ -50,7 +50,8 @@
                     <select name="type">
                         <option value="rent" @if($faq->type=='rent') selected @endif>Rent</option>
                         <option value="buy" @if($faq->type=='buy') selected @endif>Buy</option>
-                        <option value="offplan" @if($faq->type=='offplan') selected @endif>offplan</option>
+                        <option value="offplan" @if($faq->type=='offplan') selected @endif>Offplan</option>
+                        <option value="area" @if($faq->type=='area') selected @endif>Area</option>
                     </select>
                 </div>
 
