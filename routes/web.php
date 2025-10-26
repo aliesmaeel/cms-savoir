@@ -442,6 +442,7 @@ Route::get('/signature',[SignatureController::class,'index'])->name('signature.i
 Route::post('/signature',[SignatureController::class,'update'])->name('signature.update');
 
 Route::match(['get', 'post'], '/contact_us_list',[App\Http\Controllers\ContactUsController::class, 'contact_us_list'])->name('contact_us_list');
+Route::get('/contact_us_delete',[App\Http\Controllers\ContactUsController::class, 'contact_us_delete'])->name('contact_us_delete');
 Route::match(['post', 'get'], '/insight_create', [InsightController::class,'insight_create'])->name('insight_create');
 Route::match(['post', 'get'], '/insight_list', [InsightController::class,'insight_list'])->name('insight_list');
 Route::match(['post', 'get'], '/insight_list_update/{id}', [InsightController::class,'insight_list_update'])->name('insight_update');
