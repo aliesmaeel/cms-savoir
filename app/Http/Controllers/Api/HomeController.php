@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Blog;
 use App\Models\Email;
+use App\Models\GlobalProject;
 use App\Models\Insight;
 use App\Models\ListingSyndication;
 use App\Models\MarketingChannels;
@@ -696,4 +697,12 @@ class HomeController
         return response()->json($offplan);
     }
 
+    public function globalProjectDetails($name)
+    {
+        $project=GlobalProject::where('name',$name)->first();
+        if (!$project) {
+            return response()->json(['message' => 'Global Project not found'], 404);
+        }
+        return response()->json($project);
+    }
 }

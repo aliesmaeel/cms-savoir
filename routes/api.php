@@ -51,3 +51,4 @@ Route::get('/teams/{slug}', [\App\Http\Controllers\Api\HomeController::class, 't
 Route::post('/search-offplan', [\App\Http\Controllers\Api\HomeController::class, 'searchOffplan']);
 Route::get('/offplan-projects', [\App\Http\Controllers\Api\HomeController::class, 'offplanProjects']);
 Route::get('/offplan-projects/{slug}', [\App\Http\Controllers\Api\HomeController::class, 'offplanProjectDetails']);
+Route::get('/global-project/{name}', [\App\Http\Controllers\Api\HomeController::class, 'globalProjectDetails']);
