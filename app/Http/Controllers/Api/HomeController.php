@@ -99,7 +99,7 @@ class HomeController
 
         $areas = DB::table('communities')
             ->orderBy('order', 'asc')
-            ->select('name', 'image')
+            ->select('name', 'image','slug')
             ->take(6)
             ->get();
 
@@ -704,5 +704,30 @@ class HomeController
             return response()->json(['message' => 'Global Project not found'], 404);
         }
         return response()->json($project);
+    }
+
+    public function popularAreaDetails($slug)
+    {
+        $area=DB::table('communities')
+            ->where('slug', $slug)
+            ->select('id','name','slug','image','description','location','youtube')
+            ->first();
+
+        $suggestedProperties=NewProperty::
+             with('user:id,name,image,phone')
+            ->where('community',$area->id)
+            ->where('offering_type','RS')
+            ->select('id','title_en','slug','price','bedroom','bathroom','photo','offering_type','user_id')
+            ->take(10)
+            ->get();
+
+
+        if (!$area) {
+            return response()->json(['message' => 'Popular Area not found'], 404);
+        }
+        return response()->json([
+            'area'=>$area,
+            'suggested_properties'=>$suggestedProperties,
+        ]);
     }
 }

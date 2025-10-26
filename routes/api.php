@@ -52,3 +52,4 @@ Route::post('/search-offplan', [\App\Http\Controllers\Api\HomeController::class,
 Route::get('/offplan-projects', [\App\Http\Controllers\Api\HomeController::class, 'offplanProjects']);
 Route::get('/offplan-projects/{slug}', [\App\Http\Controllers\Api\HomeController::class, 'offplanProjectDetails']);
 Route::get('/global-project/{name}', [\App\Http\Controllers\Api\HomeController::class, 'globalProjectDetails']);
+Route::get('/popular-areas/{slug}', [\App\Http\Controllers\Api\HomeController::class, 'popularAreaDetails']);
