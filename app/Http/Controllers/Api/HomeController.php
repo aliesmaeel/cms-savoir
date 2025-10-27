@@ -699,7 +699,7 @@ class HomeController
 
     public function globalProjectDetails($name)
     {
-        $project=GlobalProject::where('name',$name)->first();
+        $project=GlobalProject::with('user:name,phone,id')->where('name',$name)->first();
         $similarProjects=NewProperty::
               where('country',$name)
             ->select('id','title_en','slug','price','bedroom','bathroom','photo','offering_type')
