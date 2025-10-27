@@ -700,10 +700,19 @@ class HomeController
     public function globalProjectDetails($name)
     {
         $project=GlobalProject::where('name',$name)->first();
+        $similarProjects=NewProperty::
+              where('country',$name)
+            ->select('id','title_en','slug','price','bedroom','bathroom','photo','offering_type')
+            ->take(10)
+            ->get();
+
         if (!$project) {
             return response()->json(['message' => 'Global Project not found'], 404);
         }
-        return response()->json($project);
+        return response()->json([
+            'project'=>$project,
+            'similar_properties'=>$similarProjects,
+        ]);
     }
 
     public function popularAreaDetails($slug)
