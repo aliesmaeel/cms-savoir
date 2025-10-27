@@ -365,6 +365,21 @@
                         <textarea type="text" class="input_off_plan" placeholder="Enter Description" name="description" id="description" required style="border-right: 3px solid #9D865C!important"></textarea>
                     </div>
                 </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">User</label>
+                    </div>
+                    <div class="col-md-8">
+                        <select class="input_off_plan" name="user_id" id="user_id" required
+                                style="border-right: 3px solid #9D865C!important">
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
                 <div class="row mt-5">
                     <div class="col-md-12 text-center">
                         <button id="buttonsubmit" class="btn btn-primary" type="button">Create

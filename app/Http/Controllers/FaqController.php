@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\FAQ;
 use App\Models\GlobalProject;
 use App\Models\Insight;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -102,6 +103,7 @@ class FaqController extends Controller
                 'name' => 'required',
                 'description' => 'required',
                 'image' => 'nullable|image',
+                'user_id' => 'required|exists:users,id',
             ]);
             $global = GlobalProject::create($validator);
 
@@ -127,8 +129,8 @@ class FaqController extends Controller
                 'message' => 'FAQ created successfully'
             ]);
         }
-
-        return view('admin.globalprojects.create');
+        $users = User::all();
+        return view('admin.globalprojects.create', compact('users'));
     }
 
     public function global_project_list(Request $request)
@@ -163,13 +165,15 @@ class FaqController extends Controller
     public function global_project_update(Request $request, $id)
     {
 
-        $data = GlobalProject::findOrFail($id);
+        $data = GlobalProject::with('user')->findOrFail($id);
+        $users = User::all();
         if ($request->ajax()) {
 
             $validator = $request->validate([
                 'description' => 'required',
                 'name' => 'required',
                 'image' => 'nullable|image',
+                'user_id' => 'required|exists:users,id',
             ]);
            $x= $data->update($validator);
 
@@ -193,7 +197,7 @@ class FaqController extends Controller
             ]);
         }
 
-        return view('admin.globalprojects.update', compact('data'));
+        return view('admin.globalprojects.update', compact('data','users'));
     }
 
     public function global_project_delete(Request $request)

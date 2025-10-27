@@ -371,6 +371,20 @@
                 </div>
 
 
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">Assigned User</label>
+                    </div>
+                    <div class="col-md-8">
+                        <select name="user_id" id="user_id" class="custom-select" style="border-right: 3px solid #9D865C!important">
+                            @foreach($users as $user)
+                                <option value="{{$user->id}}" {{$data->user_id == $user->id ? 'selected' : ''}}>{{$user->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    </div>
+
+
                 <div class="row mt-5">
                     <div class="col-md-12 text-center">
                         <button id="buttonsubmit" class="btn btn-primary" type="button">Update
