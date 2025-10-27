@@ -772,16 +772,36 @@ class HomeController
 
     public function propertyDetails($slug)
     {
-
-        $property = NewProperty::with(['pcommunity:id,name','propertyImages', 'psubcommunity:id,name', 'user:id,name,email,phone,image'])
+        $property = NewProperty::with([
+            'pcommunity:id,name',
+            'psubcommunity:id,name',
+            'propertyImages',
+            'user:id,name,email,phone,image'
+        ])
             ->where('slug', $slug)
             ->first();
+
+        $similarProperties = NewProperty::with('user:id,name,image,phone')
+            ->where('community', $property->community)
+            ->where('id', '!=', $property->id)
+            ->select('id', 'title_en', 'slug', 'price', 'bedroom', 'bathroom', 'photo', 'offering_type','user_id')
+            ->take(10)
+            ->get();
 
         if (!$property) {
             return response()->json(['message' => 'Property not found'], 404);
         }
 
-        return response()->json($property);
+        // Add community and subcommunity names
+        $data = $property->toArray();
+        $data['community'] = $property->pcommunity->name ?? null;
+        $data['sub_community'] = $property->psubcommunity->name ?? null;
+
+        return response()->json([
+            'property' => $data,
+            'similar_properties' => $similarProperties,
+        ]);
     }
+
 
 }
