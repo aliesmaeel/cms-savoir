@@ -761,4 +761,18 @@ class HomeController
         ], 201);
     }
 
+    public function propertyDetails($slug)
+    {
+
+        $property = NewProperty::with(['pcommunity:id,name','propertyImages', 'psubcommunity:id,name', 'user:id,name,email,phone,image'])
+            ->where('slug', $slug)
+            ->first();
+
+        if (!$property) {
+            return response()->json(['message' => 'Property not found'], 404);
+        }
+
+        return response()->json($property);
+    }
+
 }
