@@ -63,15 +63,20 @@ class HomeController
 
         // ✅ Fetch featured properties from Meilisearch
         // You can safely chain .whereIn() after search() in Scout
-        $properties = NewProperty::search('featured:true')
+        $properties = NewProperty::select(
+            'id', 'title_en', 'slug', 'city', 'community', 'sub_community',
+            'property_type', 'completion_status', 'offering_type',
+            'bedroom', 'bathroom', 'price', 'photo', 'updated_at'
+        )
+            ->where('featured', 1)
             ->whereIn('completion_status', ['off_plan', 'completed'])
             ->whereIn('offering_type', ['RR', 'RS'])
             ->take(9)
-            ->get([
-                'id', 'offering_type', 'price', 'slug',
-                'bedroom', 'bathroom', 'size', 'parking',
-                'photo', 'completion_status'
-            ]);
+            ->get()
+            ->map(function ($property) {
+                $property->added_at = $property->updated_at->diffForHumans();
+                return $property;
+            });
 
         // ✅ Group properties by type
         $grouped = [
