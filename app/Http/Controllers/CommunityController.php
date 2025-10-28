@@ -50,13 +50,13 @@ class CommunityController extends Controller
                     return $btn;
                 }) ->addColumn('image', function ($row) {
                     if ($row->image) {
-                        return '<img src="' .config('services.cms_link').'/storage/'.$row->image . '" class="img-50" style="width: 100px;" />';
+                        return '<img src="' .$row->image . '" class="img-50" style="width: 100px;" />';
                     } else {
                         return '';
                     }
                 })->addColumn('inner_image', function ($row) {
                     if ($row->inner_image) {
-                        return '<img src="' .config('services.cms_link').'/storage/'.$row->inner_image . '" class="img-50" style="width: 100px;" />';
+                        return '<img src="' .$row->inner_image . '" class="img-50" style="width: 100px;" />';
                     } else {
                         return '';
                     }
@@ -210,16 +210,17 @@ class CommunityController extends Controller
 
         // ✅ Update main image
         if ($request->hasFile('image')) {
-            deleteFile($community->image);
 
             $file = $request->file('image');
             $filename = uploadFile($file, 'areas');
-            $originalUrl = $baseS3Url . $filename;
+            $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/'.$filename;
+
             $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
 
             $community->update([
                 'image' => $optimizedUrl
             ]);
+
         }
 
         // ✅ Update inner image
@@ -228,7 +229,7 @@ class CommunityController extends Controller
 
             $file = $request->file('inner_image');
             $filename = uploadFile($file, 'areas');
-            $originalUrl = $baseS3Url . $filename;
+            $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/'.$filename;
             $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
 
             $community->update([

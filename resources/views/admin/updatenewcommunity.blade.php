@@ -363,7 +363,7 @@
                                id="image"
                                style="background: #fff!important">
                         <div class="holder mt-4">
-                            <img id="imgPreview" src="{{config('services.cms_link').'/storage/'.$community->image}}" alt="pic" width="100"
+                            <img id="imgPreview" src="{{$community->image}}" alt="pic" width="100"
                                  height="100"  />
                         </div>
                     </div>
@@ -378,7 +378,7 @@
                                id="inner_image"
                                style="background: #fff!important">
                         <div class="holder mt-4">
-                            <img id="innerimgPreview" src="{{config('services.cms_link').'/storage/'.$community->inner_image}}" alt="pic" width="100"
+                            <img id="innerimgPreview" src="{{$community->inner_image}}" alt="pic" width="100"
                                  height="100"  />
                         </div>
                     </div>
