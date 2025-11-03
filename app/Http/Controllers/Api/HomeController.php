@@ -70,7 +70,7 @@ class HomeController
         // You can safely chain .whereIn() after search() in Scout
         $properties = NewProperty::select(
             'id', 'title_en', 'slug', 'city', 'community', 'sub_community',
-            'property_type', 'completion_status', 'offering_type',
+            'property_type', 'completion_status', 'offering_type','size',
             'bedroom', 'bathroom', 'price', 'photo', 'updated_at'
         )
             ->where('featured', 1)
