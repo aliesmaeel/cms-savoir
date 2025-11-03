@@ -23,11 +23,16 @@ class HomeController
 {
     public function homePage()
     {
-        // ✅ Get all countries (distinct names)
+
         $countries = DB::table('countries')
             ->select('name', 'image')
             ->distinct()
-            ->get();
+            ->get()
+            ->map(function ($country) {
+                $country->name = strtolower($country->name);
+                return $country;
+            });
+
 
         $search = [];
 
