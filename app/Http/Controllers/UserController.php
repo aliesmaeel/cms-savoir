@@ -388,6 +388,14 @@ class UserController extends Controller
         $user = User::find($request->id);
         if ($user){
             deleteFile($user->image);
+            //make all properties of this user to be assigned to admin where admin is the user with id 1
+            $properties = $user->newproperties;
+
+            foreach ($properties as $property) {
+                $property->user_id = 1;
+                $property->save();
+            }
+
             $user->delete();
             return response()->json(['success' => true, 'message' => 'User has been deleted successfully']);
         }
