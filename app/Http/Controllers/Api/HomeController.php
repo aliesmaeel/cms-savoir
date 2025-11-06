@@ -701,6 +701,15 @@ class HomeController
                 'first_installment', 'area', 'description',
                 'during_construction', 'on_handover', 'features', 'lat', 'lng', 'order','youtube_link','header_images')
             ->first();
+        // make header_images array as associative array with id and url
+        $offplan->header_images = array_map(function ($image, $index) {
+            return [
+                'id' => $index + 1,
+                'url' => $image,
+            ];
+        }, $offplan->header_images ?? [], array_keys($offplan->header_images ?? []));
+
+
         if (!$offplan) {
             return response()->json(['message' => 'Off-Plan Project not found'], 404);
         }
@@ -710,6 +719,7 @@ class HomeController
     public function globalProjectDetails($name)
     {
         $project=GlobalProject::with('user:name,phone,id,image')->where('name',$name)->first();
+
         $similarProjects=NewProperty::
               where('country',$name)
             ->select('id','title_en','slug','price','bedroom','bathroom','photo','offering_type')
