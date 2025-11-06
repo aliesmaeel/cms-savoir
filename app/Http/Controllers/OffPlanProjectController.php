@@ -216,12 +216,11 @@ class OffPlanProjectController extends Controller
 
                 // ✅ Update main image
                 if ($request->hasFile('image')) {
-                    deleteFile($off_plan->image);
-
-                    $file = $request->file('image');
-                    $filename = uploadFile($file, 'offplan');
+                    $image = $request->file('image');
+                    $filename = uploadFile($image, 'offplan');
                     $originalUrl = $baseS3Url . $filename;
-                    $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/f_fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
+                    $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
 
                     $off_plan->update([
                         'image' => $optimizedUrl
