@@ -716,8 +716,9 @@ class HomeController
         $project=GlobalProject::with('user:name,phone,id,image')->where('name',$name)->first();
 
         $similarProjects=NewProperty::
-              where('country',$name)
-            ->select('id','title_en','slug','price','bedroom','bathroom','photo','offering_type')
+              with('user')
+            ->where('country',ucfirst($name))
+            ->select('id','title_en','slug','price','bedroom','bathroom','photo','offering_type','user_id')
             ->take(10)
             ->get();
 
