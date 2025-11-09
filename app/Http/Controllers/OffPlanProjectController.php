@@ -49,7 +49,7 @@ class OffPlanProjectController extends Controller
                 })
                 ->addColumn('image_col', function ($row) {
                     if ($row->image) {
-                        return '<img src="' .config('services.cms_link').'/storage/'.$row->image . '" class="img-50" style="width: 100px;" />';
+                        return '<img src="' .$row->image . '" class="img-50" style="width: 100px;" />';
                     } else {
                         return '';
                     }

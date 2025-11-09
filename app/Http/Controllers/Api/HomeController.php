@@ -144,7 +144,7 @@ class HomeController
 
         // 🧠 Use only selected columns for pagination (faster query)
         $offplan_projects = OffPlanProject::query()
-            ->select('id', 'image', 'title', 'link as slug', 'developer', 'completion_date', 'location')
+            ->select('id', 'image', 'title', 'link as slug', 'developer', 'completion_date', 'location','starting_price')
             ->paginate($limit);
 
         // 🧠 Retrieve distinct filters in one query (if filters are needed)
