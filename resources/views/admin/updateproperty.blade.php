@@ -3266,18 +3266,6 @@ type="text/css" />
         formData.append('FloorPlan', FloorPlan);
 
 
-
-
-        // add logo data
-        // var logo = $('#watermark').prop('files')[0];
-        // var logo_width = $('#watermark_width').val();
-        // var logo_height = $('#watermark_height').val();
-        // var logo_position = $('#watermark_position').val();
-        // formData.append('watermark', logo);
-        // formData.append('watermark_width', logo_width);
-        // formData.append('watermark_height', logo_height);
-        // formData.append('watermark_position', logo_position);
-
         var description_en = CKEDITOR.instances.description_en.getData();
         var description_ar = CKEDITOR.instances.description_ar.getData();
         formData.append('description_en', description_en);

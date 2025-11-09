@@ -184,6 +184,115 @@
             }
         }
 
+        .wrapper .file-upload-multi {
+            height: 100px;
+            width: 100px;
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 4px solid #FFFFFF;
+            overflow: hidden;
+            background-image: linear-gradient(to bottom, #2590EB 50%, #FFFFFF 50%);
+            background-size: 100% 200%;
+            transition: all 1s;
+            color: #FFFFFF;
+            font-size: 100px;
+        }
+
+        .wrapper .file-upload-multi input[type=file] {
+            height: 200px;
+            width: 200px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-multi i {
+            font-size: 64px
+        }
+
+        .wrapper .file-upload-multi:hover {
+            background-position: 0 -100%;
+            color: #9D865C;
+        }
+
+        /* */
+        .remove {
+            /* display: block; */
+            border: 1px solid none;
+            background-color: rgb(37 144 235);
+            opacity: 0.7;
+            background-size: cover;
+            color: white;
+            padding: 9px 15px 9px 15px;
+            left: 28%;
+            top: 30px;
+            border-radius: 74px;
+            text-align: center;
+            cursor: pointer;
+            position: absolute;
+        }
+
+        .remove:hover {
+            opacity: 1;
+            color: white;
+        }
+
+        .file-upload .file-upload-select {
+            color: #dbdbdb;
+            cursor: pointer;
+            text-align: left;
+            background: transparent;
+            overflow: hidden;
+            position: relative;
+            border-radius: 6px;
+        }
+
+        .file-upload .file-upload-select .file-select-button {
+            background: #9D865C;
+            padding: 0.275rem 1.75rem !important;
+            display: inline-block;
+            border-radius: 5px;
+            color: aliceblue;
+        }
+
+        .file-upload .file-upload-select .file-select-name {
+            display: none;
+            padding: 10px;
+        }
+
+        .file-upload .file-upload-select:hover .file-select-button {
+            background: #9D865C;
+            color: #ffffff;
+            transition: all 0.2s ease-in-out;
+            -moz-transition: all 0.2s ease-in-out;
+            -webkit-transition: all 0.2s ease-in-out;
+            -o-transition: all 0.2s ease-in-out;
+        }
+
+        .file-upload .file-upload-select input[type="file"] {
+            display: none;
+        }
+
+        .grid-img {
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+            height: 100px;
+            width: 100px !important;
+        }
+
+        .div-grid {
+            overflow-x: scroll;
+        }
+
+        .div-grid-property {
+            overflow-x: scroll;
+        }
+
         @media(max-width: 1350px) and (min-width: 1200px) {
             .top-title {
                 font-size: 16px;
@@ -314,6 +423,71 @@
             box-shadow: 0 4px 2px -2px #d9d1d1;
         }
 
+        @media (max-width: 1024px) {
+            #img {
+                width: 100%;
+            }
+
+            .div-grid {
+                overflow-x: scroll;
+            }
+
+            .div-grid-property {
+                overflow-x: scroll;
+            }
+        }
+
+        .image-grid {
+            box-shadow: 0 0 2px #ef2027, 0 2px 4px #ef2027 !important;
+            border: 1px solid #ef2027;
+            border-radius: 10px;
+            width: 100%;
+            height: 130px;
+        }
+
+        .div-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            grid-gap: 10px;
+        }
+
+        .div-grid-property {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            grid-gap: 10px;
+        }
+
+        .image2 {
+            background: #ef2027;
+            color: #fff;
+            box-shadow: 0 0 2px #ef2027, 0 2px 4px #ef2027 !important;
+            border: 1px solid #ef2027;
+            border-radius: 10px;
+            width: 130px;
+            height: 130px;
+
+        }
+
+        .photo-title {
+            color: #3d4040;
+            font-weight: 400;
+            font-family: 'SF-Pro-Text-Regular' !important;
+        }
+
+        #pac-input {
+            z-index: 999;
+            position: inherit;
+            width: 100%;
+            border: aliceblue;
+            border-radius: 7px;
+            padding: 12px;
+        }
+
+        #geomap {
+            width: 100%;
+            height: 400px;
+        }
+
         /*end responsive*/
     </style>
 @endpush
@@ -353,16 +527,45 @@
                         <label class="title-input" for="header_images">Header Images</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="file" name="header_images[]" id="header_images" multiple accept="image/*" style="background: #fff!important">
-                        <div class="holder mt-4" id="imgholder">
-                            @if($off_plan->header_images)
-                                @foreach($off_plan->header_images as $image)
-                                    <img src="{{ $image }}" alt="pic" width="100" height="100" />
-                                @endforeach
-                            @endif
+                        <div class="row row-img">
+                            <div class="div-grid">
+                                <div class="grid-img">
+                                    <div class="wrapper">
+                                        <div class="file-upload-multi">
+                                            <input type="file" name="header_images[]" id="header_images" multiple accept="image/*" />
+                                            <i class="fa fa-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Existing header images --}}
+                                {{-- Existing header images --}}
+                                @if ($header_images)
+                                    @foreach ($header_images as $image)
+                                        <div class="img-thumb-wrapper grid-img card shadow" style="width: 100%">
+                                            <!-- mark this as an existing image -->
+                                            <img class="img-thumb image-grid existing-img"
+                                                 data-existing="1"
+                                                 src="{{ $image }}"
+                                                 alt="Header Image" />
+                                            <span class="remove">
+                <i class="fa fa-trash"></i>
+            </span>
+                                        </div>
+                                    @endforeach
+                                @endif
+
+                            </div>
                         </div>
+
+                        @error('header_images')
+                        <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+                        @enderror
                     </div>
                 </div>
+
 
                 <!-- Title -->
                 <x-input-row label="Title" name="title" value="{{$off_plan->title}}" placeholder="Enter Title"/>
@@ -506,24 +709,39 @@
         });
     </script>
 
- <script>
-     $('#header_images').change(function() {
-         const files = this.files;
-         $('#imgholder').empty();
-         if (files) {
-             for (let i = 0; i < files.length; i++) {
-                 let reader = new FileReader();
-                 reader.onload = function(event) {
-                     $('#imgholder').append(`
-                    <img id="imgPreviewHeader${i}" src="${event.target.result}" alt="pic" width="100" height="100" hidden />
-                `);
-                     $(`#imgPreviewHeader${i}`).attr('hidden', false);
-                 };
+    <script>
+        $(document).ready(function () {
+            if (window.File && window.FileList && window.FileReader) {
+                $("#header_images").on("change", function (e) {
+                    const files = e.target.files;
+                    const filesLength = files.length;
 
-                 reader.readAsDataURL(files[i]);
-             }
-         }
-     });
+                    for (let i = 0; i < filesLength; i++) {
+                        const f = files[i];
+                        const fileReader = new FileReader();
+
+                        fileReader.onload = function (event) {
+                            $("<div class='img-thumb-wrapper grid-img card shadow' style='width:100%'>" +
+                                "<img class='img-thumb image-grid' src='" + event.target.result + "' title='" + f.name + "'/>" +
+                                "<span class='remove'><i class='fa fa-trash'></i></span>" +
+                                "</div>").appendTo(".div-grid");
+                        };
+                        fileReader.readAsDataURL(f);
+                    }
+                });
+
+
+                // Remove preview (for new or existing images)
+                $(document).on("click", ".div-grid .remove", function () {
+                    $(this).closest(".img-thumb-wrapper").remove();
+                });
+            } else {
+                alert("Your browser doesn't support File API");
+            }
+        });
+    </script>
+
+ <script>
 
      $('#image').change(function() {
          const file = this.files[0];
@@ -551,6 +769,17 @@
             for (let i = 0; i < fileInput.files.length; i++) {
                 formData.append('header_images[]', fileInput.files[i]);
             }
+
+            var old_images = [];
+            $(".img-thumb.existing-img").each(function() {
+                old_images.push($(this).attr('src'));
+            });
+
+            old_images.forEach(function(img) {
+                formData.append('old_images[]', img);
+            });
+
+            formData.append('old_images', JSON.stringify(old_images));
 
             let singleImageInput = document.getElementById('image');
             if (singleImageInput.files.length > 0) {

@@ -3,7 +3,6 @@
 @push('head')
     <title>Create Off-Plan Project</title>
 
-    <!-- Custom fonts for this template -->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
@@ -12,11 +11,29 @@
     <!-- Custom styles for this template -->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
+    {{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" /> --}}
+    <link href="{{ asset('select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+
+
 
     <!-- Custom styles for this page -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.10.24/css/dataTables.semanticui.min.css" rel="stylesheet">
     <link rel="stylesheet" href="images/css/dash.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css" />
+    <!-- jQuery library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js">
+    </script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <style>
         body {
@@ -24,6 +41,199 @@
             background-color: white;
         }
 
+        .image-grid {
+            box-shadow: 0 0 2px #9D865C, 0 2px 4px #9D865C !important;
+            border: 1px solid #9D865C;
+            border-radius: 10px;
+            width: 100%;
+            height: 130px;
+        }
+
+        .div-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            grid-gap: 10px;
+        }
+
+        .div-grid-property {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            grid-gap: 10px;
+        }
+
+        .image2 {
+            background: #9D865C;
+            color: #fff;
+            box-shadow: 0 0 2px #9D865C, 0 2px 4px #9D865C !important;
+            border: 1px solid #9D865C;
+            border-radius: 10px;
+            width: 130px;
+            height: 130px;
+
+        }
+        .div-grid {
+            overflow-x: scroll;
+        }
+
+        .div-grid-property {
+            overflow-x: scroll;
+        }
+
+        .wrapper .file-upload-multi {
+            height: 100px;
+            width: 100px;
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 4px solid #FFFFFF;
+            overflow: hidden;
+            background-image: linear-gradient(to bottom, #9D865C 50%, #FFFFFF 50%);
+            background-size: 100% 200%;
+            transition: all 1s;
+            color: #FFFFFF;
+            font-size: 100px;
+        }
+
+        .wrapper .file-upload-multi input[type=file] {
+            height: 200px;
+            width: 200px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-multi i {
+            font-size: 64px
+        }
+
+        .wrapper .file-upload-multi:hover {
+            background-position: 0 -100%;
+            color: #9D865C;
+        }
+
+        /*end responsive*/
+
+        .cke_contents.cke_reset {
+            height: 100px !important;
+        }
+
+        /* */
+        .remove {
+            /* display: block; */
+            border: 1px solid none;
+            background-color: rgb(37 144 235);
+            opacity: 0.7;
+            background-size: cover;
+            color: white;
+            padding: 9px 15px 9px 15px;
+            left: 28%;
+            top: 30px;
+            border-radius: 74px;
+            text-align: center;
+            cursor: pointer;
+            position: absolute;
+        }
+
+        .remove:hover {
+            opacity: 1;
+            color: white;
+        }
+
+        .file-upload .file-upload-select {
+            color: #dbdbdb;
+            cursor: pointer;
+            text-align: left;
+            background: transparent;
+            overflow: hidden;
+            position: relative;
+            border-radius: 6px;
+        }
+
+        .file-upload .file-upload-select .file-select-button {
+            background: #9D865C;
+            padding: 0.275rem 1.75rem !important;
+            display: inline-block;
+            border-radius: 5px;
+            color: aliceblue;
+        }
+
+        .file-upload .file-upload-select .file-select-name {
+            display: none;
+            padding: 10px;
+        }
+
+        .file-upload .file-upload-select:hover .file-select-button {
+            background: #9D865C;
+            color: #ffffff;
+            transition: all 0.2s ease-in-out;
+            -moz-transition: all 0.2s ease-in-out;
+            -webkit-transition: all 0.2s ease-in-out;
+            -o-transition: all 0.2s ease-in-out;
+        }
+
+        .file-upload .file-upload-select input[type="file"] {
+            display: none;
+        }
+
+        .grid-img {
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+            height: 100px;
+            width: 100px !important;
+        }
+
+        .div-grid {
+            overflow-x: scroll;
+        }
+
+        .div-grid-property {
+            overflow-x: scroll;
+        }
+
+        .row-img {
+            height: 8rem;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            padding-left: 0.5rem;
+        }
+
+        .btn {
+            border-radius: 0.4rem !important;
+        }
+
+        .row-img::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        /* Track */
+        .row-img::-webkit-scrollbar-track {
+            background: #c5c5c5;
+            border-radius: 8px;
+        }
+
+        /* Handle */
+        .row-img::-webkit-scrollbar-thumb {
+            background: #9D865C !important;
+            border-radius: 8px;
+        }
+
+        /* Handle on hover */
+        .row-img::-webkit-scrollbar-thumb:hover {
+            background: #9D865C !important;
+            border-radius: 8px;
+        }
+
+        #top-div {
+            margin-left: 30px;
+        }
+
+        #img {
+            width: 500px;
+        }
         * {
             box-sizing: border-box;
         }
@@ -173,7 +383,6 @@
             /* border: 1px solid #e4aa47; */
             border-radius: 5px;
             padding: 20px 51px;
-            width: 50rem;
             margin: 5rem auto;
         }
 
@@ -348,15 +557,29 @@
                 </div>
 
                 <!-- Header Images -->
+                <h5 class="mt-3 mb-3">Media :</h5>
+
+                <!-- Header Images Upload -->
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
                         <label class="title-input" for="header_images">Header Images</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="file" name="header_images[]" id="header_images" multiple accept="image/*" style="background: #fff!important">
-                        <div class="holder mt-4" id="imgholder"></div>
+                        <div class="div-grid">
+                            <div class="grid-img">
+                                <div class="wrapper">
+                                    <div class="file-upload-multi">
+                                        <input type="file" name="header_images[]" id="header_images" multiple accept="image/*" />
+                                        <i class="fa fa-plus"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="holder mt-4 div-grid" id="imgholder"></div>
                     </div>
                 </div>
+
+
 
                 <!-- Title -->
                 <div class="row mt-4 mb-4" style="align-items: center;">
@@ -546,11 +769,56 @@
 
     <!-- Page level custom scripts -->
     <script src="js/demo/datatables-demo.js"></script>
+
+    <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet"
+          type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+    <script src="{{ asset('select2/admin/upload_image.js') }}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"
+            integrity="sha384-qlmct0AOBiA2VPZkMY3+2WqkHtIQ9lSdAsAn5RUJD/3vA5MKDgSGcdmIv4ycVxyn" crossorigin="anonymous">
+    </script>
     <script>
         $(document).ready(function() {
 
             $('select.custom-select').val($('select.custom-select > option:last').val()).change();
 
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            // ====== Header Images Preview ======
+            if (window.File && window.FileList && window.FileReader) {
+                $("#header_images").on("change", function (e) {
+                    const files = e.target.files;
+                    const filesLength = files.length;
+                    $("#imgholder").empty(); // clear old previews
+
+                    for (let i = 0; i < filesLength; i++) {
+                        const f = files[i];
+                        const fileReader = new FileReader();
+
+                        fileReader.onload = function (event) {
+                            const file = event.target;
+                            $("<div class='img-thumb-wrapper grid-img card shadow' style='width:100%; position:relative; display:inline-block; margin:5px'>" +
+                                "<img class='img-thumb image-grid' src='" + event.target.result + "' title='" + f.name + "' style='width:100%; border-radius:8px;'/>" +
+                                "<span class='remove' style='position:absolute; top:5px; right:5px; cursor:pointer; color:red;'><i class='fa fa-trash'></i></span>" +
+                                "</div>").appendTo("#imgholder");
+                        };
+
+                        fileReader.readAsDataURL(f);
+                    }
+
+                    // remove preview on click
+                    $(document).on("click", "#imgholder .remove", function () {
+                        $(this).closest(".img-thumb-wrapper").remove();
+                    });
+                });
+            } else {
+                alert("Your browser doesn't support File API");
+            }
         });
     </script>
 
@@ -577,24 +845,6 @@
  <script>
 
 
-     $('#header_images').change(function() {
-         const files = this.files;
-
-         if (files) {
-             for (let i = 0; i < files.length; i++) {
-                 let reader = new FileReader();
-
-                 reader.onload = function(event) {
-                     $('#imgholder').append(`
-                    <img id="imgPreviewHeader${i}" src="${event.target.result}" alt="pic" width="100" height="100" hidden />
-                `);
-                     $(`#imgPreviewHeader${i}`).attr('hidden', false);
-                 };
-
-                 reader.readAsDataURL(files[i]);
-             }
-         }
-     });
 
     $('#image').change(function() {
         const file = this.files[0];
@@ -619,10 +869,13 @@
             });
             formData.append("_token", "{{ csrf_token() }}");
 
-            let fileInput = document.getElementById('header_images');
-            for (let i = 0; i < fileInput.files.length; i++) {
-                formData.append('header_images[]', fileInput.files[i]);
+            let HeaderImages = $('#header_images')[0].files.length;
+            let headerImgs = $('#header_images')[0];
+            for (let i = 0; i < HeaderImages; i++) {
+                formData.append('header_images' + i, headerImgs.files[i]);
             }
+            formData.append('HeaderImages', HeaderImages);
+
 
             let singleImageInput = document.getElementById('image');
             if (singleImageInput.files.length > 0) {
@@ -672,4 +925,6 @@
             });
         });
     </script>
+
+
 @endpush

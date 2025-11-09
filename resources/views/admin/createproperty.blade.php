@@ -956,30 +956,6 @@
     <script src="js/sb-admin-2.min.js"></script>
 
 
-    {{-- <script>
-        $('#photo').change(function() {
-            $('#exampleModal').modal('show');
-        });
-        $('#modal_close').click(function() {
-            $('#exampleModal').modal('hide');
-        });
-
-        $('#watermark').change(function(e) {
-            var reader = new FileReader();
-            reader.readAsDataURL($(this).prop('files')[0]);
-            reader.onload = function(e) {
-                var image = new Image();
-                image.src = e.target.result;
-                image.onload = function() {
-                    var height = this.height;
-                    var width = this.width;
-                    $('#watermark_width').val(width);
-                    $('#watermark_height').val(height);
-                };
-            }
-        });
-    </script> --}}
-
     <script>
         $(document).ready(function() {
             $('select.custom-select').val($('select.custom-select > option:last').val()).change();
@@ -1000,39 +976,6 @@
     </script>
 
 
-    {{-- <script src="{{ asset('select2/js/form-advanced.init.js') }}"></script>
-
-      <script>
-          $(function() {
-              $('#maindata').validate({
-                  rules: {
-                      bedroom: {
-                          required: true,
-                          min: 0,
-                          max:10
-                      },
-
-                  },
-                  messages: {
-                      bedroom: {
-                          max: "Please enter a valid email address"
-                      },
-
-                  },
-                  errorElement: 'span',
-                  errorPlacement: function(error, element) {
-                      error.addClass('invalid-feedback');
-                      element.closest('.form-group').append(error);
-                  },
-                  highlight: function(element, errorClass, validClass) {
-                      $(element).addClass('is-invalid');
-                  },
-                  unhighlight: function(element, errorClass, validClass) {
-                      $(element).removeClass('is-invalid');
-                  }
-              });
-          });
-      </script> --}}
     <script src="{{ asset('select2/js/select2.min.js') }}"></script>
     <script>
         $('#offering_type').select2({
@@ -2319,33 +2262,6 @@
                             marker.setPosition(latlng);
                             initialize();
                         });
-                        // geocoder.geocode({
-                        //     'address': request.term
-                        // }, function(results, status) {
-                        //     response($.map(results, function(item) {
-                        //         return {
-                        //             label: item.formatted_address,
-                        //             value: item.formatted_address,
-                        //             lat: item.geometry.location.lat(),
-                        //             lon: item.geometry.location.lng(),
-                        //         };
-                        //     }));
-                        // });
-                    },
-
-                    // select: function(event, ui) {
-                    //     $('.search_addr').val(ui.item.value);
-                    //     $('.search_latitude').val(place.geometry['location'].lat());
-                    //     $('.search_longitude').val(place.geometry['location'].lng());
-                    //     $('#geopoints').val($("#search_latitude").val() + "," + $(
-                    //         "#search_longitude").val())
-                    //     $('#d_geopoints').val($("#search_latitude").val() + "," + $(
-                    //         "#search_longitude").val())
-
-                    //     var latlng = new google.maps.LatLng(ui.item.lat, ui.item.lon);
-                    //     marker.setPosition(latlng);
-                    //     initialize();
-                    // }
                 });
             });
 
@@ -2415,19 +2331,6 @@
             }
             formData.append('TotalFiles', TotalFiles);
 
-            // let VideoPlan = $('#view360')[0].files.length; //Total videos
-            // let video = $('#view360')[0];
-            // for (let i = 0; i < VideoPlan; i++) {
-            //     formData.append('video' + i, video.files[i]);
-            // }
-            // formData.append('VideoPlan', VideoPlan);
-
-            // let d_VideoPlan = $('#d_view360')[0].files.length; //Total videos
-            // let d_video = $('#d_view360')[0];
-            // for (let i = 0; i < d_VideoPlan; i++) {
-            //     formData.append('d_video' + i, d_video.files[i]);
-            // }
-            // formData.append('d_VideoPlan', d_VideoPlan);
 
             let FloorPlan = $('#floor_plan')[0].files.length; //Total videos
             let floorplans = $('#floor_plan')[0];
@@ -2436,22 +2339,6 @@
             }
             formData.append('FloorPlan', FloorPlan);
 
-            // let TotalVideos = $('#videos')[0].files.length; //Total videos
-            // let videos = $('#videos')[0];
-            // for (let i = 0; i < TotalVideos; i++) {
-            //     formData.append('videos' + i, videos.files[i]);
-            // }
-            // formData.append('TotalVideos', TotalVideos);
-
-            // add logo data
-            // var logo = $('#watermark').prop('files')[0];
-            // var logo_width = $('#watermark_width').val();
-            // var logo_height = $('#watermark_height').val();
-            // var logo_position = $('#watermark_position').val();
-            // formData.append('watermark', logo);
-            // formData.append('watermark_width', logo_width);
-            // formData.append('watermark_height', logo_height);
-            // formData.append('watermark_position', logo_position);
 
             var description_en = CKEDITOR.instances.description_en.getData();
             var description_ar = CKEDITOR.instances.description_ar.getData();

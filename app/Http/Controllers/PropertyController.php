@@ -657,20 +657,6 @@ class PropertyController extends Controller
                 if ($request->hasFile('files' . $x)) {
                     $file = $request->file('files' . $x);
                     $name=uploadFile($file ,'properties/images/'. $newproperty->reference_number,false );
-                    // $setting = Setting::where('type', 'logo')->first();
-                    // if ($setting) {
-                    //     if(FileExists($setting->description['logo'])){
-                    //         $img = Image::make(config('services.cms_link').'/storage/properties/images/'.$newproperty->reference_number.'/'. $name);
-                    //         $watermark = Image::make(config('services.cms_link').'/'.$setting->description['logo']);
-
-                    //         $watermark->opacity(40);
-                    //         $watermark->resize($setting->description['watermark_width'], $setting->description['watermark_height']);
-                    //         $img->insert($watermark, $setting->description['watermark_position']);
-                    //         $exten=pathinfo($name, PATHINFO_EXTENSION );
-                    //         $storage_type = env('STORAGE_TYPE') ?? 's3';
-                    //         Storage::disk($storage_type)->put('storage/properties/images/'.$newproperty->reference_number.'/'. $name, $img->encode($exten)->stream()->__toString(),'public');
-                    //     }
-                    // }
                 }
                 DB::table('property_images')->insert(
                     array(
@@ -971,7 +957,6 @@ class PropertyController extends Controller
     }
     public function update_new_property(Request $request, $id)
     {
-
         $newproperty = NewProperty::find($id);
         if (Auth::user()->isAgent()) {
             $request->validate(

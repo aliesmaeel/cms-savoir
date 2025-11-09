@@ -100,18 +100,22 @@ class OffPlanProjectController extends Controller
             $baseS3Url = "https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/";
 
             // ✅ Handle multiple header images
-            if ($request->hasFile('header_images')) {
-                $filenames = [];
-                foreach ($request->file('header_images') as $image) {
-                    $filename = uploadFile($image, 'offplan');
-                    $originalUrl = $baseS3Url . $filename;
-                    $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-                    $filenames[] = $optimizedUrl;
-                }
 
-                $off_plan->update([
-                    'header_images' => $filenames
-                ]);
+            for ($i = 0; $i < $request->HeaderImages; $i++) {
+
+                if ($request->hasFile('header_images' . $i)) {
+                    $filenames = [];
+                        $image = $request->file('header_images' . $i);
+                        $filename = uploadFile($image, 'offplan');
+                        $originalUrl = $baseS3Url . $filename;
+                        $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+                        $filenames[] = $optimizedUrl;
+
+
+                    $off_plan->update([
+                        'header_images' => $filenames
+                    ]);
+                }
             }
 
             // ✅ Handle main image
@@ -159,8 +163,8 @@ class OffPlanProjectController extends Controller
     }
     public function off_plan_project_update(Request $request, $id)
     {
-        $off_plan = OffPlanProject::find($id);
 
+        $off_plan = OffPlanProject::find($id);
         if ($request->ajax()) {
 
             if ($off_plan) {
@@ -187,55 +191,69 @@ class OffPlanProjectController extends Controller
                     'youtube_link' => 'nullable',
                 ]);
 
-                // ✅ Update the project
+                // ✅ Update main data
                 $off_plan->update($validator);
 
                 $cloudName = "djd3y5gzw";
                 $baseS3Url = "https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/";
 
-                // ✅ Update header images
-                if ($request->hasFile('header_images')) {
-                    if ($off_plan->header_images) {
-                        foreach ($off_plan->header_images as $key) {
-                            deleteFile($key);
-                        }
-                    }
+                // ✅ Initialize array for final images
+                $finalImages = [];
 
-                    $filenames = [];
+                // ✅ Add old images (if provided)
+                if ($request->filled('old_images')) {
+                    $oldImages = json_decode($request->old_images, true);
+
+                    if (is_array($oldImages)) {
+                        $finalImages = array_merge($finalImages, $oldImages);
+                    }
+                }
+
+                // ✅ Upload and add new header images
+                if ($request->hasFile('header_images')) {
                     foreach ($request->file('header_images') as $image) {
                         $filename = uploadFile($image, 'offplan');
                         $originalUrl = $baseS3Url . $filename;
                         $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-                        $filenames[] = $optimizedUrl;
+                        $finalImages[] = $optimizedUrl;
                     }
-
-                    $off_plan->update([
-                        'header_images' => $filenames
-                    ]);
                 }
 
-                // ✅ Update main image
+                // ✅ Save final header images array
+                $off_plan->update([
+                    'header_images' => $finalImages,
+                ]);
+
+                // ✅ Update main image if uploaded
                 if ($request->hasFile('image')) {
                     $image = $request->file('image');
                     $filename = uploadFile($image, 'offplan');
                     $originalUrl = $baseS3Url . $filename;
-
                     $optimizedUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
 
                     $off_plan->update([
-                        'image' => $optimizedUrl
+                        'image' => $optimizedUrl,
                     ]);
                 }
 
-                return response()->json(['success' => true, 'message' => 'Off-Plan Project updated successfully']);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Off-Plan Project updated successfully',
+                ]);
             } else {
-                return response()->json(['success' => false, 'message' => 'Off-Plan Project not found']);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Off-Plan Project not found',
+                ]);
             }
         }
 
         $off_plan_projects = OffPlanProject::pluck('id')->unique()->toArray();
-        return view('offPlanProject.update', compact('off_plan', 'off_plan_projects'));
+        $header_images = json_decode($off_plan->header_images, true);
+
+        return view('offPlanProject.update', compact('off_plan', 'off_plan_projects','header_images'));
     }
+
 
 
 }

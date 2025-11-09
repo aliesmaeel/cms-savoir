@@ -11,7 +11,6 @@ class OffPlanProject extends Model
     use HasFactory,Searchable;
     protected $guarded=[];
     protected $table = 'off_plan_projects';
-    protected $casts=['header_images'=>'array'];
 
     public function toSearchableArray(): array
     {
