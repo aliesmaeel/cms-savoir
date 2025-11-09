@@ -140,7 +140,7 @@ class HomeController
     }
     public function offplanProjects(Request $request)
     {
-        $limit = (int) $request->input('limit', 9);
+        $limit = (int) $request->limit > 0 ? (int) $request->limit : 20;
 
         // 🧠 Use only selected columns for pagination (faster query)
         $offplan_projects = OffPlanProject::query()
@@ -651,6 +651,16 @@ class HomeController
 
             return response()->json($allNames);
         });
+    }
+
+    public function searchOffplanSuggestions()
+    {
+        $offplans=OffPlanProject::select('developer','location','completion_date')->get();
+        return response()->json([
+            'developers'=>$offplans->pluck('developer')->filter()->unique()->values(),
+            'locations'=>$offplans->pluck('location')->filter()->unique()->values(),
+            'completion_dates'=>$offplans->pluck('completion_date')->filter()->unique()->values(),
+        ]);
     }
 
     public function faqs(Request $request)

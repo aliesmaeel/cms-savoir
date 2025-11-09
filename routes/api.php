@@ -38,6 +38,7 @@ Route::get('/blogs/{slug}', [\App\Http\Controllers\Api\HomeController::class, 'b
 Route::post('/search', [\App\Http\Controllers\Api\HomeController::class, 'search']);
 
 Route::get('/search-suggestions', [\App\Http\Controllers\Api\HomeController::class, 'searchSuggestions']);
+Route::get('/search-offplan-suggestions', [\App\Http\Controllers\Api\HomeController::class, 'searchOffplanSuggestions']);
 Route::post('/subscribe', [\App\Http\Controllers\Api\HomeController::class, 'subscribe']);
 Route::post('/downloadBrochure', [\App\Http\Controllers\Api\HomeController::class, 'downloadBrochure']);
 Route::post('/talk-to-expert', [\App\Http\Controllers\Api\HomeController::class, 'talkToExpert']);
