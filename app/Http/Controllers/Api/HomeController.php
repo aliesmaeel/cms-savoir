@@ -707,6 +707,7 @@ class HomeController
                 'during_construction', 'on_handover', 'features', 'lat', 'lng', 'order','youtube_link','header_images')
             ->first();
         // make header_images array as associative array with id and url
+        $offplan->header_images = json_decode($offplan->header_images,true) ?? [];
         $offplan->header_images = array_map(function ($image, $index) {
             return [
                 'id' => $index + 1,
