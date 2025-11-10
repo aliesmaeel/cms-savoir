@@ -529,7 +529,7 @@ class HomeController
     public function searchOffplan(Request $request)
     {
         $filters = [
-            'developer' => $request->input('developer', []),
+            'developer' => $request->input('developers', []),
             'completion_date' => $request->input('completion_date'),
             'locations' => $request->input('locations', []),
         ];
@@ -560,6 +560,8 @@ class HomeController
                 ->join(' OR ');
             $filterConditions[] = "($devFilters)";
         }
+
+
 
         if (!empty($filters['completion_date'])) {
             $filterConditions[] = 'completion_date = "' . addslashes($filters['completion_date']) . '"';
