@@ -529,9 +529,9 @@ class HomeController
     public function searchOffplan(Request $request)
     {
         $filters = [
-            'developers' => $request->input('developers', []), // array
-            'completion_date' => $request->input('completion_date'), // string (ex: Q4 2029)
-            'locations' => $request->input('locations', []), // array
+            'developers' => $request->input('developers', []),
+            'completion_date' => $request->input('completion_date'),
+            'locations' => $request->input('locations', []),
         ];
 
         // 🧭 Pagination setup
@@ -575,7 +575,7 @@ class HomeController
         $filterString = implode(' AND ', $filterConditions);
 
         // 🧭 Perform Meilisearch query
-        $results = OffPlanProject::search('', function ($meilisearch, $query, $options) use ($filterString, $limit, $offset, $sortField, $sortOrder) {
+        $searchResult = OffPlanProject::search('', function ($meilisearch, $query, $options) use ($filterString, $limit, $offset, $sortField, $sortOrder) {
             if (!empty($filterString)) {
                 $options['filter'] = $filterString;
             }
@@ -583,32 +583,50 @@ class HomeController
             $options['offset'] = $offset;
             $options['sort'] = [$sortField . ':' . $sortOrder];
             return $meilisearch->search($query, $options);
-        })->get();
+        });
+
+        // Get the raw Meilisearch metadata
+        $raw = $searchResult->raw();
+
+        // Extract hits
+        $results = collect($raw['hits'] ?? []);
 
         // 🧾 Format response
         $data = $results->map(function ($item) {
             return [
-                'id' => $item->id,
-                'title' => $item->title,
-                'slug' => $item->link,
-                'image' => $item->image,
-                'developer' => $item->developer,
-                'completion_date' => $item->completion_date,
-                'location' => $item->location,
-                'price' => $item->starting_price,
-                'updated_at' => $item->updated_at,
+                'id' => $item['id'] ?? null,
+                'title' => $item['title'] ?? null,
+                'slug' => $item['link'] ?? null,
+                'image' => $item['image'] ?? null,
+                'developer' => $item['developer'] ?? null,
+                'completion_date' => $item['completion_date'] ?? null,
+                'location' => $item['location'] ?? null,
+                'price' => $item['starting_price'] ?? null,
+                'updated_at' => $item['updated_at'] ?? null,
             ];
         });
 
+        // 🧮 Calculate pagination info
+        $total = $raw['estimatedTotalHits'] ?? $data->count();
+        $lastPage = (int) ceil($total / $limit);
+        $from = $offset + 1;
+        $to = min($offset + $limit, $total);
+
         return response()->json([
-            'page' => $page,
-            'limit' => $limit,
-            'count' => $data->count(),
+            'pagination' => [
+                'total' => $total,
+                'per_page' => $limit,
+                'current_page' => $page,
+                'last_page' => $lastPage,
+                'from' => $total > 0 ? $from : null,
+                'to' => $total > 0 ? $to : null,
+            ],
             'sort_by' => $sortField,
             'sort_order' => $sortOrder,
             'data' => $data,
         ]);
     }
+
 
 
 
