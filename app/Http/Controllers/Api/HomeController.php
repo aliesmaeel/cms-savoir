@@ -680,12 +680,18 @@ class HomeController
 
     public function searchOffplanSuggestions()
     {
-        $offplans=OffPlanProject::select('developer','location','completion_date')->get();
-        return response()->json([
-            'developers'=>$offplans->pluck('developer')->filter()->unique()->values(),
-            'locations'=>$offplans->pluck('location')->filter()->unique()->values(),
-            'completion_dates'=>$offplans->pluck('completion_date')->filter()->unique()->values(),
-        ]);
+
+        $filters = OffPlanProject::select('developer', 'completion_date', 'location', 'link')->get();
+
+        $searchFilters = [
+            'developers' => $filters->pluck('developer')->filter()->unique()->values(),
+            'completion_date' => $filters->pluck('completion_date')->filter()->unique()->values(),
+            'locations' => $filters->mapWithKeys(function ($item) {
+                return [$item->link => $item->location];
+            })->unique(),
+        ];
+
+        return response()->json($searchFilters);
     }
 
     public function faqs(Request $request)
