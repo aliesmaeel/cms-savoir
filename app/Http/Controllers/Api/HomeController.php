@@ -534,6 +534,7 @@ class HomeController
             'locations' => $request->input('locations', []),
         ];
 
+
         // 🧭 Pagination setup
         $page = max(1, (int)$request->input('page', 1));
         $limit = min(100, (int)$request->input('limit', 20));
@@ -569,9 +570,12 @@ class HomeController
 
         if (!empty($filters['locations'])) {
             $locFilters = collect($filters['locations'])
-                ->map(fn($loc) => 'location = "' . addslashes($loc) . '"')
+                ->filter(fn($loc) => !empty(trim($loc)))
+                ->map(function ($loc) {
+                    $clean = str_replace(['"', ','], ['\"', '\,'], trim($loc));
+                    return 'location = "' . $clean . '"';
+                })
                 ->join(' OR ');
-            $filterConditions[] = "($locFilters)";
         }
 
         $filterString = implode(' AND ', $filterConditions);
