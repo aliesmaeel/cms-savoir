@@ -529,7 +529,7 @@ class HomeController
     public function searchOffplan(Request $request)
     {
         $filters = [
-            'developers' => $request->input('developers', []),
+            'developer' => $request->input('developer', []),
             'completion_date' => $request->input('completion_date'),
             'locations' => $request->input('locations', []),
         ];
@@ -554,8 +554,8 @@ class HomeController
         // 🧩 Build Meilisearch filter string
         $filterConditions = [];
 
-        if (!empty($filters['developers'])) {
-            $devFilters = collect($filters['developers'])
+        if (!empty($filters['developer'])) {
+            $devFilters = collect($filters['developer'])
                 ->map(fn($dev) => 'developer = "' . addslashes($dev) . '"')
                 ->join(' OR ');
             $filterConditions[] = "($devFilters)";
