@@ -659,24 +659,18 @@ class HomeController
                 ->get();
 
             $countries = $properties->pluck('country')->filter()->unique()->toArray();
-
-            $communities = $properties
-                ->pluck('pcommunity.name')
-                ->filter()
-                ->unique()
-                ->toArray();
-
-            $subCommunities = $properties
-                ->pluck('psubcommunity.name')
-                ->filter()
-                ->unique()
-                ->toArray();
+            $communities = $properties->pluck('pcommunity.name')->filter()->unique()->toArray();
+            $subCommunities = $properties->pluck('psubcommunity.name')->filter()->unique()->toArray();
 
             $allNames = array_values(array_unique(array_merge($countries, $communities, $subCommunities)));
 
-            return response()->json($allNames);
+            // 🔹 Make associative array: key = value
+            $associative = collect($allNames)->mapWithKeys(fn($item) => [$item => $item])->toArray();
+
+            return response()->json($associative);
         });
     }
+
 
     public function searchOffplanSuggestions()
     {
