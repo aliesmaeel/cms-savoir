@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Str;
 
 
 class HomeController
@@ -148,13 +149,17 @@ class HomeController
             ->paginate($limit);
 
         // 🧠 Retrieve distinct filters in one query (if filters are needed)
-        $filters = OffPlanProject::select('developer', 'completion_date', 'location')->get();
+        $filters = OffPlanProject::select('developer', 'completion_date', 'location', 'link')->get();
 
         $searchFilters = [
-            'developers' => $filters->pluck('developer')->unique()->values(),
-            'completion_date' => $filters->pluck('completion_date')->unique()->values(),
-            'locations' => $filters->pluck('location')->unique()->values(),
+            'developers' => $filters->pluck('developer')->filter()->unique()->values(),
+            'completion_date' => $filters->pluck('completion_date')->filter()->unique()->values(),
+            'locations' => $filters->mapWithKeys(function ($item) {
+                return [$item->link => $item->location];
+            })->unique(),
         ];
+
+
 
         return response()->json([
             'filters' => $searchFilters,
@@ -531,7 +536,7 @@ class HomeController
         $filters = [
             'developer' => $request->input('developers', []),
             'completion_date' => $request->input('completion_date'),
-            'id' => $request->input('locations', []),
+            'link' => $request->input('locations', []),
         ];
 
 
@@ -567,9 +572,9 @@ class HomeController
         if (!empty($filters['completion_date'])) {
             $filterConditions[] = 'completion_date = "' . addslashes($filters['completion_date']) . '"';
         }
-        if (!empty($filters['id'])) {
-            $locFilters = collect($filters['id'])
-                ->map(fn($loc) => 'id = "' . addslashes($loc) . '"')
+        if (!empty($filters['link'])) {
+            $locFilters = collect($filters['link'])
+                ->map(fn($loc) => 'link = "' . addslashes($loc) . '"')
                 ->join(' OR ');
             $filterConditions[] = "($locFilters)";
         }
