@@ -30,7 +30,7 @@ class OffPlanProject extends Model
     {
         return [
             "filterableAttributes" => [
-                "location",
+                "id",
                 "developer",
                 "completion_date",
             ],

@@ -531,7 +531,7 @@ class HomeController
         $filters = [
             'developer' => $request->input('developers', []),
             'completion_date' => $request->input('completion_date'),
-            'locations' => $request->input('locations', []),
+            'id' => $request->input('locations', []),
         ];
 
 
@@ -567,15 +567,11 @@ class HomeController
         if (!empty($filters['completion_date'])) {
             $filterConditions[] = 'completion_date = "' . addslashes($filters['completion_date']) . '"';
         }
-
-        if (!empty($filters['locations'])) {
-            $locFilters = collect($filters['locations'])
-                ->filter(fn($loc) => !empty(trim($loc)))
-                ->map(function ($loc) {
-                    $clean = str_replace(['"', ','], ['\"', '\,'], trim($loc));
-                    return 'location = "' . $clean . '"';
-                })
+        if (!empty($filters['id'])) {
+            $locFilters = collect($filters['id'])
+                ->map(fn($loc) => 'id = "' . addslashes($loc) . '"')
                 ->join(' OR ');
+            $filterConditions[] = "($locFilters)";
         }
 
         $filterString = implode(' AND ', $filterConditions);

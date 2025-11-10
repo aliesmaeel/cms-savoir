@@ -67,7 +67,7 @@ $index = $client->index('off_plan_projects');
 $index->updateFilterableAttributes([
     'developer',
     'completion_date',
-    'location',
+    'id',
     'price'
 ]);
 
