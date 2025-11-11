@@ -846,7 +846,6 @@ class HomeController
             return response()->json(['message' => 'Property not found'], 404);
         }
 
-        // Add community and subcommunity names
         $data = $property->toArray();
         $data['community'] = $property->pcommunity->name ?? null;
         $data['sub_community'] = $property->psubcommunity->name ?? null;

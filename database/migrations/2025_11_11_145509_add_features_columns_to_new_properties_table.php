@@ -14,9 +14,10 @@ class AddFeaturesColumnsToNewPropertiesTable extends Migration
     public function up()
     {
         Schema::table('new_properties', function (Blueprint $table) {
-            $table->text('features')->nullable();
+            $table->json('features')->nullable()->default(json_encode([]));
         });
     }
+
 
     /**
      * Reverse the migrations.
