@@ -65,6 +65,7 @@ class GoyzerIntegrationConroller extends Controller
         $properties = $array["SalesListingsResponse"]["SalesListingsResult"]["ArrayOfUnitDTO"]['UnitDTO'];
 
 
+
         $communities = Community::pluck('name', 'id')->toArray();
         $sub_communities = SubCommunity::pluck('name', 'id')->toArray();
         $propertiesExistsInOurDb=NewProperty::where('offering_type','RS')->get();
@@ -311,8 +312,16 @@ class GoyzerIntegrationConroller extends Controller
 
             ]);
 
+            $fixtures = $property['FittingFixtures']['FittingFixture'];
+            $amenityNames = array_column($fixtures, 'Name');
 
-                $cloudName = "djd3y5gzw";
+            $amenities = implode(', ', $amenityNames);
+
+            $newproperty->update([
+                'features' => $amenities,
+            ]);
+
+            $cloudName = "djd3y5gzw";
 
                 $property_images = is_array($property['Images']) ? $property['Images'] : json_decode($property['Images']);
                 if (array_key_exists('Image', $property_images) && count($property_images['Image']) > 0) {
