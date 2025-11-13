@@ -612,7 +612,7 @@
                 <!-- Features -->
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
-                        <label class="title-input" for="features">Features</label>
+                        <label class="title-input" for="features">Features & Aminities</label>
                     </div>
                     <div class="col-md-8" style="overflow: scroll;min-height: 150px">
                         <div id="feature-input" class=""
