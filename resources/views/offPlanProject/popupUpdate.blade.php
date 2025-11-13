@@ -342,7 +342,7 @@
                         <input type="file" placeholder="Enter Image" name="image" id="image"
                                style="background: #fff!important">
                         <div class="holder mt-4">
-                            <img id="imgPreview" src="{{asset('/storage/').'/'.$popup->image}}" alt="pic"
+                            <img id="imgPreview" src="{{asset('/storage/').'/'.$popup?->image}}" alt="pic"
                                  width="100" height="100" />
                         </div>
                     </div>

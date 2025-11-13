@@ -366,16 +366,18 @@
         </li>
     @endif
 
-    <li id="sbitem78">
-        <a href="#" class="link-content data-btn78"><span class="left-title">Global Projects</span><span
-                class="fas fa-caret-down twenty"></span></a>
-        <ul class="data-show78">
-            <li id="sbitem78_1"><a href="{{ route('create_global') }}"><i class="fas fa-fw fa-table"></i>
-                    Create Global Project</a></li>
-            <li id="sbitem78_2"><a href="{{ route('list_globals') }}"><i class="fas fa-fw fa-table"></i>
-                    List Global Projects</a>
+    <li id="sbitem30">
+        <a href="#" class="link-content data-btn30"><span class="left-title">Off-Plan Projects</span><span
+                class="fas fa-caret-down offy"></span></a>
+        <ul class="data-show30">
+            <li id="sbitem30_1"><a href="{{ route('off_plan_project_create') }}"><i class="fas fa-ad"></i>
+                    Create Off-Plan Project</a></li>
+            <li id="sbitem30_2"><a href="{{ route('off_plan_project_list') }}"><i class="fas fa-fw fa-table"></i>
+                    Off-Plan Projects List</a>
             </li>
-
+            <li id="sbitem30_3"><a href="{{ route('pop-up-update') }}"><i class="fas fa-fw fa-table"></i>
+                    Popup Update</a>
+            </li>
         </ul>
     </li>
 
@@ -404,9 +406,6 @@
                     <li id="sbitem3_1"><a href="{{ route('getcharts') }}"><i class="fas fa-chart-pie"></i>
                             Charts</a></li>
 
-                    {{-- <li id="sbitem3_2"><a href="{{ route('geochart') }}"><i class="fas fa-chart-pie"></i>
-                            Geo
-                            chart</a></li> --}}
                     <li id="sbitem3_5"><a href="{{ route('leader_board_index') }}"><i
                                 class="fas fa-fw fa-table"></i>
                             Calls</a></li>
@@ -444,18 +443,29 @@
             </ul>
         </li>
         {{-- Off-Plan Projects Section --}}
-        <li id="sbitem30">
-            <a href="#" class="link-content data-btn30"><span class="left-title">Off-Plan Projects</span><span
-                    class="fas fa-caret-down off-plan30"></span></a>
-            <ul class="off-plan-show30">
-                <li id="sbitem30_1"><a href="{{ route('off_plan_project_create') }}"><i class="fas fa-ad"></i>
-                        Create Off-Plan Project</a></li>
-                <li id="sbitem30_2"><a href="{{ route('off_plan_project_list') }}"><i class="fas fa-fw fa-table"></i>
-                        Off-Plan Projects List</a>
+
+
+        <li id="sbitem78">
+            <a href="#" class="link-content data-btn78"><span class="left-title">Global Projects</span><span
+                    class="fas fa-caret-down globly"></span></a>
+            <ul class="data-show78">
+                <li id="sbitem78_1"><a href="{{ route('create_global') }}"><i class="fas fa-fw fa-table"></i>
+                        Create Global Project</a></li>
+                <li id="sbitem78_2"><a href="{{ route('list_globals') }}"><i class="fas fa-fw fa-table"></i>
+                        List Global Projects</a>
                 </li>
 
-                <li id="sbitem30_2"><a href="{{ route('pop-up-update') }}"><i class="fas fa-fw fa-table"></i>
-                        Popup Update</a>
+            </ul>
+        </li>
+
+        <li id="sbitem56">
+            <a href="#" class="link-content data-btn56"><span class="left-title">Insights</span><span
+                    class="fas fa-caret-down insighty"></span></a>
+            <ul class="data-show56">
+                <li id="sbitem56_1"><a href="{{ route('insight_create') }}"><i class="fas fa-ad"></i>
+                        Create Insight</a></li>
+                <li id="sbitem56_2"><a href="{{ route('insight_list') }}"><i class="fas fa-fw fa-table"></i>
+                        Insights List</a>
                 </li>
             </ul>
         </li>
@@ -483,22 +493,12 @@
         </li>
 
 
-        <li id="sbitem56">
-            <a href="#" class="link-content data-btn56"><span class="left-title">Insights</span><span
-                    class="fas fa-caret-down off-plan56"></span></a>
-            <ul class="off-plan-show56">
-                <li id="sbitem56_1"><a href="{{ route('insight_create') }}"><i class="fas fa-ad"></i>
-                        Create Insight</a></li>
-                <li id="sbitem56_2"><a href="{{ route('insight_list') }}"><i class="fas fa-fw fa-table"></i>
-                        Insights List</a>
-                </li>
-            </ul>
-        </li>
+
 
         <li id="sbitem57">
             <a href="#" class="link-content data-btn57"><span class="left-title">FAQ</span><span
-                    class="fas fa-caret-down off-plan57"></span></a>
-            <ul class="off-plan-show57">
+                    class="fas fa-caret-down faq"></span></a>
+            <ul class="data-show57">
                 <li id="sbitem57_1"><a href="{{ route('faq_create') }}"><i class="fas fa-ad"></i>
                         Create FAQ</a></li>
                 <li id="sbitem57_2"><a href="{{ route('faq_list') }}"><i class="fas fa-fw fa-table"></i>
@@ -513,10 +513,10 @@
         <li id="sbitem32">
             <a href="#" class="link-content data-btn32">
                 <span class="left-title">Emails</span>
-                <span class="fas fa-caret-down off-plan32"></span>
+                <span class="fas fa-caret-down emails"></span>
             </a>
-            <ul class="email-show" >
-                <li id="sbitem32_2">
+            <ul class="data-show32" >
+                <li id="sbitem32_1">
                     <a href="{{ route('emails.show') }}">
                         <i class="fas fa-fw fa-table"></i> Show Emails
                     </a>
