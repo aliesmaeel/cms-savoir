@@ -70,6 +70,7 @@ class OffPlanProjectController extends Controller
     {
         if ($request->ajax()) {
 
+
             // ✅ Validate only the fields that exist in the new DB
             $validator = $request->validate([
                 'title' => 'required',

@@ -614,10 +614,16 @@
                     <div class="col-md-3">
                         <label class="title-input" for="features">Features</label>
                     </div>
-                    <div class="col-md-8">
-                        <textarea name="features" id="features" class="ckeditor input-form" placeholder="Enter Features" style="background: #fff!important; visibility: hidden; display: none;">{{$off_plan->features}}</textarea>
+                    <div class="col-md-8" style="overflow: scroll;min-height: 150px">
+                        <div id="feature-input" class=""
+                             style="background: #fff!important; padding: 8px; border: 1px solid #ccc; min-height: 45px; display: flex; flex-wrap: wrap; gap: 5px;">
+                            <input type="text" id="feature-text" placeholder="Type a feature and press Enter"
+                                   style="border: none; outline: none; flex: 1; min-width: 150px;">
+                        </div>
+                        <input type="hidden" name="features" id="features" value="{{ $off_plan->features }}">
                     </div>
                 </div>
+
 
                 <!-- Lat & Lng -->
                 <x-input-row label="Lat" type="number" name="lat" value="{{$off_plan->lat}}" placeholder="Enter Lat"/>
@@ -686,6 +692,69 @@
 
             $('select.custom-select').val($('select.custom-select > option:last').val()).change();
 
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('feature-input');
+            const input = document.getElementById('feature-text');
+            const hiddenInput = document.getElementById('features');
+
+            let features = [];
+
+            // 🟩 Load existing features from backend (comma-separated string)
+            if (hiddenInput.value.trim() !== '') {
+                features = hiddenInput.value.split(',').map(f => f.trim()).filter(f => f !== '');
+                features.forEach(addTag);
+            }
+
+            // 🟩 Add feature on Enter key
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && input.value.trim() !== '') {
+                    e.preventDefault();
+                    const value = input.value.trim();
+
+                    if (!features.includes(value)) {
+                        features.push(value);
+                        addTag(value);
+                        updateHiddenInput();
+                    }
+                    input.value = '';
+                }
+            });
+
+            // 🟩 Create a tag (chip)
+            function addTag(text) {
+                const tag = document.createElement('span');
+                tag.textContent = text;
+                tag.className = 'badge bg-primary';
+                tag.style.padding = '6px 10px';
+                tag.style.borderRadius = '20px';
+                tag.style.display = 'flex';
+                tag.style.alignItems = 'center';
+                tag.style.gap = '6px';
+                tag.style.fontSize = '14px';
+                tag.style.margin = '2px';
+
+                const removeBtn = document.createElement('span');
+                removeBtn.textContent = '×';
+                removeBtn.style.cursor = 'pointer';
+                removeBtn.style.fontWeight = 'bold';
+                removeBtn.onclick = function() {
+                    features = features.filter(f => f !== text);
+                    tag.remove();
+                    updateHiddenInput();
+                };
+
+                tag.appendChild(removeBtn);
+                container.insertBefore(tag, input);
+            }
+
+            // 🟩 Update hidden input value
+            function updateHiddenInput() {
+                hiddenInput.value = features.join(',');
+            }
         });
     </script>
 
@@ -785,11 +854,6 @@
             if (singleImageInput.files.length > 0) {
                 formData.append('image', singleImageInput.files[0]);
             }
-
-
-            var feature = CKEDITOR.instances.features.getData();
-
-            formData.append('features', feature);
 
             $.ajax({
                 method: 'post',
