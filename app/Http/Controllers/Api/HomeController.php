@@ -25,7 +25,7 @@ class HomeController
     public function homePage()
     {
 
-        $countries = DB::table('countries')
+        $countries = DB::table('global_projects')
             ->select('name', 'image')
             ->distinct()
             ->get()
