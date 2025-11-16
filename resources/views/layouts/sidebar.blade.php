@@ -14,8 +14,8 @@
                 <!-- Sidebar - Brand -->
                 <a class="sidebar-brand align-items-center " href="{{ url('/createlead') }}">
                     <div class="sidebar-brand-icon">
-                        <img src="{{ asset('img/savoir.png') }}" style="width: 4.4rem;"
-                             class="user-img img-responsive" alt="">
+                        <img src="{{ asset('img/savoir.png') }}" style="width: 4.4rem;" class="user-img img-responsive"
+                            alt="">
 
                     </div>
                 </a>
@@ -28,10 +28,10 @@
 
         {{-- Leads Section --}}
         @if (Auth::user()->isagent() ||
-            Auth::user()->isadmin() ||
-            Auth::user()->isconsultant() ||
-            Auth::user()->iscustomer() ||
-            Auth::user()->issuperAdmin())
+                Auth::user()->isadmin() ||
+                Auth::user()->isconsultant() ||
+                Auth::user()->iscustomer() ||
+                Auth::user()->issuperAdmin())
             <li id="sbitem1">
                 <a href="#" class="link-content leads-btn"><span class="left-title">Leads</span><span
                         class="fas fa-caret-down first"></span></a>
@@ -182,10 +182,7 @@
         @endif
     @endif
 
-    @if (Auth::user()->isadmin() ||
-        Auth::user()->issuperAdmin() ||
-        Auth::user()->isagent() ||
-        Auth::user()->iscustomer())
+    @if (Auth::user()->isadmin() || Auth::user()->issuperAdmin() || Auth::user()->isagent() || Auth::user()->iscustomer())
         <li id="sbitem5">
             <a href="#" class="link-content pm-btn"><span class="left-title">Property
                     Management</span><span class="fas fa-caret-down fifth"></span></a>
@@ -250,9 +247,9 @@
     @endif
 
     @if (Auth::user()->isadmin() ||
-        Auth::user()->issuperAdmin() ||
-        Auth::user()->isagent() ||
-        Auth::user()->isPhotographer())
+            Auth::user()->issuperAdmin() ||
+            Auth::user()->isagent() ||
+            Auth::user()->isPhotographer())
         <li id="sbitem7">
             <a href="#" class="link-content pmeventa"><span class="left-title">Events</span><span
                     class="fas fa-caret-down pm-events"></span></a>
@@ -277,9 +274,9 @@
                     </li>
                 @endif
                 @if (Auth::user()->isadmin() ||
-                    Auth::user()->issuperAdmin() ||
-                    Auth::user()->isagent() ||
-                    Auth::user()->isPhotographer())
+                        Auth::user()->issuperAdmin() ||
+                        Auth::user()->isagent() ||
+                        Auth::user()->isPhotographer())
                     <li id="sbitem6_2"><a href="{{ route('show_appointment_index') }}"><i
                                 class="fas fa-fw fa-table"></i>
                             Appointments List</a></li>
@@ -321,7 +318,6 @@
                     <li id="sbitem4_88"><a href="{{ route('signature.index') }}"><i class="fas fa-ad"></i>
                             Create Signature</a>
                     </li>
-
                 @endif
                 @if (Auth::user()->issuperAdmin())
                     <li id="sbitem4_6"><a href="{{ route('create_super_Admin') }}"><i class="fas fa-ad"></i>
@@ -397,6 +393,8 @@
         </li>
     @endif
 
+
+
     @if (Auth::user()->isadmin() || Auth::user()->issuperAdmin())
         <li id="sbitem3">
             <a href="#" class="link-content report-btn"><span class="left-title">Reports</span><span
@@ -431,13 +429,16 @@
             </ul>
         </li>
         <li id="sbitem22">
-            <a href="#" class="link-content subscriptions-btn"><span class="left-title">Subscriptions</span><span
+            <a href="#" class="link-content subscriptions-btn"><span
+                    class="left-title">Subscriptions</span><span
                     class="fas fa-caret-down subscriptions-span"></span></a>
             <ul class="subscriptions-show">
-                <li id="sbitem22_1"><a href="{{ route('subscriptions') }}"><i class="fas fa-ad"></i>Subscriptions List
+                <li id="sbitem22_1"><a href="{{ route('subscriptions') }}"><i class="fas fa-ad"></i>Subscriptions
+                        List
                     </a>
                 </li>
-                <li id="sbitem22_2"><a href="{{ route('downloadedBrochures') }}"><i class="fas fa-ad"></i>Downloaded Brochures
+                <li id="sbitem22_2"><a href="{{ route('downloadedBrochures') }}"><i class="fas fa-ad"></i>Downloaded
+                        Brochures
                     </a>
                 </li>
             </ul>
@@ -478,21 +479,19 @@
                 <li id="sbitem63_1"><a href="{{ route('create_testimonial') }}"><i class="fas fa-ad"></i>
                         Create Testimonial</a></li>
                 <li id="sbitem63_2"><a href="{{ route('list_testimonials') }}"><i class="fas fa-fw fa-table"></i>
-                         List Testimonial</a>
+                        List Testimonial</a>
                 </li>
                 <li id="sbitem63_3"><a href="{{ route('create_marketing') }}"><i class="fas fa-ad"></i>
                         Create Marketing Channel</a></li>
                 <li id="sbitem63_4"><a href="{{ route('list_marketing') }}"><i class="fas fa-fw fa-table"></i>
-                         List Marketing Channels</a>
+                        List Marketing Channels</a>
                 </li>
                 <li id="sbitem63_3"><a href="{{ route('create_listing') }}"><i class="fas fa-ad"></i>
                         Create Listing Syndication</a></li>
                 <li id="sbitem63_4"><a href="{{ route('list_listing') }}"><i class="fas fa-fw fa-table"></i>
-                         List Listing Syndications</a>
+                        List Listing Syndications</a>
             </ul>
         </li>
-
-
 
 
         <li id="sbitem57">
@@ -508,6 +507,26 @@
         </li>
 
 
+        @if (Auth::user()->isadmin() || Auth::user()->issuperAdmin())
+            <li id="sbitem64">
+                <a href="#" class="link-content data-btn64">
+                    <span class="left-title">Careers</span>
+                    <span class="fas fa-caret-down careers"></span>
+                </a>
+                <ul class="data-show64">
+                    <li id="sbitem64_1">
+                        <a href="{{ route('career_create') }}"><i class="fas fa-ad"></i>
+                            Create Career</a>
+                    </li>
+                    <li id="sbitem64_2">
+                        <a href="{{ route('career_list') }}"><i class="fas fa-fw fa-table"></i>
+                            Careers List</a>
+                    </li>
+                </ul>
+            </li>
+        @endif
+
+
 
 
         <li id="sbitem32">
@@ -515,7 +534,7 @@
                 <span class="left-title">Emails</span>
                 <span class="fas fa-caret-down emails"></span>
             </a>
-            <ul class="data-show32" >
+            <ul class="data-show32">
                 <li id="sbitem32_1">
                     <a href="{{ route('emails.show') }}">
                         <i class="fas fa-fw fa-table"></i> Show Emails
@@ -542,10 +561,12 @@
                     class="fas fa-caret-down fourteen"></span></a>
             <ul class="sync-show">
                 <li id="sbitem14_1"><a href="{{ route('sync') }}"><i class="fas fa-ad"></i> Sync Properties</a>
-                <li id="sbitem14_2"><a href="{{ route('sync_communities') }}"><i class="fas fa-ad"></i> Sync Communities</a>
+                <li id="sbitem14_2"><a href="{{ route('sync_communities') }}"><i class="fas fa-ad"></i> Sync
+                        Communities</a>
                 <li id="sbitem14_3"><a href="{{ route('sync_sub_communities') }}"><i class="fas fa-ad"></i> Sync
                         SubCommunities</a>
-                <li id="sbitem14_4"><a href="{{ route('sync_buildings') }}"><i class="fas fa-ad"></i> Sync Buildings</a>
+                <li id="sbitem14_4"><a href="{{ route('sync_buildings') }}"><i class="fas fa-ad"></i> Sync
+                        Buildings</a>
                 </li>
             </ul>
         </li>
@@ -571,7 +592,7 @@
     {{-- Log Out --}}
     <li>
         <a href="{{ route('logout') }}"
-           onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+            onclick="event.preventDefault();document.getElementById('logout-form').submit();">
             <span class="left-title"> {{ __('Logout') }}</span>
         </a>
 

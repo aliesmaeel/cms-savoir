@@ -132,6 +132,7 @@
             background: #cc7070;
             border-left-color: transparent;
         }
+
         .sbitem22.active {
             color: #e6e6e6;
             background: #cc7070;
@@ -157,6 +158,7 @@
             box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
             background: #ffff;
         }
+
         nav ul .subscriptions-show.show {
             display: block;
             height: auto;
@@ -326,6 +328,7 @@
             box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
             background: #fff;
         }
+
         nav ul .data-show21.show {
             display: block;
             height: auto;
@@ -335,6 +338,7 @@
             box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
             background: #fff;
         }
+
         nav ul .off-plan-show30.show {
             display: block;
             height: auto;
@@ -344,6 +348,7 @@
             box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
             background: #fff;
         }
+
         nav ul .off-plan-show63.show {
             display: block;
             height: auto;
@@ -353,6 +358,7 @@
             box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
             background: #fff;
         }
+
         nav ul .off-plan-show56.show {
             display: block;
             height: auto;
@@ -362,6 +368,7 @@
             box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
             background: #fff;
         }
+
         nav ul .off-plan-show57.show {
             display: block;
             height: auto;
@@ -375,7 +382,7 @@
 
 
 
-          nav ul .off-plan-show31.show {
+        nav ul .off-plan-show31.show {
             display: block;
             height: auto;
             overflow-y: auto;
@@ -384,6 +391,7 @@
             box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
             background: #fff;
         }
+
         nav ul .off-plan-show32.show {
             display: block;
             height: auto;
@@ -393,6 +401,7 @@
             box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
             background: #fff;
         }
+
         nav ul .off-plan-show55.show {
             display: block;
             height: auto;
@@ -402,6 +411,7 @@
             box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
             background: #fff;
         }
+
         nav ul ul li {
             line-height: 42px;
             border-bottom: none;
@@ -462,9 +472,8 @@
         #sbitem57 .link-content,
         #sbitem87 .link-content,
         #sbitem63 .link-content,
-        #sbitem78 .link-content
-
-        {
+        #sbitem78 .link-content,
+        #sbitem64 .link-content {
             height: 4rem;
             padding: 9px 20px;
             align-items: center;
@@ -752,8 +761,7 @@
             #sbitem3_3,
             #sbitem3_4,
             #sbitem3_5,
-            #sbitem32_2
-            #sbitem3_6 {
+            #sbitem32_2 #sbitem3_6 {
                 line-height: 17px !important;
                 margin-bottom: 10px !important;
             }
@@ -958,11 +966,11 @@
             font-size: 12px;
         }
 
-            .email-show li a {
-                line-height: 2;
-                padding-left: 13px;
-                font-size: 12px;
-            }
+        .email-show li a {
+            line-height: 2;
+            padding-left: 13px;
+            font-size: 12px;
+        }
 
         nav ul .pm-show.show {
             height: 10rem;
@@ -1169,6 +1177,7 @@
             box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
             background: #efefef;
         }
+
         nav ul .data-show30.show {
             display: block;
             height: auto;
@@ -1189,7 +1198,7 @@
             background: #efefef;
         }
 
-        nav ul .data-show32.show {
+        nav ul .data-show64.show {
             display: block;
             height: auto;
             /* overflow-y: scroll; */
@@ -1199,6 +1208,15 @@
             background: #efefef;
         }
 
+        nav ul .data-show32.show {
+            display: block;
+            height: auto;
+            /* overflow-y: scroll; */
+            width: 100%;
+            border-radius: 0px 3px 3px 0;
+            box-shadow: 0px -3px 3px -1px #656161, 2px 0 5px -1px #fff;
+            background: #efefef;
+        }
     </style>
 
     @stack('head')
@@ -1445,7 +1463,7 @@
                     $('#sbitem4_5').addClass('active');
                 else if ("{{ request()->route()->getName() }}" == 'create_super_Admin')
                     $('#sbitem4_6').addClass('active')
-                else if ("{{ request()->route()->getName() }}" == 'signature.index'){
+                else if ("{{ request()->route()->getName() }}" == 'signature.index') {
                     $('#sbitem4_88').addClass('active')
                 }
 
@@ -1531,8 +1549,8 @@
                 "{{ request()->route()->getName() }}" == 'list_communities' ||
                 "{{ request()->route()->getName() }}" == 'create_new_subcommunity' ||
                 "{{ request()->route()->getName() }}" == 'list_subcommunities' ||
-                "{{ request()->route()->getName() }}" == 'list_countries'||
-                "{{ request()->route()->getName() }}" == 'list_cities'||
+                "{{ request()->route()->getName() }}" == 'list_countries' ||
+                "{{ request()->route()->getName() }}" == 'list_cities' ||
                 "{{ request()->route()->getName() }}" == 'list_archived_properties_index'
             ) {
                 $('#sbitem5').find('a:first').toggleClass('selected');
@@ -1933,16 +1951,13 @@
                 $('nav ul .off-plan30').removeClass('rotate');
                 $('nav ul .off-plan-show30').removeClass('show');
 
-            }
-            else if (
+            } else if (
                 "{{ request()->route()->getName() }}" == 'contact_us_list'
 
-            )
-            {
+            ) {
                 $('#sbitem21').find('a:first').toggleClass('selected');
                 if ("{{ request()->route()->getName() }}" == 'contact_us_list')
-                    $('#sbitem21_1').addClass('active');
-;
+                    $('#sbitem21_1').addClass('active');;
 
 
                 $('nav ul .asd-show').removeClass('show');
@@ -1994,8 +2009,7 @@
                 $('nav ul .off-plan30').removeClass('rotate');
                 $('nav ul .off-plan-show30').removeClass('show');
 
-            }
-            else if (
+            } else if (
                 "{{ request()->route()->getName() }}" == 'create_developer' ||
                 "{{ request()->route()->getName() }}" == 'listdeveloperindex'
 
@@ -2029,9 +2043,9 @@
                 $('nav ul .off-plan30').toggleClass('rotate');
                 $('nav ul .off-plan-show30').toggleClass('show');
 
-            }else if(
+            } else if (
                 "{{ request()->route()->getName() }}" == 'off_plan_project_create' ||
-                "{{ request()->route()->getName() }}" == 'off_plan_project_list'||
+                "{{ request()->route()->getName() }}" == 'off_plan_project_list' ||
                 "{{ request()->route()->getName() }}" == 'pop-up-update'
             ) {
                 $('#sbitem30').find('a:first').toggleClass('selected');
@@ -2062,7 +2076,7 @@
                 $('nav ul .subscriptions-show').removeClass('show');
                 $('nav ul .off-plan30').toggleClass('rotate');
                 $('nav ul .data-show30').toggleClass('show');
-            }else if(
+            } else if (
                 "{{ request()->route()->getName() }}" == 'create_global' ||
                 "{{ request()->route()->getName() }}" == 'list_globals'
 
@@ -2092,8 +2106,7 @@
                 $('nav ul .subscriptions-show').removeClass('show');
                 $('nav ul .off-plan30').toggleClass('rotate');
                 $('nav ul .data-show78').toggleClass('show');
-            }
-            else if(
+            } else if (
                 "{{ request()->route()->getName() }}" == 'insight_create' ||
                 "{{ request()->route()->getName() }}" == 'insight_list'
 
@@ -2123,9 +2136,7 @@
                 $('nav ul .subscriptions-show').removeClass('show');
                 $('nav ul .off-plan30').toggleClass('rotate');
                 $('nav ul .data-show56').toggleClass('show');
-            }
-
-            else if(
+            } else if (
                 "{{ request()->route()->getName() }}" == 'faq_create' ||
                 "{{ request()->route()->getName() }}" == 'faq_list'
 
@@ -2155,9 +2166,38 @@
                 $('nav ul .subscriptions-show').removeClass('show');
                 $('nav ul .off-plan30').toggleClass('rotate');
                 $('nav ul .data-show57').toggleClass('show');
-            }
+            } else if (
+                "{{ request()->route()->getName() }}" == 'career_create' ||
+                "{{ request()->route()->getName() }}" == 'career_list'
+            ) {
 
-            else if(
+
+                $('#sbitem64').find('a:first').toggleClass('selected');
+                if ("{{ request()->route()->getName() }}" == 'career_create')
+                    $('#sbitem64_1').addClass('active');
+                else if ("{{ request()->route()->getName() }}" == 'career_list')
+                    $('#sbitem64_2').addClass('active');
+
+                $('nav ul .asd-show').removeClass('show');
+                $('nav ul .comments-show').removeClass('show');
+                $('nav ul .data-show').removeClass('show');
+                $('nav ul .data-show2').removeClass('show');
+                $('nav ul .report-show').removeClass('show');
+                $('nav ul .au-show').removeClass('show');
+                $('nav ul .pm-event').removeClass('show');
+                $('nav ul .pm-show').removeClass('show');
+                $('nav ul .ap-show').removeClass('show');
+                $('nav ul .meet-show').removeClass('show');
+                $('nav ul .setting-show').removeClass('show');
+                $('nav ul .sync-show').removeClass('show');
+                $('nav ul .leads-show').removeClass('show');
+                $('nav ul .careers').removeClass('rotate');
+                $('nav ul .contact_us21').removeClass('rotate');
+                $('nav ul .data-show21').removeClass('show');
+                $('nav ul .subscriptions-show').removeClass('show');
+                $('nav ul .off-plan30').toggleClass('rotate');
+                $('nav ul .data-show64').toggleClass('show');
+            } else if (
                 "{{ request()->route()->getName() }}" == "emails.show"
             ) {
 
@@ -2797,74 +2837,74 @@
         $('.sync-btn').click(function() {
 
 
-        $('nav ul .asd-show').removeClass('show');
-        $('nav ul .comments-show').removeClass('show');
-        $('nav ul .data-show').removeClass('show');
-        $('nav ul .data-show3').removeClass('show');
-        $('nav ul .data-show20').removeClass('show');
-        $('nav ul .data-show2').removeClass('show');
-        $('nav ul .report-show').removeClass('show');
-        $('nav ul .au-show').removeClass('show');
-        $('nav ul .pm-event').removeClass('show');
-        $('nav ul .pm-show').removeClass('show');
-        $('nav ul .ap-show').removeClass('show');
-        $('nav ul .meet-show').removeClass('show');
-        $('nav ul .setting-show').removeClass('show');
-        $('nav ul .sync-show').toggleClass('show');
-        $('nav ul .leads-show').removeClass('show');
-        $('nav ul .fourteen').toggleClass('rotate');
-        $('nav ul .data-show21').removeClass('show');
-        $('nav ul .contact_us21').removeClass('rotate');
-        $('nav ul .subscriptions-show').removeClass('show');
-        $('nav ul .off-plan30').removeClass('rotate');
-        $('nav ul .off-plan-show30').removeClass('show');
-});
-    $('.data-btn21').click(function() {
-        $('nav ul .asd-show').removeClass('show');
-        $('nav ul .comments-show').removeClass('show');
-        $('nav ul .data-show').removeClass('show');
-        $('nav ul .data-show3').removeClass('show');
-        $('nav ul .data-show20').removeClass('show');
-        $('nav ul .data-show2').removeClass('show');
-        $('nav ul .report-show').removeClass('show');
-        $('nav ul .au-show').removeClass('show');
-        $('nav ul .pm-event').removeClass('show');
-        $('nav ul .pm-show').removeClass('show');
-        $('nav ul .ap-show').removeClass('show');
-        $('nav ul .meet-show').removeClass('show');
-        $('nav ul .setting-show').removeClass('show');
-        $('nav ul .sync-show').removeClass('show');
-        $('nav ul .leads-show').removeClass('show');
-        $('nav ul .data-show21').toggleClass('show');
-        $('nav ul .contact_us21').toggleClass('rotate');
-        $('nav ul .subscriptions-show').removeClass('show');
-        $('nav ul .off-plan30').removeClass('rotate');
-        $('nav ul .off-plan-show30').removeClass('show');
+            $('nav ul .asd-show').removeClass('show');
+            $('nav ul .comments-show').removeClass('show');
+            $('nav ul .data-show').removeClass('show');
+            $('nav ul .data-show3').removeClass('show');
+            $('nav ul .data-show20').removeClass('show');
+            $('nav ul .data-show2').removeClass('show');
+            $('nav ul .report-show').removeClass('show');
+            $('nav ul .au-show').removeClass('show');
+            $('nav ul .pm-event').removeClass('show');
+            $('nav ul .pm-show').removeClass('show');
+            $('nav ul .ap-show').removeClass('show');
+            $('nav ul .meet-show').removeClass('show');
+            $('nav ul .setting-show').removeClass('show');
+            $('nav ul .sync-show').toggleClass('show');
+            $('nav ul .leads-show').removeClass('show');
+            $('nav ul .fourteen').toggleClass('rotate');
+            $('nav ul .data-show21').removeClass('show');
+            $('nav ul .contact_us21').removeClass('rotate');
+            $('nav ul .subscriptions-show').removeClass('show');
+            $('nav ul .off-plan30').removeClass('rotate');
+            $('nav ul .off-plan-show30').removeClass('show');
+        });
+        $('.data-btn21').click(function() {
+            $('nav ul .asd-show').removeClass('show');
+            $('nav ul .comments-show').removeClass('show');
+            $('nav ul .data-show').removeClass('show');
+            $('nav ul .data-show3').removeClass('show');
+            $('nav ul .data-show20').removeClass('show');
+            $('nav ul .data-show2').removeClass('show');
+            $('nav ul .report-show').removeClass('show');
+            $('nav ul .au-show').removeClass('show');
+            $('nav ul .pm-event').removeClass('show');
+            $('nav ul .pm-show').removeClass('show');
+            $('nav ul .ap-show').removeClass('show');
+            $('nav ul .meet-show').removeClass('show');
+            $('nav ul .setting-show').removeClass('show');
+            $('nav ul .sync-show').removeClass('show');
+            $('nav ul .leads-show').removeClass('show');
+            $('nav ul .data-show21').toggleClass('show');
+            $('nav ul .contact_us21').toggleClass('rotate');
+            $('nav ul .subscriptions-show').removeClass('show');
+            $('nav ul .off-plan30').removeClass('rotate');
+            $('nav ul .off-plan-show30').removeClass('show');
 
-    });
-    $('.subscriptions-btn').click(function() {
-        $('nav ul .asd-show').removeClass('show');
-        $('nav ul .comments-show').removeClass('show');
-        $('nav ul .data-show').removeClass('show');
-        $('nav ul .data-show3').removeClass('show');
-        $('nav ul .data-show20').removeClass('show');
-        $('nav ul .data-show2').removeClass('show');
-        $('nav ul .report-show').removeClass('show');
-        $('nav ul .au-show').removeClass('show');
-        $('nav ul .pm-event').removeClass('show');
-        $('nav ul .pm-show').removeClass('show');
-        $('nav ul .ap-show').removeClass('show');
-        $('nav ul .meet-show').removeClass('show');
-        $('nav ul .setting-show').removeClass('show');
-        $('nav ul .sync-show').removeClass('show');
-        $('nav ul .leads-show').removeClass('show');
-        $('nav ul .data-show21').removeClass('show');
-        $('nav ul .subscriptions-span').toggleClass('rotate');
-        $('nav ul .subscriptions-show').toggleClass('show');
-        $('nav ul .off-plan30').removeClass('rotate');
-        $('nav ul .off-plan-show30').removeClass('show');
+        });
+        $('.subscriptions-btn').click(function() {
+            $('nav ul .asd-show').removeClass('show');
+            $('nav ul .comments-show').removeClass('show');
+            $('nav ul .data-show').removeClass('show');
+            $('nav ul .data-show3').removeClass('show');
+            $('nav ul .data-show20').removeClass('show');
+            $('nav ul .data-show2').removeClass('show');
+            $('nav ul .report-show').removeClass('show');
+            $('nav ul .au-show').removeClass('show');
+            $('nav ul .pm-event').removeClass('show');
+            $('nav ul .pm-show').removeClass('show');
+            $('nav ul .ap-show').removeClass('show');
+            $('nav ul .meet-show').removeClass('show');
+            $('nav ul .setting-show').removeClass('show');
+            $('nav ul .sync-show').removeClass('show');
+            $('nav ul .leads-show').removeClass('show');
+            $('nav ul .data-show21').removeClass('show');
+            $('nav ul .subscriptions-span').toggleClass('rotate');
+            $('nav ul .subscriptions-show').toggleClass('show');
+            $('nav ul .off-plan30').removeClass('rotate');
+            $('nav ul .off-plan-show30').removeClass('show');
 
-    });
+        });
 
         $('.data-btn63').click(function() {
             $('nav ul .asd-show').removeClass('show');
@@ -2933,6 +2973,28 @@
             $('nav ul .data-show57').toggleClass('show');
         });
 
+        $('.data-btn64').click(function() {
+            $('nav ul .asd-show').removeClass('show');
+            $('nav ul .comments-show').removeClass('show');
+            $('nav ul .data-show').removeClass('show');
+            $('nav ul .data-show3').removeClass('show');
+            $('nav ul .data-show20').removeClass('show');
+            $('nav ul .data-show2').removeClass('show');
+            $('nav ul .report-show').removeClass('show');
+            $('nav ul .au-show').removeClass('show');
+            $('nav ul .pm-event').removeClass('show');
+            $('nav ul .pm-show').removeClass('show');
+            $('nav ul .ap-show').removeClass('show');
+            $('nav ul .meet-show').removeClass('show');
+            $('nav ul .setting-show').removeClass('show');
+            $('nav ul .sync-show').removeClass('show');
+            $('nav ul .leads-show').removeClass('show');
+            $('nav ul .subscriptions-span').removeClass('rotate');
+            $('nav ul .subscriptions-show').removeClass('show');
+            $('nav ul .off-plan64').toggleClass('rotate');
+            $('nav ul .data-show64').toggleClass('show');
+        });
+
 
         $('.data-btn32').click(function() {
             $('nav ul .asd-show').removeClass('show');
@@ -2956,7 +3018,7 @@
         });
 
 
-          $('.data-btn31').click(function (e) {
+        $('.data-btn31').click(function(e) {
             e.preventDefault(); // Prevent anchor default behavior
 
             // Remove "show" and "rotate" classes from other dropdowns

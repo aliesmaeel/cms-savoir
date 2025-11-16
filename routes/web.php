@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CareerController;
 use App\Http\Controllers\DownloadedBrochureController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\HomePageController;
@@ -507,3 +508,11 @@ Route::match(['post', 'get'], '/global_project_create', [FaqController::class,'g
 Route::match(['post', 'get'], '/global_project_list', [FaqController::class,'global_project_list'])->name('list_globals');
 Route::match(['post', 'get'], '/global_project_update/{id}', [FaqController::class,'global_project_update'])->name('global_project_update');
 Route::post('/global_project_delete', [FaqController::class,'global_project_delete'])->name('global_project_delete');
+
+// Careers & Applicants
+Route::match(['post', 'get'], '/career_create', [CareerController::class, 'career_create'])->name('career_create');
+Route::match(['post', 'get'], '/career_list', [CareerController::class, 'career_list'])->name('career_list');
+Route::match(['post', 'get'], '/career_update/{id}', [CareerController::class, 'career_update'])->name('career_update');
+Route::post('/career_delete', [CareerController::class, 'career_delete'])->name('career_delete');
+Route::match(['post', 'get'], '/career_applicants/{careerId}', [CareerController::class, 'career_applicants'])->name('career_applicants');
+Route::post('/career_apply/{careerId}', [CareerController::class, 'apply'])->name('career_apply');
