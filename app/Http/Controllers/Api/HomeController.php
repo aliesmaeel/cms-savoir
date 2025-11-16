@@ -760,6 +760,18 @@ class HomeController
             ->take(10)
             ->get();
 
+        $fallBackProjects=NewProperty::
+              with([
+            'user:id,name,email,phone,image',
+             ])
+            ->select('id','title_en','slug','price','bedroom','bathroom','photo','offering_type','user_id')
+            ->take(10)
+            ->get();
+
+        if ($similarProjects->isEmpty()) {
+            $similarProjects = $fallBackProjects;
+        }
+
         if (!$project) {
             return response()->json(['message' => 'Global Project not found'], 404);
         }
