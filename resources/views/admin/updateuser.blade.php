@@ -624,7 +624,7 @@
                             <input type="file" placeholder="Enter Image" name="image" id="image"
                                 style="background: #fff!important">
                                 @if($image)
-                                <img src="{{ config('services.cms_link').'/storage/image/Agent/'.$image}}" alt="" width="75px"
+                                <img src="{{$image}}" alt="" width="75px"
                                 height="75px">
                                 @endif
                         </div>

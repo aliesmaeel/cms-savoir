@@ -4,19 +4,19 @@
     <title>Create User</title>
 
     <!-- Custom fonts for this template -->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
 
 
     <!-- Custom styles for this page -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.10.24/css/dataTables.semanticui.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="images/css/dash.css">
+    <link rel="stylesheet" href="{{ asset('images/css/dash.css') }}">
 
     <style>
         body {
@@ -172,11 +172,21 @@
 
         @font-face {
             font-family: 'Lato-Semibold';
-            src: url('font/Lato-Semibold.ttf');
+            src: url({{ asset('font/Lato-Semibold.ttf') }});
+        }
+
+        @font-face {
+            font-family: 'Lato-Bold';
+            src: url({{ asset('font/Lato-Bold.ttf') }});
+        }
+
+        @font-face {
+            font-family: 'Lato-Regular';
+            src: url({{ asset('font/Lato-Regular.ttf') }});
         }
 
         #buttonsubmit {
-            width: 9rem;
+            width: 10rem;
             /* background: #6c4d18; */
             padding: 5px 32px;
             border-radius: 0;
@@ -321,7 +331,7 @@
         </div>
     </div>
     <div id="content-wrapper" class="d-flex flex-column">
-        <img id="img-top" src="img/bg-top.png">
+        <img id="img-top" src="{{ asset('img/bg-top.png') }}">
         <!-- <h3 style="margin: auto" class="mt-4 mb-4">Create new agent</h3> -->
         <form id="maindata">
             <div class="container">
@@ -331,7 +341,7 @@
                         <label class="title-input" for="property">Name</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" placeholder="Enter User Name" name="name" id="name" required>
+                        <input type="text" placeholder="Enter Agent Name" name="name" id="name" required>
                     </div>
                 </div>
                 <div class="row mt-4 mb-4" style="align-items: center;">
@@ -339,19 +349,19 @@
                         <label class="title-input" for="property">Type</label>
                     </div>
                     <div class="col-md-8">
-                        @if(Auth::user()->isadmin())
-                        <select name="type" id="name" onclick="showCompanyName(value)">
-                            <option value="" >select user Type</option>
-                            <option value="3">Agent</option>
-                            <option value="6">photographer</option>
-                        </select>
+                        @if (Auth::user()->isadmin())
+                            <select name="type" id="name" onclick="showCompanyName(value)">
+                                <option value="">select user Type</option>
+                                <option value="3">Agent</option>
+                                <option value="6">photographer</option>
+                            </select>
                         @elseif(Auth::user()->issuperAdmin())
-                        <select name="type" id="name" onclick="showCompanyName(value)">
-                            <option value="" >select user Type</option>
-                            <option value="1">Admin</option>
-                            <option value="3">Agent</option>
-                            <option value="6">photographer</option>
-                        </select>
+                            <select name="type" id="name" onclick="showCompanyName(value)">
+                                <option value="">select user Type</option>
+                                <option value="1">Admin</option>
+                                <option value="3">Agent</option>
+                                <option value="6">photographer</option>
+                            </select>
                         @endif
                     </div>
                 </div>
@@ -360,7 +370,7 @@
                         <label class="title-input" for="property">Email</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" placeholder="Enter User Email" name="email" id="email" required>
+                        <input type="text" placeholder="Enter Email" name="email" id="email" required>
                     </div>
                 </div>
                 <div class="row mt-4 mb-4" style="align-items: center;">
@@ -368,7 +378,7 @@
                         <label class="title-input" for="property">Phone</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" placeholder="Enter User Phone" name="phone" id="phone" required>
+                        <input type="text" placeholder="Enter Phone" name="phone" id="phone" required>
                     </div>
                 </div>
                 <div class="row mt-4 mb-4" style="align-items: center;">
@@ -378,7 +388,7 @@
                     <div class="col-md-8">
                         {{-- <div class="dropdown"> --}}
                             <select name="language" id="name" class="form-control" required>
-                                <option>Select User Language</option>
+                                <option>Select Language</option>
                                 <option value="Afrikaans">Afrikaans</option>
                                 <option value="Albanian">Albanian</option>
                                 <option value="Amharic">Amharic</option>
@@ -530,7 +540,7 @@
                         <label class="title-input" for="property">Password</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="password" placeholder="Enter User Password" name="password" id="password" required
+                        <input type="password" placeholder="Enter Password" name="password" id="password" required
                             style="background: #fff!important">
                     </div>
                 </div>
@@ -539,11 +549,11 @@
                         <label class="title-input" for="property">Repeat Password</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="password" placeholder="Repeat User Password" name="password_confirm"
+                        <input type="password" placeholder="Repeat Password" name="password_confirm"
                             id="password_confirm" required>
                     </div>
                 </div>
-            <div class="mb-3 form-group" style="display: none" id="company_input">
+            <div class="mb-3 form-group" style="" id="company_input">
 
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
@@ -568,16 +578,18 @@
                         <label class="title-input" for="property">Job Description</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" placeholder="Enter Job Description" name="Job_Description" id="Job_Description" required
+                        <input type="text" placeholder="Enter Job Description" name="Job_Description"
+                            id="Job_Description" required
                             style="background: #fff!important">
                     </div>
                 </div>
+              
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
                         <label class="title-input" for="property">Slug</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" placeholder="Enter slug" name="slug" id="slug" required
+                        <input type="text" placeholder="Enter Slug" name="slug" id="slug" required
                             style="background: #fff!important">
                     </div>
                 </div>
@@ -613,19 +625,17 @@
                         <label class="title-input" for="property">Publish TO Website</label>
                     </div>
                     <div class="col-md-8">
-                    <input type="checkbox" name="publish_to_web_site" value="1" id="publish_to_web_site">
-                    <label class="title-input" for="publish_to_web_site"> </label>
-                </div>
+                        <input type="checkbox" name="publish_to_web_site" value="1" id="publish_to_web_site">
+                        <label class="title-input" for="publish_to_web_site"> </label>
+                    </div>
                 </div>
             </div>
                 <div class="row mt-5">
                     <div class="col-md-12 text-center">
-                        <button id="buttonsubmit" class="btn " type="button">Create
+                        <button id="buttonsubmit" type="button" class="registerbtn">Create
                             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
                                 hidden></span>
                         </button>
-
-                        {{-- <button id="buttonsubmit" type="button" class="registerbtn">Create</button> --}}
                     </div>
                 </div>
             </div>
@@ -647,21 +657,21 @@
 
 @push('scripts')
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/datatables-demo.js"></script>
+    <script src="{{ asset('js/demo/datatables-demo.js') }}"></script>
     <script>
         $(document).ready(function() {
 
@@ -746,6 +756,7 @@
                     $.each(error.responseJSON.errors, function(index, value) {
                         $("#alertdata").append(
                             "<div class= 'alert alert-danger'>" +
+                            index +
                             "   " + value + "</div>");
                     });
                     $("#alertdata").attr('hidden', false);
@@ -755,19 +766,15 @@
             });
         });
     </script>
-      <script>
-        function showCompanyName($value) {
-
-                var checkBox = document.getElementById("name");
+    <script>
+        function showCompanyName(value) {
+            var checkBox = document.getElementById("name");
             var text = document.getElementById("company_input");
-            if($value == "3"||$value == "6"){
-            text.style.display = "block";
-            }
-            else{
+            if (value == "3"||value == "6") {
+                text.style.display = "block";
+            } else {
                 text.style.display = "none";
             }
         }
-
-
     </script>
 @endpush
