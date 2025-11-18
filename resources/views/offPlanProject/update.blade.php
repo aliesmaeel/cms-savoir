@@ -156,7 +156,7 @@
             /* border: 1px solid #e4aa47; */
             border-radius: 5px;
             padding: 20px 51px;
-            width: 50rem;
+            width: 75rem;
             margin: 5rem auto;
         }
 
@@ -641,14 +641,14 @@
                     </div>
 
                 <!-- Description -->
-                <div class="row mt-4 mb-4" style="align-items: center;">
+                <div class="row mt-8 col-md-12 mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3"><label class="title-input" for="description">Description</label></div>
                     <div class="col-md-8">
                         <textarea name="description" id="description" required placeholder="Enter Description" class="input_off_plan" style="border-right: 3px solid #9D865C!important">{{$off_plan->description}}</textarea>
                     </div>
                 </div>
 
-                <div class="row mt-4 mb-4" style="align-items: center;">
+                <div class="row mt-8 col-md-12 mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3"><label class="title-input" for="youtube_link">YouTube Link</label></div>
                     <div class="col-md-8">
                         <input type="text" name="youtube_link" id="youtube_link" value="{{$off_plan->youtube_link}}" placeholder="Enter YouTube Link" class="input_off_plan"/>
