@@ -729,7 +729,7 @@ class HomeController
             ->select('id', 'title', 'link', 'image', 'developer', 'completion_date', 'location', 'starting_price',
                 'project_size', 'lifestyle', 'title_type',
                 'first_installment', 'area', 'description',
-                'during_construction', 'on_handover', 'features', 'lat', 'lng', 'order','youtube_link','header_images')
+                'during_construction', 'on_handover', 'features', 'map_link', 'order','youtube_link','header_images')
             ->first();
         // make header_images array as associative array with id and url
         $offplan->header_images = json_decode($offplan->header_images,true) ?? [];
