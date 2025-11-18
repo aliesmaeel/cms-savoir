@@ -705,19 +705,12 @@
 
                 <!-- Lat -->
                 <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3"><label class="title-input" for="lat">Lat</label></div>
+                    <div class="col-md-3"><label class="title-input" for="lat">map</label></div>
                     <div class="col-md-8">
-                        <input type="number" name="lat" required placeholder="Enter Lat" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
+                        <input type="text" name="map_link" required placeholder="Enter map" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
                     </div>
                 </div>
 
-                <!-- Lng -->
-                <div class="row mt-4 mb-4" style="align-items: center;">
-                    <div class="col-md-3"><label class="title-input" for="lng">Lng</label></div>
-                    <div class="col-md-8">
-                        <input type="number" name="lng" required placeholder="Enter Lng" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
-                    </div>
-                </div>
 
                 <!-- Description -->
                 <div class="row mt-4 mb-4" style="align-items: center;">

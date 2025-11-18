@@ -875,8 +875,6 @@ content: "";
                                         <tr>
                                             <th><span class="table-title">Image</span></th>
                                             <th><span class="table-title">title</span></th>
-                                            <th><span class="table-title">lat</span></th>
-                                            <th><span class="table-title">lng</span></th>
                                             <th><span class="table-title">Link</span></th>
                                             <th><span class="table-title">Action</span></th>
                                         </tr>
@@ -962,15 +960,6 @@ content: "";
                             data: "title",
                             width: '200px'
                         },
-                        {
-                            data: "lat",
-                            width: '250px'
-                        },
-                        {
-                            data: "lng",
-                            width: '250px'
-                        },
-
                         {
                             data: "link",
                             width: '200px'

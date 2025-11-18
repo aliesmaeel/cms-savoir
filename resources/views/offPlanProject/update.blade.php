@@ -487,7 +487,10 @@
             width: 100%;
             height: 400px;
         }
-
+        iframe{
+            width: 100%;
+            height: 100%;
+        }
         /*end responsive*/
     </style>
 @endpush
@@ -625,9 +628,17 @@
                 </div>
 
 
-                <!-- Lat & Lng -->
-                <x-input-row label="Lat" type="number" name="lat" value="{{$off_plan->lat}}" placeholder="Enter Lat"/>
-                <x-input-row label="Lng" type="number" name="lng" value="{{$off_plan->lng}}" placeholder="Enter Lng"/>
+                <!-- map -->
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="map">Map Location</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" id="pac-input" name="map_link" value="{{$off_plan->map_link}}" placeholder="Enter Map Location" class="input_off_plan" style="border-right: 3px solid #9D865C!important">
+                        <div id="geomap" class="mt-3">
+                            {!! $off_plan->map_link !!}
+                        </div>
+                    </div>
 
                 <!-- Description -->
                 <div class="row mt-4 mb-4" style="align-items: center;">

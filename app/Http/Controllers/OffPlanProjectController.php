@@ -80,8 +80,6 @@ class OffPlanProjectController extends Controller
                 'during_construction' => 'required',
                 'on_handover' => 'required',
                 'features' => 'required',
-                'lat' => 'required',
-                'lng' => 'required',
                 'location' => 'required',
                 'order' => 'required',
                 'developer' => 'nullable',
@@ -92,6 +90,7 @@ class OffPlanProjectController extends Controller
                 'title_type' => 'nullable',
                 'first_installment' => 'nullable',
                 'youtube_link' => 'nullable',
+                'map_link' => 'nullable',
             ]);
 
             // ✅ Create the project
@@ -178,8 +177,6 @@ class OffPlanProjectController extends Controller
                     'during_construction' => 'required',
                     'on_handover' => 'required',
                     'features' => 'required',
-                    'lat' => 'required',
-                    'lng' => 'required',
                     'location' => 'required',
                     'order' => 'required',
                     'developer' => 'nullable',
@@ -190,6 +187,7 @@ class OffPlanProjectController extends Controller
                     'title_type' => 'nullable',
                     'first_installment' => 'nullable',
                     'youtube_link' => 'nullable',
+                    'map_link' => 'nullable',
                 ]);
 
                 // ✅ Update main data
