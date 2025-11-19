@@ -20,6 +20,14 @@ class CareerController extends Controller
 
             Career::create($validated);
 
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $imagePath = uploadFile($file, 'careers/images');
+                $career = Career::latest()->first();
+                $career->image = $imagePath;
+                $career->save();
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Career created successfully',
@@ -69,8 +77,15 @@ class CareerController extends Controller
                 'title' => 'required|string|max:255',
                 'location' => 'nullable|string|max:255',
             ]);
-
             $career->update($validated);
+
+            if ($request->hasfile('image')) {
+                $file = $request->file('image');
+                $imagePath = uploadFile($file, 'careers/images');
+                $career->image = $imagePath;
+                $career->save();
+            }
+
 
             return response()->json([
                 'success' => true,

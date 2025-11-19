@@ -146,6 +146,15 @@
                         <input type="text" placeholder="Enter Job Title" name="title" id="title" required>
                     </div>
                 </div>
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="image">Image URL</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="file" placeholder="" name="image" id="image">
+                    </div>
+                </div>
+
 
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
@@ -198,7 +207,8 @@
             $('#maindata').serializeArray().forEach(function (field) {
                 formData.append(field.name, field.value);
             });
-
+            var imageFile = $('#image')[0].files[0];
+            formData.append('image', imageFile);
             formData.append('_token', '{{ csrf_token() }}');
 
             $.ajax({
