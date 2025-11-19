@@ -57,3 +57,4 @@ Route::get('/global-project/{name}', [\App\Http\Controllers\Api\HomeController::
 Route::get('/popular-areas/{slug}', [\App\Http\Controllers\Api\HomeController::class, 'popularAreaDetails']);
 Route::get('/property/{slug}', [\App\Http\Controllers\Api\HomeController::class, 'propertyDetails']);
 Route::post('/career_apply/{careerId}', [CareerController::class, 'apply'])->name('career_apply');
+Route::get('/careers', [CareerController::class, 'careerListApi'])->name('api_career_list_api');

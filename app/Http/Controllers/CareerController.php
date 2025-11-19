@@ -182,4 +182,14 @@ class CareerController extends Controller
             'message' => 'Application submitted successfully',
         ]);
     }
+
+    public function careerListApi()
+    {
+        $careers = Career::all();
+
+        return response()->json([
+            'success' => true,
+            'data' => $careers,
+        ]);
+    }
 }
