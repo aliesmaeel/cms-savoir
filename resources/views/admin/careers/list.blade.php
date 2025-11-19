@@ -49,6 +49,7 @@
                                 <thead style="background: #70cacc;color: aliceblue;">
                                 <tr>
                                     <th><span class="table-title">Title</span></th>
+                                    <th><span class="table-title">Image</span></th>
                                     <th><span class="table-title">Location</span></th>
                                     <th><span class="table-title">Applicants</span></th>
                                     <th><span class="table-title">Action</span></th>
@@ -116,6 +117,7 @@
                 },
                 columns: [
                     {data: 'title', width: '250px'},
+                    {data: 'image', width: '250px'},
                     {data: 'location', width: '200px'},
                     {data: 'applicants_count', width: '150px'},
                     {data: 'action', width: '250px'}

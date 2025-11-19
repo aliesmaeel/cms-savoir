@@ -44,6 +44,13 @@ class CareerController extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('image', function (Career $career) {
+                    if ($career->image) {
+                        $url = asset('storage/' . $career->image);
+                        return '<img src="' . $url . '" width="50" height="50"/>';
+                    }
+                    return '';
+                })
                 ->addColumn('applicants_count', function (Career $career) {
                     return $career->applicants_count;
                 })
@@ -61,7 +68,7 @@ class CareerController extends Controller
                         <a class="delete btn btn-danger btn-sm">Delete</a>
                     ';
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action','image'])
                 ->make(true);
         }
 
