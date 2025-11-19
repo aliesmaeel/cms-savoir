@@ -216,7 +216,7 @@
                             <thead style="background: #70cacc;color: aliceblue;">
                                 <tr>
                                     <th><span class="table-title">Name</span></th>
-                                    <th><span class="table-title">Title</span></th>
+                                    <th><span class="table-title">email</span></th>
                                     <th><span class="table-title">CV</span></th>
                                 </tr>
                             </thead>
@@ -288,7 +288,7 @@
                     width: '250px'
                 },
                 {
-                    data: 'title',
+                    data: 'email',
                     width: '250px'
                 },
 
