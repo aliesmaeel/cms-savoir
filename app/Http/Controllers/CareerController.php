@@ -186,6 +186,12 @@ class CareerController extends Controller
     public function careerListApi()
     {
         $careers = Career::all();
+        //add base url to image
+        foreach ($careers as $career) {
+            if ($career->image) {
+                $career->image = asset($career->image);
+            }
+        }
 
         return response()->json([
             'success' => true,
