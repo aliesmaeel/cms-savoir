@@ -453,7 +453,9 @@ class HomeController
                     $options['offset'] = $offset;
                     $options['sort'] = [$sortField . ':' . $sortOrder];
                     return $meilisearch->search($query, $options);
-                })->get();
+                })->raw();
+                $total = $found['estimatedTotalHits'] ?? $found['totalHits'] ?? 0;
+                $hits  = $found['hits'] ?? [];
 
                 foreach ($found as $item) {
                     $id = $item->id;
@@ -474,8 +476,9 @@ class HomeController
                 $options['offset'] = $offset;
                 $options['sort'] = [$sortField . ':' . $sortOrder]; // ✅
                 return $meilisearch->search($query, $options);
-            })->get();
-
+            })->raw();
+            $total = $found['estimatedTotalHits'] ?? $found['totalHits'] ?? 0;
+            $hits  = $found['hits'] ?? [];
             foreach ($found as $item) {
                 $combinedResults[$item->id] = ['count' => 1, 'data' => $item];
             }
@@ -524,11 +527,14 @@ class HomeController
         return response()->json([
             'page' => $page,
             'limit' => $limit,
+            'total' => $total,
+            'total_pages' => ceil($total / $limit),
             'count' => $data->count(),
             'sort_by' => $sortField,
             'sort_order' => $sortOrder,
             'data' => $data,
         ]);
+
     }
 
     public function searchOffplan(Request $request)
