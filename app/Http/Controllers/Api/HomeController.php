@@ -393,7 +393,7 @@ class HomeController
 
         // 🧭 Pagination setup
         $page = max(1, (int)$request->input('page', 1));
-        $limit = min(1000, (int)$request->input('limit', 20));
+        $limit = min(1000, (int)$request->input('limit',100));
         $offset = ($page - 1) * $limit;
 
         // 🧮 Sorting setup
