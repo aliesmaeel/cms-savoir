@@ -22,7 +22,7 @@ class CareerController extends Controller
 
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
-                $imagePath = uploadFile($file, 'careers/images');
+                $imagePath = $file->store('careers/images', 'public');
                 $career = Career::latest()->first();
                 $career->image = $imagePath;
                 $career->save();
@@ -81,7 +81,7 @@ class CareerController extends Controller
 
             if ($request->hasfile('image')) {
                 $file = $request->file('image');
-                $imagePath = uploadFile($file, 'careers/images');
+                $imagePath = $file->store('careers/images', 'public');
                 $career->image = $imagePath;
                 $career->save();
             }
@@ -189,7 +189,7 @@ class CareerController extends Controller
         //add base url to image
         foreach ($careers as $career) {
             if ($career->image) {
-                $career->image = asset($career->image);
+                $career->image = asset('/storage/'.$career->image);
             }
         }
 
