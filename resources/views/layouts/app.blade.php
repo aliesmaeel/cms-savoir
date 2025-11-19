@@ -2168,7 +2168,8 @@
                 $('nav ul .data-show57').toggleClass('show');
             } else if (
                 "{{ request()->route()->getName() }}" == 'career_create' ||
-                "{{ request()->route()->getName() }}" == 'career_list'
+                "{{ request()->route()->getName() }}" == 'career_list'   ||
+                "{{request()->route()->getName() }}" == 'career_applicants'
             ) {
 
 
