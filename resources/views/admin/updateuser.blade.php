@@ -629,6 +629,21 @@
                                 @endif
                         </div>
                     </div>
+
+                    <div class="row mt-4 mb-4" style="align-items: center;">
+                        <div class="col-md-3">
+                            <label class="title-input" for="property">Image</label>
+                        </div>
+                        <div class="col-md-8 " style="display: flex;flex-direction: column">
+                            <input type="file" placeholder="Enter Image" name="image_border" id="image_border"
+                                   style="background: #fff!important">
+                            @if($image_border)
+                                <img src="{{$image_border}}" alt="" width="75px"
+                                     height="75px">
+                            @endif
+                        </div>
+                    </div>
+
                     <div class="row mt-4 mb-4" style="align-items: center;">
                         <div class="col-md-3">
                             <label class="title-input" for="property">Publish TO Website</label>
@@ -751,6 +766,12 @@
             for (let i = 0; i < FloorPlan; i++) {
                 formData.append('floorplans' + i, floorplans.files[i]);
             }
+
+            let FloorPlanBorder = $('#image_border')[0].files.length; //Total image
+            let floorplansBorder = $('#image_border')[0];
+            formData.append('floorplansBorder', floorplansBorder.files[0]);
+
+
             formData.append('FloorPlan', FloorPlan);
              var bio = CKEDITOR.instances.bio.getData();
              formData.append('bio', bio);

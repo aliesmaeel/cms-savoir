@@ -36,7 +36,8 @@ class User extends Authenticatable
         'Job_Description',
         'slug',
         'order',
-        'is_external_agent'
+        'is_external_agent',
+        'image_border',
     ];
 
     /**

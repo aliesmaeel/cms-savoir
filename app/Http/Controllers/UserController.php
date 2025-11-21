@@ -85,20 +85,34 @@ class UserController extends Controller
              }
              $cloudName = "djd3y5gzw";
 
-             if ($request->FloorPlan > 0) {
-                 for ($x = 0; $x < $request->FloorPlan; $x++) {
-                     if ($request->hasFile('floorplans' . $x)) {
+
+
+                     if ($request->hasFile('floorplans')) {
                          $file = $request->file('floorplans');
                          $filename =uploadFile($file ,'image/Agent',false);
                          $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/image/Agent/'.$filename;
                          $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
 
+                         $user->update([
+                             'image' => $store,
+
+                         ]);
                      }
-                     $user->update([
-                         'image' => $store
-                     ]);
-                 }
-             }
+
+                     if ($request->hasFile('floorplansBorder')){
+                            $file = $request->file('floorplansBorder');
+                            $filename =uploadFile($file ,'image/Agent',false);
+                            $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/image/Agent/'.$filename;
+                            $store2 = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
+                            $user->update([
+                                'image_border' => $store2,
+                            ]);
+                     }
+
+
+
+
 
              $details = [
                  'email' => $request->email,
@@ -177,15 +191,17 @@ class UserController extends Controller
      public function updateuserindex($id)
     {
         $user = User::find($id);
+
         // dd($user->id);
         if ($user->role_id == 4) {
             return view('admin.updatebuyer', ['username' => $user->name, 'userphone' => $user->phone, 'useremail' => $user->email, 'userid' => $id]);
         } else {
-            return view('admin.updateuser', ['username' => $user->name, 'userphone' => $user->phone, 'useremail' => $user->email, 'userid' => $id, 'userlang' => $user->language, 'role' => $user->role_id, 'Job_Description' => $user->Job_Description, 'brn' => $user->brn, 'websiteId' => $user->websiteId, 'bio' => $user->bio, 'publish_to_web_site' => $user->publish_to_web_site, 'image' => $user->image, 'slug' => $user->slug,'order'=>$user->order,'user_id' => $user->id]);
+            return view('admin.updateuser', ['username' => $user->name, 'userphone' => $user->phone, 'useremail' => $user->email, 'userid' => $id, 'userlang' => $user->language, 'role' => $user->role_id, 'Job_Description' => $user->Job_Description, 'brn' => $user->brn, 'websiteId' => $user->websiteId, 'bio' => $user->bio, 'publish_to_web_site' => $user->publish_to_web_site, 'image' => $user->image,'image_border'=>$user->image_border, 'slug' => $user->slug,'order'=>$user->order,'user_id' => $user->id]);
         }
     }
     public function updateuser(Request $request)
     {
+
         if ($request->type == "3"||$request->type == "6") {
             $roles = [];
             $roles['email'] = 'required|unique:users,email,'.$request->user_id;
@@ -257,11 +273,10 @@ class UserController extends Controller
                         'publish_to_web_site' => '0',
                     ]);
                 }
-                // dd($customer);
-                // DB::table('user')->where('id', $id)->delete();
+
                 $cloudName = "djd3y5gzw";
 
-                if ($request->FloorPlan > 0) {
+                if ($request->FloorPlan > 0 || $request->hasFile('floorplansBorder')) {
                     for ($x = 0; $x < $request->FloorPlan; $x++) {
                         if ($request->hasFile('floorplans' . $x)) {
 
@@ -274,6 +289,17 @@ class UserController extends Controller
                         }
                         $customer->update([
                             'image' => $store
+                        ]);
+                    }
+
+                    if ($request->hasFile('floorplansBorder')){
+                        $file = $request->file('floorplansBorder');
+                        $filename =uploadFile($file ,'image/Agent',false);
+                        $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/image/Agent/'.$filename;
+                        $store2 = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
+                        $customer->update([
+                            'image_border' => $store2,
                         ]);
                     }
                 }
@@ -314,9 +340,6 @@ class UserController extends Controller
                     $customer->password = Hash::make($request->password);
                 }
 
-
-                // dd($customer);
-                // DB::table('user')->where('id', $id)->delete();
                 $customer->save();
                 if ($customer)
                     return response()->json(['success' => true, 'message' => 'Agent updated successfully']);

@@ -583,7 +583,7 @@
                             style="background: #fff!important">
                     </div>
                 </div>
-              
+
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
                         <label class="title-input" for="property">Slug</label>
@@ -620,6 +620,17 @@
                             style="background: #fff!important">
                     </div>
                 </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">Without border Image</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="file" placeholder="Enter Image" name="image_border" id="image_border"
+                               style="background: #fff!important">
+                    </div>
+                </div>
+
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
                         <label class="title-input" for="property">Publish TO Website</label>
@@ -712,9 +723,12 @@
 
             let FloorPlan = $('#image')[0].files.length; //Total image
             let floorplans = $('#image')[0];
-            for (let i = 0; i < FloorPlan; i++) {
-                formData.append('floorplans' + i, floorplans.files[i]);
-            }
+            formData.append('floorplans', floorplans.files[0]);
+
+            let FloorPlanBorder = $('#image_border')[0].files.length; //Total image
+            let floorplansBorder = $('#image_border')[0];
+            formData.append('floorplansBorder', floorplansBorder.files[0]);
+
             formData.append('FloorPlan', FloorPlan);
             var bio = CKEDITOR.instances.bio.getData();
             formData.append('bio', bio);
