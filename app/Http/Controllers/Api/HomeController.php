@@ -886,7 +886,7 @@ class HomeController
             return response()->json(['message' => 'Guide not found'], 404);
         }
 
-        $filePath = storage_path('app/pdf/' . $filename);
+        $filePath = public_path('/storage/realestatepdf/' . $filename);
 
         if (file_exists($filePath)) {
             return response()->download($filePath);

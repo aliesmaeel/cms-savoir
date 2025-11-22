@@ -13,8 +13,8 @@ class RealEstateController extends Controller
 
     public function download($filename)
     {
-        $filePath = storage_path('app/pdf/' . $filename); // Adjust the path as needed
-
+        $filePath = public_path('/storage/realestatepdf/' . $filename); // Adjust the path as needed
+      ;
         if (file_exists($filePath)) {
             return response()->download($filePath);
         } else {
