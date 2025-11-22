@@ -870,7 +870,11 @@ class HomeController
 
     public function realEstateGuides()
     {
-        $guides = RealEstate::all();
+        //add /storage to images
+        $guides=RealEstate::all()->map(function ($guide) {
+            $guide->image = asset('storage/' . $guide->image);
+            return $guide;
+        });
         return response()->json($guides);
     }
     public function downloadGuide($id)
