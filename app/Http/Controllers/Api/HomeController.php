@@ -910,4 +910,16 @@ class HomeController
 
         return response()->json(['message' => 'Information stored successfully']);
     }
+
+    public function leatestListings()
+    {
+        $listings = NewProperty::
+        where('offering_type', 'RS')
+        ->select('id', 'title_en', 'slug', 'city', 'price', 'photo')
+            ->orderBy('updated_at', 'desc')
+            ->take(3)
+            ->get();
+
+        return response()->json($listings);
+    }
 }
