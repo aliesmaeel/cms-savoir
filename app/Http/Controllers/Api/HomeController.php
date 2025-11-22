@@ -894,4 +894,20 @@ class HomeController
             return response()->json(['message' => 'Guide file not found'], 404);
         }
     }
+
+    public function whoDownloadsGuide(Request $request)
+    {
+
+     $store=DB::table('downloaded_brochures')
+            ->insert([
+                'brochure_name' => $request->brochure_name,
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+        return response()->json(['message' => 'Information stored successfully']);
+    }
 }
