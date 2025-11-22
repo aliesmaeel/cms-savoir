@@ -58,3 +58,5 @@ Route::get('/popular-areas/{slug}', [\App\Http\Controllers\Api\HomeController::c
 Route::get('/property/{slug}', [\App\Http\Controllers\Api\HomeController::class, 'propertyDetails']);
 Route::post('/career_apply/{careerId}', [CareerController::class, 'apply'])->name('career_apply');
 Route::get('/careers', [CareerController::class, 'careerListApi'])->name('api_career_list_api');
+Route::get('/real-estate-guides', [\App\Http\Controllers\Api\HomeController::class, 'realEstateGuides']);
+Route::get('/download-guide/{id}', [\App\Http\Controllers\Api\HomeController::class, 'downloadGuide']);

@@ -10,6 +10,7 @@ use App\Models\ListingSyndication;
 use App\Models\MarketingChannels;
 use App\Models\NewProperty;
 use App\Models\OffPlanProject;
+use App\Models\RealEstate;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -867,5 +868,26 @@ class HomeController
         ]);
     }
 
+    public function realEstateGuides()
+    {
+        $guides = RealEstate::all();
+        return response()->json($guides);
+    }
+    public function downloadGuide($id)
+    {
+        $guide = RealEstate::find($id);
+        $filename = $guide ? $guide->pdf : null;
 
+        if (!$guide) {
+            return response()->json(['message' => 'Guide not found'], 404);
+        }
+
+        $filePath = storage_path('app/pdf/' . $filename);
+
+        if (file_exists($filePath)) {
+            return response()->download($filePath);
+        } else {
+            return response()->json(['message' => 'Guide file not found'], 404);
+        }
+    }
 }
