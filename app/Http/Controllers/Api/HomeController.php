@@ -347,7 +347,7 @@ class HomeController
         return $this->handleContactRequest($request, 'contact_us');
     }
 
-    private function handleContactRequest(Request $request, string $type)
+    private function handleContactRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -367,7 +367,7 @@ class HomeController
             'email' => $request->email,
             'phone' => $request->phone,
             'message' => $request->message,
-            'type' => $type,
+            'type' => $request->type,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
