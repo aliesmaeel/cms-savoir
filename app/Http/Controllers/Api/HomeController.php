@@ -114,7 +114,7 @@ class HomeController
             ->select('id', 'name', 'position', 'image', 'message')
             ->get();
 
-        $offplan_projects = OffPlanProject::select('id', 'image', 'link')
+        $offplan_projects = OffPlanProject::select('id', 'image', 'link','title')
             ->orderBy('order', 'asc')
             ->take(5)
             ->get();
