@@ -851,7 +851,7 @@ class HomeController
         $similarProperties = NewProperty::with('user:id,name,image,phone')
             ->where('community', $property->community)
             ->where('id', '!=', $property->id)
-            ->select('id', 'title_en', 'slug', 'price', 'bedroom', 'bathroom', 'photo', 'offering_type','user_id')
+            ->select('id', 'title_en', 'slug', 'price', 'bedroom', 'bathroom', 'photo', 'offering_type','user_id','currency')
             ->take(10)
             ->get();
 
