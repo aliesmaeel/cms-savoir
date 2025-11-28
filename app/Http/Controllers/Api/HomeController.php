@@ -535,6 +535,7 @@ class HomeController
                 'bedroom' => $item->bedroom,
                 'bathroom' => $item->bathroom,
                 'price' => $item->price,
+                'currency' => $item->currency,
                 'updated_at' => $item->updated_at,
                 'added_date' => Carbon::make($item->updated_at)->diffForHumans(),
                 'photo' => $item->photo,
