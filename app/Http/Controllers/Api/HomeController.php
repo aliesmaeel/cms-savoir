@@ -916,7 +916,7 @@ class HomeController
     {
         $listings = NewProperty::
         where('offering_type', 'RS')
-        ->select('id', 'title_en', 'slug', 'city', 'price', 'photo')
+        ->select('id', 'title_en', 'slug', 'city', 'price', 'photo','currency')
             ->orderBy('updated_at', 'desc')
             ->take(3)
             ->get();
