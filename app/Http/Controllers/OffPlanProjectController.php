@@ -38,7 +38,7 @@ class OffPlanProjectController extends Controller
     public function off_plan_project_list(Request $request)
     {
         if ($request->ajax()) {
-            $data=OffPlanProject::query()->orderBy('order','DESC')->get();
+            $data=OffPlanProject::query()->orderBy('created_at','DESC')->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
