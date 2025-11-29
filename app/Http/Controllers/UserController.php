@@ -360,6 +360,10 @@ class UserController extends Controller
             $users = User::wherenotIn('role_id', ['1', '5'])->orderBy('created_at', 'DESC')->get();
             return DataTables::of($users)
                 ->addIndexColumn()
+                ->addColumn('image', function ($row) {
+                    $img = '<img src="' . $row->image . '" width="50" height="50"/>';
+                    return $img;
+                })
                 ->addColumn('role', function ($row) {
                     if ($row->role_id == '2')
                         return 'Consultant';
@@ -377,12 +381,16 @@ class UserController extends Controller
                     $actionBtn .= '<a class="edit btn btn-info btn-sm">Edit</a>';
                     return $actionBtn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action','image'])
                 ->make(true);
         } else {
             $users = User::where('role_id', 'not like', '%5%')->orderBy('created_at', 'DESC')->get();
             return DataTables::of($users)
                 ->addIndexColumn()
+                ->addColumn('image', function ($row) {
+                    $img = '<img src="' . $row->image . '" width="50" height="50"/>';
+                    return $img;
+                })
                 ->addColumn('role', function ($row) {
                     if ($row->role_id == '2')
                         return 'Consultant';
@@ -402,7 +410,7 @@ class UserController extends Controller
                     $actionBtn .= '<a class="edit btn btn-info btn-sm">Edit</a>';
                     return $actionBtn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action','image'])
                 ->make(true);
         }
     }

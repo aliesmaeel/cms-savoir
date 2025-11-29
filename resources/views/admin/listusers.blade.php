@@ -68,14 +68,14 @@
         .items-center .justify-between {
             display: none;
         }
-         
+
         .top-title{
             font-family: 'Lato-Semibold';
             font-size:20px;
             color:#9D865C;
             height: 4rem;
             padding: 14px 35px;
-           
+
             border-radius: 0 0px 55px 0;
             /* background-image:linear-gradient(to right, #211706, #291d0a, #30230c, #39290f, #412f10, #503913, #5f4416, #6e4f19, #88621f, #a37526, #be892c, #db9d33); */
         }
@@ -83,7 +83,7 @@
             border-bottom: 0!important;
         }
         .content-input{display: flex;align-items: center;}
-        .label{  
+        .label{
             width: auto;
             padding-right: 12px;}
         .dropdown{width: 55%;}
@@ -122,7 +122,7 @@
     display: inline-block;
     /* color:rgb(228 170 71); */
          }
-         #dataTable_filter input{  
+         #dataTable_filter input{
                padding: 0 36px;
                width: 20rem!important;
                outline: none!important;
@@ -166,9 +166,9 @@
         }
 
         th{
-            
+
             /* background: #6d4e18; */
-            
+
             /* width: 25px!important; */
         }
         span.table-title {
@@ -225,7 +225,7 @@
          color:#fff!important;
          font-size: 13px!important;
          font-family: 'Lato-Regular'!important;
-         
+
         }
         .last a{
          /* background:url(img/right.jpg) no-repeat; */
@@ -270,7 +270,7 @@ display: none;
     color: #9D865C;
     height: 3rem;
     padding: 11px 30px;
-    
+
     }
 
     #tablebuttonexcel button, #tablebuttoncsv button
@@ -383,7 +383,7 @@ display: none;
    width: 157%;
     margin-left: -5rem;
     margin-top: -9rem;
-} 
+}
 #sel1:focus-visible,#daymonthvalue:focus-visible,#rangedate:focus-visible,#datasource:focus-visible{
     outline: none;
 }
@@ -408,7 +408,7 @@ display: none;
 #daymonthvalue,#rangedate{
     box-shadow: 0 4px 2px -2px #d9d1d1;
     color: #878b8f;
-    vertical-align: middle; 
+    vertical-align: middle;
     height: calc(2.25rem + 2px);
     padding: 0.375rem 1.75rem 0.375rem 0.75rem;
         font-size: 12px;
@@ -542,7 +542,7 @@ display: none;
             height: 100%!important;
         }
 
-        
+
 
         div.dataTables_scrollBody::-webkit-scrollbar {
   width: 5px;
@@ -572,7 +572,7 @@ div.dataTables_scrollBody::-webkit-scrollbar-thumb:hover {
   .justify-content-start{
     left: 20px;
     top: 6px;
-  } 
+  }
 
 #dataTable_next a::after {
 content: "";
@@ -875,6 +875,7 @@ content: "";
                                     <thead style="background: #70cacc;color: aliceblue;">
                                         <tr>
                                         {{-- <th><span class="table-title">id</span></th> --}}
+                                            <th><span class="table-title">Image</span></th>
                                             <th><span class="table-title">Name</span></th>
                                             <th><span class="table-title">Email</span></th>
                                             <th><span class="table-title">Phone</span></th>
@@ -901,7 +902,7 @@ content: "";
                     </div>
 
                 </div>
-                
+
                 <!-- /.container-fluid -->
 
             </div>
@@ -914,7 +915,7 @@ content: "";
                 </div>
             </footer>
             <!-- End of Footer -->
-           
+
         </div>
         <div class="row img-row">
                     <div class="col-md-8"></div>
@@ -960,11 +961,12 @@ content: "";
                             $("#parent").LoadingOverlay("hide", true);
                         }
                     },
-                    "columns": [{
-                        //     data: "DT_RowIndex",
-                        //     width: '100px'
-                        // },
-                        // {
+                    "columns": [
+                        {
+                            data: "image",
+                            width: '100px'
+                        },
+                        {
                             data: "name",
                             width: '200px'
                         },
