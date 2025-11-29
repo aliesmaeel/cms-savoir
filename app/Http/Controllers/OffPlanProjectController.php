@@ -150,10 +150,9 @@ class OffPlanProjectController extends Controller
             deleteFile($off_plan->area_guide_image);
             deleteFile($off_plan->description_image);
             deleteFile($off_plan->last_image);
+
             if($off_plan->header_images){
-                foreach($off_plan->header_images as $key){
-                    deleteFile($key);
-                }
+                $off_plan->header_images = '[]';
             }
             $off_plan->delete();
             return response()->json(['success' => true, 'message' => 'Off-Plan Project has been deleted successfully']);
