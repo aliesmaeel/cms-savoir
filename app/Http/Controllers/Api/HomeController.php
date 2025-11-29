@@ -780,7 +780,7 @@ class HomeController
 
     public function globalProjectDetails($name)
     {
-        $project=GlobalProject::with('user:name,phone,id,image')->where('name',$name)->first();
+        $project=GlobalProject::with('user:name,phone,id,image,email')->where('name',$name)->first();
 
         $similarProjects=NewProperty::
               with([
