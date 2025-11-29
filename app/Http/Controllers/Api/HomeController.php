@@ -787,7 +787,7 @@ class HomeController
             'user:id,name,email,phone,image',
              ])
             ->where('country',ucfirst($name))
-            ->select('id','title_en','slug','price','bedroom','bathroom','photo','offering_type','user_id')
+            ->select('id','title_en','slug','price','currency','bedroom','bathroom','photo','offering_type','user_id')
             ->take(10)
             ->get();
 
@@ -795,7 +795,7 @@ class HomeController
               with([
             'user:id,name,email,phone,image',
              ])
-            ->select('id','title_en','slug','price','bedroom','bathroom','photo','offering_type','user_id')
+            ->select('id','title_en','slug','price','currency','bedroom','bathroom','photo','offering_type','user_id')
             ->take(10)
             ->get();
 
