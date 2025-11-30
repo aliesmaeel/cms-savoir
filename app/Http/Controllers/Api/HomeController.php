@@ -835,8 +835,8 @@ class HomeController
             ->take(10)
             ->get()
             ->map(function ($property) {
-                $property->community_name = $property->pcommunity->name ?? null;
-                $property->subcommunity_name = $property->psubcommunity->name ?? null;
+                $property->community = $property->pcommunity->name ?? null;
+                $property->subcommunity = $property->psubcommunity->name ?? null;
                 return $property;
             });
 
