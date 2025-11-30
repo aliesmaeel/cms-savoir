@@ -820,12 +820,15 @@ class HomeController
             ->first();
 
         $suggestedProperties=NewProperty::
-             with('user:id,name,image,phone')
-             ->with('pcommunity:id,name')
-            ->with('psubcommunity:id,name')
+             with([
+            'user:id,name,email,phone,image',
+            'pcommunity:id,name',
+            'psubcommunity:id,name',
+            ])
+
             ->where('community',$area->id)
             ->where('offering_type','RS')
-            ->select('id','title_en','slug','price','bedroom','bathroom','photo','offering_type','user_id','currency')
+            ->select('id','title_en','slug','price','bedroom','bathroom','photo','offering_type','user_id','currency','community','subcommunity')
             ->take(10)
             ->get();
 
