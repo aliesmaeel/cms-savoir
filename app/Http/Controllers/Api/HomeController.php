@@ -819,18 +819,27 @@ class HomeController
             ->select('id','name','slug','image','description','location','youtube')
             ->first();
 
-        $suggestedProperties=NewProperty::
-             with([
+        $suggestedProperties = NewProperty::
+        with([
             'user:id,name,email,phone,image',
             'pcommunity:id,name',
             'psubcommunity:id,name',
-            ])
-
-            ->where('community',$area->id)
-            ->where('offering_type','RS')
-            ->select('id','title_en','slug','price','bedroom','bathroom','photo','offering_type','user_id','currency','community','sub_community')
+        ])
+            ->where('community', $area->id)
+            ->where('offering_type', 'RS')
+            ->select(
+                'id','title_en','slug','price','bedroom','bathroom',
+                'photo','offering_type','user_id','currency',
+                'community','sub_community'
+            )
             ->take(10)
-            ->get();
+            ->get()
+            ->map(function ($property) {
+                $property->community_name = $property->pcommunity->name ?? null;
+                $property->subcommunity_name = $property->psubcommunity->name ?? null;
+                return $property;
+            });
+
 
 
         if (!$area) {
