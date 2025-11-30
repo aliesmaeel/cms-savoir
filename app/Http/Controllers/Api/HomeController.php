@@ -828,7 +828,7 @@ class HomeController
 
             ->where('community',$area->id)
             ->where('offering_type','RS')
-            ->select('id','title_en','slug','price','bedroom','bathroom','photo','offering_type','user_id','currency','community','subcommunity')
+            ->select('id','title_en','slug','price','bedroom','bathroom','photo','offering_type','user_id','currency','community','sub_community')
             ->take(10)
             ->get();
 
