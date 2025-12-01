@@ -42,5 +42,16 @@ class FetchGoyzerProperties extends Command
         Log::channel('fetching_properties')->alert("Goyzer ferching start");
         app()->call('App\Http\Controllers\Api\GoyzerIntegrationConroller@get_goyzer_properties_for_sale');
         app()->call('App\Http\Controllers\Api\GoyzerIntegrationConroller@get_goyzer_properties_for_rent');
+
+        $phpFile = base_path('setup_meilisearch.php'); // change to your file name
+
+        if (file_exists($phpFile)) {
+            Log::channel('fetching_properties')->alert("Running external PHP file...");
+
+            exec("php " . escapeshellarg($phpFile), $output, $resultCode);
+
+        } else {
+            Log::channel('fetching_properties')->error("External PHP file not found: $phpFile");
+        }
     }
 }
