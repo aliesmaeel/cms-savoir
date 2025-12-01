@@ -865,9 +865,16 @@ class HomeController
         $similarProperties = NewProperty::with('user:id,name,image,phone')
             ->where('community', $property->community)
             ->where('id', '!=', $property->id)
-            ->select('id', 'title_en', 'slug', 'price', 'bedroom', 'bathroom', 'photo', 'offering_type','user_id','currency')
+            ->select('id', 'title_en', 'slug', 'price', 'bedroom', 'bathroom', 'photo', 'offering_type','user_id','currency','community','sub_community')
             ->take(10)
-            ->get();
+            ->get()
+            ->map(function ($property) {
+                $property->community = $property->pcommunity->name ?? null;
+                $property->subcommunity = $property->psubcommunity->name ?? null;
+                return $property;
+            });
+
+
 
         if (!$property) {
             return response()->json(['message' => 'Property not found'], 404);
