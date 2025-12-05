@@ -44,11 +44,6 @@
                 <span id="alertdata"></span>
 
                 <!-- Title -->
-                <div class="row mt-4 mb-4 align-items-center">
-                    <div class="col-md-3"><label class="title-input">Title</label></div>
-                    <div class="col-md-8"><input type="text" value="{{ $blog->title }}" name="title" class="input_off_plan" required></div>
-                </div>
-
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
                         <label class="title-input" for="title_details">Title in Details Page</label>
@@ -58,6 +53,11 @@
                             {{ $blog->title_details }}
                         </textarea>
                     </div>
+                </div>
+
+                <div class="row mt-4 mb-4 align-items-center">
+                    <div class="col-md-3"><label class="title-input">Title</label></div>
+                    <div class="col-md-8"><input type="text"  id="title"  value="{{ $blog->title }}" name="title" class="input_off_plan" required></div>
                 </div>
 
                 <!-- Slug -->
@@ -170,12 +170,13 @@
     <script>
         $(document).ready(function() {
 
-
-            // Generate slug from title
-            $('#title').change(function (){
-                let title = $(this).val();
-                $('#slug').val(title.toLowerCase().replace(/ /g, '-'));
+            $('#title').on('keyup', function () {
+                console.log('slug');
+                let slug = $(this).val().toLowerCase().trim().replace(/\s+/g,'-').replace(/[^a-z\-]/g,'');
+                $('#slug').val(slug);
             });
+
+
 
             // Preview main image
             $('#image').change(function() {
