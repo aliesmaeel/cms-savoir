@@ -79,6 +79,7 @@ class GoyzerIntegrationConroller extends Controller
         }
 
         foreach ($properties as $key => $property) {
+
             $isNew = $this->create_new_property($property, $communities, $sub_communities);
             if ($isNew) {
                 $goyzer_property = $this->create_goyzer_property($property);
@@ -312,20 +313,28 @@ class GoyzerIntegrationConroller extends Controller
 
             ]);
 
-            $fixtures = $property['FittingFixtures']['FittingFixture'];
-            $amenityNames = array_column($fixtures, 'Name');
-
-            $amenities = implode(', ', $amenityNames);
+            $fixtures = [];
+            if (array_key_exists('FittingFixtures', $property) && $property['FittingFixtures']) {
+                $fixtures = is_array($property['FittingFixtures']['Fixture']) ? $property['FittingFixtures']['Fixture'] : json_decode($property['FittingFixtures'], true);
+                $amenityNames = array_column($fixtures, 'Name');
+                $amenities = implode(', ', $amenityNames);
+            }else{
+                $amenities = '';
+            }
 
             $newproperty->update([
                 'features' => $amenities,
             ]);
+
+
+
 
             $cloudName = "djd3y5gzw";
 
                 $property_images = is_array($property['Images']) ? $property['Images'] : json_decode($property['Images']);
                 if (array_key_exists('Image', $property_images) && count($property_images['Image']) > 0) {
                     foreach ($property_images['Image'] as $link) {
+
                         $originalUrl = $link['ImageURL'];
                         $webpUrl = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
 
