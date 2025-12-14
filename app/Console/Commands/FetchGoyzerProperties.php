@@ -53,5 +53,6 @@ class FetchGoyzerProperties extends Command
         } else {
             Log::channel('fetching_properties')->error("External PHP file not found: $phpFile");
         }
+        return Command::SUCCESS;
     }
 }
