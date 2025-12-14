@@ -12,11 +12,12 @@ $kernel->bootstrap();
 use App\Models\NewProperty;
 use Meilisearch\Client;
 use Carbon\Carbon;
+use Dotenv\Dotenv;
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-$client = new Client($_ENV['MEILISEARCH_HOST'], $_ENV['MEILISEARCH_KEY']);
+$client = new Client(getenv('MEILISEARCH_HOST'), getenv('MEILISEARCH_KEY'));
 $index = $client->index('new_properties');
 
 // Update Meilisearch attributes

@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Console\Commands;
-ini_set('memory_limit', '-1');
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -39,20 +38,39 @@ class FetchGoyzerProperties extends Command
      */
     public function handle()
     {
+        ini_set('memory_limit', '-1');
+
         Log::channel('fetching_properties')->alert("Goyzer ferching start");
-        app()->call('App\Http\Controllers\Api\GoyzerIntegrationConroller@get_goyzer_properties_for_sale');
-        app()->call('App\Http\Controllers\Api\GoyzerIntegrationConroller@get_goyzer_properties_for_rent');
+       app()->call('App\Http\Controllers\Api\GoyzerIntegrationConroller@get_goyzer_properties_for_sale');
+       app()->call('App\Http\Controllers\Api\GoyzerIntegrationConroller@get_goyzer_properties_for_rent');
+        $this->runMeilisearchIndex();
+    }
 
-        $phpFile = base_path('setup_meilisearch.php'); // change to your file name
+    private function runMeilisearchIndex(): void
+    {
+        $phpFile = base_path('setup_meilisearch.php');
 
-        if (file_exists($phpFile)) {
-            Log::channel('fetching_properties')->alert("Running external PHP file...");
-
-            exec("php " . escapeshellarg($phpFile), $output, $resultCode);
-
-        } else {
-            Log::channel('fetching_properties')->error("External PHP file not found: $phpFile");
+        if (! file_exists($phpFile)) {
+            Log::channel('fetching_properties')
+                ->error("Meilisearch file not found: {$phpFile}");
+            return;
         }
-        return Command::SUCCESS;
+
+        Log::channel('fetching_properties')
+            ->alert('Running Meilisearch indexing');
+
+        exec(
+            "php " . escapeshellarg($phpFile),
+            $output,
+            $resultCode
+        );
+
+        Log::channel('fetching_properties')
+            ->alert("Meilisearch exit code: {$resultCode}");
+
+        if (! empty($output)) {
+            Log::channel('fetching_properties')
+                ->alert("Meilisearch output:\n" . implode("\n", $output));
+        }
     }
 }
