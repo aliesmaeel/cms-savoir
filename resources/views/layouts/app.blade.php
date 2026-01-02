@@ -2135,6 +2135,9 @@
                 $('nav ul .data-show21').removeClass('show');
                 $('nav ul .subscriptions-show').removeClass('show');
                 $('nav ul .off-plan30').toggleClass('rotate');
+                $('nav ul .off-plan-show30').removeClass('show');
+                $('nav ul .off-plan63').removeClass('rotate');
+                $('nav ul .off-plan-show63').removeClass('show');
                 $('nav ul .data-show56').toggleClass('show');
             } else if (
                 "{{ request()->route()->getName() }}" == 'faq_create' ||
@@ -2166,6 +2169,62 @@
                 $('nav ul .subscriptions-show').removeClass('show');
                 $('nav ul .off-plan30').toggleClass('rotate');
                 $('nav ul .data-show57').toggleClass('show');
+            } else if (
+                "{{ request()->route()->getName() }}" == 'homepage_slider_create' ||
+                "{{ request()->route()->getName() }}" == 'homepage_slider_list' ||
+                "{{ request()->route()->getName() }}" == 'create_testimonial' ||
+                "{{ request()->route()->getName() }}" == 'list_testimonials' ||
+                "{{ request()->route()->getName() }}" == 'create_marketing' ||
+                "{{ request()->route()->getName() }}" == 'list_marketing' ||
+                "{{ request()->route()->getName() }}" == 'create_listing' ||
+                "{{ request()->route()->getName() }}" == 'list_listing'
+            ) {
+                $('#sbitem63').find('a:first').toggleClass('selected');
+                if ("{{ request()->route()->getName() }}" == 'homepage_slider_create')
+                    $('#sbitem63_0').addClass('active');
+                else if ("{{ request()->route()->getName() }}" == 'homepage_slider_list')
+                    $('#sbitem63_0_1').addClass('active');
+                else if ("{{ request()->route()->getName() }}" == 'create_testimonial')
+                    $('#sbitem63_1').addClass('active');
+                else if ("{{ request()->route()->getName() }}" == 'list_testimonials')
+                    $('#sbitem63_2').addClass('active');
+                else if ("{{ request()->route()->getName() }}" == 'create_marketing')
+                    $('#sbitem63_3').addClass('active');
+                else if ("{{ request()->route()->getName() }}" == 'list_marketing')
+                    $('#sbitem63_4').addClass('active');
+                else if ("{{ request()->route()->getName() }}" == 'create_listing')
+                    $('#sbitem63_5').addClass('active');
+                else if ("{{ request()->route()->getName() }}" == 'list_listing')
+                    $('#sbitem63_6').addClass('active');
+
+                $('nav ul .asd-show').removeClass('show');
+                $('nav ul .comments-show').removeClass('show');
+                $('nav ul .data-show').removeClass('show');
+                $('nav ul .data-show2').removeClass('show');
+                $('nav ul .data-show3').removeClass('show');
+                $('nav ul .data-show20').removeClass('show');
+                $('nav ul .data-show56').removeClass('show');
+                $('nav ul .data-show57').removeClass('show');
+                $('nav ul .data-show78').removeClass('show');
+                $('nav ul .report-show').removeClass('show');
+                $('nav ul .au-show').removeClass('show');
+                $('nav ul .pm-event').removeClass('show');
+                $('nav ul .pm-show').removeClass('show');
+                $('nav ul .ap-show').removeClass('show');
+                $('nav ul .meet-show').removeClass('show');
+                $('nav ul .setting-show').removeClass('show');
+                $('nav ul .sync-show').removeClass('show');
+                $('nav ul .leads-show').removeClass('show');
+                $('nav ul .globly').removeClass('rotate');
+                $('nav ul .insighty').removeClass('rotate');
+                $('nav ul .faq').removeClass('rotate');
+                $('nav ul .contact_us21').removeClass('rotate');
+                $('nav ul .data-show21').removeClass('show');
+                $('nav ul .subscriptions-show').removeClass('show');
+                $('nav ul .off-plan30').removeClass('rotate');
+                $('nav ul .off-plan-show30').removeClass('show');
+                $('nav ul .off-plan63').toggleClass('rotate');
+                $('nav ul .off-plan-show63').toggleClass('show');
             } else if (
                 "{{ request()->route()->getName() }}" == 'career_create' ||
                 "{{ request()->route()->getName() }}" == 'career_list'   ||

@@ -4,6 +4,7 @@ use App\Http\Controllers\CareerController;
 use App\Http\Controllers\DownloadedBrochureController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\HomepageSliderController;
 use App\Http\Controllers\InsightController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\RealEstateController;
@@ -516,3 +517,9 @@ Route::match(['post', 'get'], '/career_update/{id}', [CareerController::class, '
 Route::post('/career_delete', [CareerController::class, 'career_delete'])->name('career_delete');
 Route::match(['post', 'get'], '/career_applicants/{careerId}', [CareerController::class, 'career_applicants'])->name('career_applicants');
 Route::post('/career_apply/{careerId}', [CareerController::class, 'apply'])->name('career_apply');
+
+// Homepage Sliders
+Route::match(['post', 'get'], '/homepage_slider_create', [HomepageSliderController::class, 'homepage_slider_create'])->name('homepage_slider_create');
+Route::match(['post', 'get'], '/homepage_slider_list', [HomepageSliderController::class, 'homepage_slider_list'])->name('homepage_slider_list');
+Route::match(['post', 'get'], '/homepage_slider_update/{id}', [HomepageSliderController::class, 'homepage_slider_update'])->name('homepage_slider_update');
+Route::post('/homepage_slider_delete', [HomepageSliderController::class, 'homepage_slider_delete'])->name('homepage_slider_delete');

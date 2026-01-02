@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Blog;
 use App\Models\Email;
 use App\Models\GlobalProject;
+use App\Models\HomepageSlider;
 use App\Models\Insight;
 use App\Models\ListingSyndication;
 use App\Models\MarketingChannels;
@@ -943,5 +944,17 @@ class HomeController
             ->get();
 
         return response()->json($listings);
+    }
+
+    public function homepageSliders()
+    {
+        $sliders = HomepageSlider::select('id', 'image', 'created_at', 'updated_at')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $sliders,
+        ]);
     }
 }

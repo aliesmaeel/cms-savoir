@@ -21,7 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('pf_webhook_lead_store',[leadsregisteController::class, 'property_finder_webhook_lead_store']);
+Route::post('pf_webhook_lead_store', [leadsregisteController::class, 'property_finder_webhook_lead_store']);
 Route::get('/getProperties', [PropertyApiController::class, 'getProperties'])->name('get_Properties');
 Route::get('/getCommunities', [PropertyApiController::class, 'getCommunities'])->name('get_Communities');
 Route::get('/getSubCommunities', [PropertyApiController::class, 'getSubCommunities'])->name('get_Sub_Communities');
@@ -62,3 +62,4 @@ Route::get('/real-estate-guides', [\App\Http\Controllers\Api\HomeController::cla
 Route::get('/download-guide/{id}', [\App\Http\Controllers\Api\HomeController::class, 'downloadGuide']);
 Route::post('/who-downloads-guide', [\App\Http\Controllers\Api\HomeController::class, 'whoDownloadsGuide']);
 Route::get('/leatest-listings', [\App\Http\Controllers\Api\HomeController::class, 'leatestListings']);
+Route::get('/homepage-sliders', [\App\Http\Controllers\Api\HomeController::class, 'homepageSliders']);
