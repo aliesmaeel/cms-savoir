@@ -70,9 +70,21 @@ class HomeController
         }
 
         $properties = NewProperty::select(
-            'id', 'title_en', 'slug', 'city', 'community', 'sub_community',
-            'property_type', 'completion_status', 'offering_type','size',
-            'bedroom', 'bathroom', 'price', 'photo', 'updated_at'
+            'id',
+            'title_en',
+            'slug',
+            'city',
+            'community',
+            'sub_community',
+            'property_type',
+            'completion_status',
+            'offering_type',
+            'size',
+            'bedroom',
+            'bathroom',
+            'price',
+            'photo',
+            'updated_at'
         )
             ->where('featured', 1)
             ->get()
@@ -107,7 +119,7 @@ class HomeController
 
         $areas = DB::table('communities')
             ->orderBy('order', 'asc')
-            ->select('name', 'image','slug')
+            ->select('name', 'image', 'slug')
             ->take(6)
             ->get();
 
@@ -115,7 +127,7 @@ class HomeController
             ->select('id', 'name', 'position', 'image', 'message')
             ->get();
 
-        $offplan_projects = OffPlanProject::select('id', 'image', 'link','title')
+        $offplan_projects = OffPlanProject::select('id', 'image', 'link', 'title')
             ->orderBy('order', 'asc')
             ->take(5)
             ->get();
@@ -123,10 +135,22 @@ class HomeController
         $marketChannels = MarketingChannels::select('id', 'image')->get();
         $listingSyndication = ListingSyndication::select('id', 'image')->get();
 
+        $homepageSliders = HomepageSlider::select('id', 'image', 'created_at', 'updated_at')
+            ->orderBy('id', 'desc')
+            ->get();
+
         // ✅ Cache for 10 minutes
         return Cache::remember('homepage_data', now()->addMinutes(10), function () use (
-            $search, $grouped, $countries, $insights, $areas,
-            $testimonials, $offplan_projects, $marketChannels, $listingSyndication
+            $search,
+            $grouped,
+            $countries,
+            $insights,
+            $areas,
+            $testimonials,
+            $offplan_projects,
+            $marketChannels,
+            $listingSyndication,
+            $homepageSliders
         ) {
             return [
                 'search' => $search,
@@ -138,6 +162,7 @@ class HomeController
                 'offplan_projects' => $offplan_projects,
                 'marketChannels' => $marketChannels,
                 'listingSyndications' => $listingSyndication,
+                'homepage_sliders' => $homepageSliders,
             ];
         });
     }
@@ -147,7 +172,7 @@ class HomeController
 
         // 🧠 Use only selected columns for pagination (faster query)
         $offplan_projects = OffPlanProject::query()
-            ->select('id', 'image', 'title', 'link as slug', 'developer', 'completion_date', 'location','starting_price')
+            ->select('id', 'image', 'title', 'link as slug', 'developer', 'completion_date', 'location', 'starting_price')
             ->paginate($limit);
 
         // 🧠 Retrieve distinct filters in one query (if filters are needed)
@@ -183,9 +208,8 @@ class HomeController
         $newsItem = Insight::where('slug', $slug)
             ->first();
 
-        $suggestedNews =Insight::
-            where('slug', '!=', $slug)
-            ->select('id', 'title', 'slug', 'image','created_at')
+        $suggestedNews = Insight::where('slug', '!=', $slug)
+            ->select('id', 'title', 'slug', 'image', 'created_at')
             ->take(5)
             ->get();
 
@@ -277,7 +301,7 @@ class HomeController
 
         $suggestedBlogs = Blog::with('blog_image')
             ->where('slug', '!=', $slug)
-            ->select('id', 'title', 'slug','date', 'posted_by', 'title_details')
+            ->select('id', 'title', 'slug', 'date', 'posted_by', 'title_details')
             ->take(5)
             ->get();
 
@@ -336,7 +360,6 @@ class HomeController
         } else {
             return response()->json(['message' => 'Brochure not found'], 404);
         }
-
     }
 
     public function talkToExpert(Request $request)
@@ -758,13 +781,32 @@ class HomeController
     public function offplanProjectDetails($slug)
     {
         $offplan = OffPlanProject::where('link', $slug)
-            ->select('id', 'title', 'link', 'image', 'developer', 'completion_date', 'location', 'starting_price',
-                'project_size', 'lifestyle', 'title_type',
-                'first_installment', 'area', 'description',
-                'during_construction', 'on_handover', 'features', 'map_link', 'order','youtube_link','header_images')
+            ->select(
+                'id',
+                'title',
+                'link',
+                'image',
+                'developer',
+                'completion_date',
+                'location',
+                'starting_price',
+                'project_size',
+                'lifestyle',
+                'title_type',
+                'first_installment',
+                'area',
+                'description',
+                'during_construction',
+                'on_handover',
+                'features',
+                'map_link',
+                'order',
+                'youtube_link',
+                'header_images'
+            )
             ->first();
         // make header_images array as associative array with id and url
-        $offplan->header_images = json_decode($offplan->header_images,true) ?? [];
+        $offplan->header_images = json_decode($offplan->header_images, true) ?? [];
         $offplan->header_images = array_map(function ($image, $index) {
             return [
                 'id' => $index + 1,
@@ -781,22 +823,20 @@ class HomeController
 
     public function globalProjectDetails($name)
     {
-        $project=GlobalProject::with('user:name,phone,id,image,email')->where('name',$name)->first();
+        $project = GlobalProject::with('user:name,phone,id,image,email')->where('name', $name)->first();
 
-        $similarProjects=NewProperty::
-              with([
+        $similarProjects = NewProperty::with([
             'user:id,name,email,phone,image',
-             ])
-            ->where('country',ucfirst($name))
-            ->select('id','title_en','slug','price','currency','bedroom','bathroom','photo','offering_type','user_id')
+        ])
+            ->where('country', ucfirst($name))
+            ->select('id', 'title_en', 'slug', 'price', 'currency', 'bedroom', 'bathroom', 'photo', 'offering_type', 'user_id')
             ->take(10)
             ->get();
 
-        $fallBackProjects=NewProperty::
-              with([
+        $fallBackProjects = NewProperty::with([
             'user:id,name,email,phone,image',
-             ])
-            ->select('id','title_en','slug','price','currency','bedroom','bathroom','photo','offering_type','user_id')
+        ])
+            ->select('id', 'title_en', 'slug', 'price', 'currency', 'bedroom', 'bathroom', 'photo', 'offering_type', 'user_id')
             ->take(10)
             ->get();
 
@@ -808,20 +848,19 @@ class HomeController
             return response()->json(['message' => 'Global Project not found'], 404);
         }
         return response()->json([
-            'project'=>$project,
-            'similar_properties'=>$similarProjects,
+            'project' => $project,
+            'similar_properties' => $similarProjects,
         ]);
     }
 
     public function popularAreaDetails($slug)
     {
-        $area=DB::table('communities')
+        $area = DB::table('communities')
             ->where('slug', $slug)
-            ->select('id','name','slug','image','description','location','youtube')
+            ->select('id', 'name', 'slug', 'image', 'description', 'location', 'youtube')
             ->first();
 
-        $suggestedProperties = NewProperty::
-        with([
+        $suggestedProperties = NewProperty::with([
             'user:id,name,email,phone,image',
             'pcommunity:id,name',
             'psubcommunity:id,name',
@@ -829,9 +868,18 @@ class HomeController
             ->where('community', $area->id)
             ->where('offering_type', 'RS')
             ->select(
-                'id','title_en','slug','price','bedroom','bathroom',
-                'photo','offering_type','user_id','currency',
-                'community','sub_community'
+                'id',
+                'title_en',
+                'slug',
+                'price',
+                'bedroom',
+                'bathroom',
+                'photo',
+                'offering_type',
+                'user_id',
+                'currency',
+                'community',
+                'sub_community'
             )
             ->take(10)
             ->get()
@@ -847,8 +895,8 @@ class HomeController
             return response()->json(['message' => 'Popular Area not found'], 404);
         }
         return response()->json([
-            'area'=>$area,
-            'suggested_properties'=>$suggestedProperties,
+            'area' => $area,
+            'suggested_properties' => $suggestedProperties,
         ]);
     }
 
@@ -866,7 +914,7 @@ class HomeController
         $similarProperties = NewProperty::with('user:id,name,image,phone')
             ->where('community', $property->community)
             ->where('id', '!=', $property->id)
-            ->select('id', 'title_en', 'slug', 'price', 'bedroom', 'bathroom', 'photo', 'offering_type','user_id','currency','community','sub_community')
+            ->select('id', 'title_en', 'slug', 'price', 'bedroom', 'bathroom', 'photo', 'offering_type', 'user_id', 'currency', 'community', 'sub_community')
             ->take(10)
             ->get()
             ->map(function ($property) {
@@ -894,7 +942,7 @@ class HomeController
     public function realEstateGuides()
     {
         //add /storage to images
-        $guides=RealEstate::all()->map(function ($guide) {
+        $guides = RealEstate::all()->map(function ($guide) {
             $guide->image = asset('storage/' . $guide->image);
             return $guide;
         });
@@ -921,7 +969,7 @@ class HomeController
     public function whoDownloadsGuide(Request $request)
     {
 
-     $store=DB::table('downloaded_brochures')
+        $store = DB::table('downloaded_brochures')
             ->insert([
                 'brochure_name' => $request->brochure_name,
                 'name' => $request->name,
@@ -936,25 +984,12 @@ class HomeController
 
     public function leatestListings()
     {
-        $listings = NewProperty::
-        where('offering_type', 'RS')
-        ->select('id', 'title_en', 'slug', 'city', 'price', 'photo','currency')
+        $listings = NewProperty::where('offering_type', 'RS')
+            ->select('id', 'title_en', 'slug', 'city', 'price', 'photo', 'currency')
             ->orderBy('updated_at', 'desc')
             ->take(3)
             ->get();
 
         return response()->json($listings);
-    }
-
-    public function homepageSliders()
-    {
-        $sliders = HomepageSlider::select('id', 'image', 'created_at', 'updated_at')
-            ->orderBy('id', 'desc')
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $sliders,
-        ]);
     }
 }

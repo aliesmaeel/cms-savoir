@@ -62,4 +62,3 @@ Route::get('/real-estate-guides', [\App\Http\Controllers\Api\HomeController::cla
 Route::get('/download-guide/{id}', [\App\Http\Controllers\Api\HomeController::class, 'downloadGuide']);
 Route::post('/who-downloads-guide', [\App\Http\Controllers\Api\HomeController::class, 'whoDownloadsGuide']);
 Route::get('/leatest-listings', [\App\Http\Controllers\Api\HomeController::class, 'leatestListings']);
-Route::get('/homepage-sliders', [\App\Http\Controllers\Api\HomeController::class, 'homepageSliders']);
