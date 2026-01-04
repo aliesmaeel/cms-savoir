@@ -61,4 +61,5 @@ Route::get('/careers', [CareerController::class, 'careerListApi'])->name('api_ca
 Route::get('/real-estate-guides', [\App\Http\Controllers\Api\HomeController::class, 'realEstateGuides']);
 Route::get('/download-guide/{id}', [\App\Http\Controllers\Api\HomeController::class, 'downloadGuide']);
 Route::post('/who-downloads-guide', [\App\Http\Controllers\Api\HomeController::class, 'whoDownloadsGuide']);
+Route::get('/area-transactions', [\App\Http\Controllers\Api\HomeController::class, 'areaTransactions']);
 Route::get('/leatest-listings', [\App\Http\Controllers\Api\HomeController::class, 'leatestListings']);

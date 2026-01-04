@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Blog;
 use App\Models\Email;
 use App\Models\GlobalProject;
+use App\Models\HistoryTransactionsArea;
 use App\Models\HomepageSlider;
 use App\Models\Insight;
 use App\Models\ListingSyndication;
@@ -991,5 +992,101 @@ class HomeController
             ->get();
 
         return response()->json($listings);
+    }
+
+    public function areaTransactions(Request $request)
+    {
+        $areaName = $request->input('area_name');
+        
+        if (!$areaName) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Area name is required',
+            ], 400);
+        }
+
+        // Get last 12 months from today
+        $oneYearAgo = Carbon::now()->subYear()->startOfDay();
+        $now = Carbon::now()->endOfDay();
+
+        // Query transactions filtered by area name (supports both English and Arabic)
+        $transactions = HistoryTransactionsArea::where(function ($query) use ($areaName) {
+                $query->where('area_name_en', 'LIKE', '%' . $areaName . '%')
+                      ->orWhere('area_name_ar', 'LIKE', '%' . $areaName . '%');
+            })
+            ->whereBetween('instance_date', [$oneYearAgo, $now])
+            ->whereNotNull('instance_date')
+            ->whereNotNull('actual_worth')
+            ->whereNotNull('procedure_area')
+            ->where('actual_worth', '>', 0)
+            ->where('procedure_area', '>', 0)
+            ->select('instance_date', 'actual_worth', 'procedure_area', 'meter_sale_price', 'area_name_en', 'area_name_ar')
+            ->get();
+
+        if ($transactions->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'area_name' => $areaName,
+                'total_transactions' => 0,
+                'data' => [],
+                'message' => 'No transactions found for this area in the last year',
+            ]);
+        }
+
+        // Group by month and calculate averages
+        $groupedByMonth = $transactions->groupBy(function ($transaction) {
+            return Carbon::parse($transaction->instance_date)->format('Y-m');
+        });
+
+        $monthlyData = [];
+        
+        foreach ($groupedByMonth as $month => $monthTransactions) {
+            $validTransactions = $monthTransactions->filter(function ($t) {
+                return $t->actual_worth > 0 && $t->procedure_area > 0;
+            });
+
+            if ($validTransactions->isEmpty()) {
+                continue;
+            }
+
+            $totalWorth = $validTransactions->sum('actual_worth');
+            $totalArea = $validTransactions->sum('procedure_area');
+            $count = $validTransactions->count();
+
+            // Calculate average price per square foot
+            $averagePricePerSqFt = $totalArea > 0 ? ($totalWorth / $totalArea) : 0;
+            
+            // Calculate average area
+            $averageArea = $count > 0 ? ($totalArea / $count) : 0;
+
+            // Calculate average total price
+            $averagePrice = $count > 0 ? ($totalWorth / $count) : 0;
+
+            $monthlyData[] = [
+                'month' => $month,
+                'month_label' => Carbon::createFromFormat('Y-m', $month)->format('F Y'),
+                'total_transactions' => $count,
+                'average_price_per_sqft' => round($averagePricePerSqFt, 2),
+                'average_area_sqft' => round($averageArea, 2),
+                'average_price' => round($averagePrice, 2),
+                'total_price' => round($totalWorth, 2),
+                'total_area' => round($totalArea, 2),
+            ];
+        }
+
+        // Sort by month chronologically
+        usort($monthlyData, function ($a, $b) {
+            return strcmp($a['month'], $b['month']);
+        });
+
+        // Get the matched area name (prefer English, fallback to Arabic)
+        $matchedArea = $transactions->first()->area_name_en ?? $transactions->first()->area_name_ar ?? $areaName;
+
+        return response()->json([
+            'success' => true,
+            'area_name' => $matchedArea,
+            'total_transactions' => $transactions->count(),
+            'data' => $monthlyData,
+        ]);
     }
 }
