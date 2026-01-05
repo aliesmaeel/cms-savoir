@@ -997,7 +997,7 @@ class HomeController
     public function areaTransactions(Request $request)
     {
         $areaName = $request->input('area_name');
-        
+
         if (!$areaName) {
             return response()->json([
                 'success' => false,
@@ -1011,9 +1011,9 @@ class HomeController
 
         // Query transactions filtered by area name (supports both English and Arabic)
         $transactions = HistoryTransactionsArea::where(function ($query) use ($areaName) {
-                $query->where('area_name_en', 'LIKE', '%' . $areaName . '%')
-                      ->orWhere('area_name_ar', 'LIKE', '%' . $areaName . '%');
-            })
+            $query->where('area_name_en', 'LIKE', '%' . $areaName . '%')
+                ->orWhere('area_name_ar', 'LIKE', '%' . $areaName . '%');
+        })
             ->whereBetween('instance_date', [$oneYearAgo, $now])
             ->whereNotNull('instance_date')
             ->whereNotNull('actual_worth')
@@ -1039,7 +1039,7 @@ class HomeController
         });
 
         $monthlyData = [];
-        
+
         foreach ($groupedByMonth as $month => $monthTransactions) {
             $validTransactions = $monthTransactions->filter(function ($t) {
                 return $t->actual_worth > 0 && $t->procedure_area > 0;
@@ -1050,12 +1050,14 @@ class HomeController
             }
 
             $totalWorth = $validTransactions->sum('actual_worth');
-            $totalArea = $validTransactions->sum('procedure_area');
+            $totalAreaSqm = $validTransactions->sum('procedure_area');
+            // Convert from square meters to square feet (1 sqm = 10.764 sq.ft)
+            $totalArea = $totalAreaSqm * 10.764;
             $count = $validTransactions->count();
 
             // Calculate average price per square foot
             $averagePricePerSqFt = $totalArea > 0 ? ($totalWorth / $totalArea) : 0;
-            
+
             // Calculate average area
             $averageArea = $count > 0 ? ($totalArea / $count) : 0;
 
