@@ -411,164 +411,135 @@ class HomeController
 
         // 🧪 Filters
         $filters = [
-            'offering_type' => $request->input('offering_type'),
-            'completion_status' => $request->input('completion_status'),
-            'type' => $request->input('type'),
-            'bedroom' => $request->input('bedroom'),
-            'bathroom' => $request->input('bathroom'),
-            'min_price' => $request->input('min_price'),
-            'max_price' => $request->input('max_price'),
+            'offering_type'      => $request->input('offering_type'),
+            'completion_status'  => $request->input('completion_status'),
+            'type'               => $request->input('type'),
+            'bedroom'            => $request->input('bedroom'),
+            'bathroom'           => $request->input('bathroom'),
+            'min_price'          => $request->input('min_price'),
+            'max_price'          => $request->input('max_price'),
         ];
 
         // 🧭 Pagination
-        $page = max(1, (int)$request->input('page', 1));
-        $limit = 5; // Always 5 per page
+        $page   = max(1, (int) $request->input('page', 1));
+        $limit  = 5;
         $offset = ($page - 1) * $limit;
 
         // 🔽 Sorting
-        $sortField = $request->input('sort_field', 'updated_at');
-        $sortOrder = strtolower($request->input('sort_order', 'desc'));
+        $sortFieldInput = $request->input('sort_field', 'date');
+        $sortOrder      = strtolower($request->input('sort_order', 'desc')) === 'asc' ? 'asc' : 'desc';
 
         $allowedSorts = [
-            'name' => 'title_en',
-            'title_en' => 'title_en',
-            'date' => 'updated_at',
-            'updated_at' => 'updated_at',
+            'name'  => 'title_en',
+            'date'  => 'updated_at',
             'price' => 'price',
         ];
 
+        $sortField = $allowedSorts[$sortFieldInput] ?? 'updated_at';
 
-        $sortField = $allowedSorts[$sortField] ?? 'updated_at';
-        $sortOrder = $sortOrder === 'asc' ? 'asc' : 'desc';
-
-        // 🧩 Build filter string
+        // 🧩 Build Meilisearch filter string
         $filterConditions = [];
 
-        if (!empty($filters['offering_type'])) {
+        if ($filters['offering_type']) {
             $filterConditions[] = 'offering_type = "' . $filters['offering_type'] . '"';
         }
-        if (!empty($filters['completion_status'])) {
+
+        if ($filters['completion_status']) {
             $filterConditions[] = 'completion_status = "' . $filters['completion_status'] . '"';
         }
-        if (!empty($filters['type'])) {
+
+        if ($filters['type']) {
             $filterConditions[] = 'property_type = "' . $filters['type'] . '"';
         }
+
         if (is_numeric($filters['bedroom'])) {
-            $filterConditions[] = 'bedroom = ' . $filters['bedroom'];
+            $filterConditions[] = 'bedroom = ' . (int) $filters['bedroom'];
         }
+
         if (is_numeric($filters['bathroom'])) {
-            $filterConditions[] = 'bathroom = ' . $filters['bathroom'];
+            $filterConditions[] = 'bathroom = ' . (int) $filters['bathroom'];
         }
 
         if (is_numeric($filters['min_price']) && is_numeric($filters['max_price'])) {
-            $filterConditions[] = 'price >= ' . $filters['min_price'] . ' AND price <= ' . $filters['max_price'];
+            $filterConditions[] = 'price >= ' . (float) $filters['min_price'] . ' AND price <= ' . (float) $filters['max_price'];
         } elseif (is_numeric($filters['min_price'])) {
-            $filterConditions[] = 'price >= ' . $filters['min_price'];
+            $filterConditions[] = 'price >= ' . (float) $filters['min_price'];
         } elseif (is_numeric($filters['max_price'])) {
-            $filterConditions[] = 'price <= ' . $filters['max_price'];
+            $filterConditions[] = 'price <= ' . (float) $filters['max_price'];
         }
 
         $filterString = implode(' AND ', $filterConditions);
 
-        // 🟢 RESULTS COLLECTION
-        $combinedResults = [];
-        $totalHits = 0;
-
-        // 🔍 SEARCH WITH KEYWORDS
-        if (!empty($keywords)) {
-            foreach ($keywords as $word) {
-
-                $raw = NewProperty::search($word, function ($meilisearch, $query, $options)
-                use ($filterString, $limit, $offset, $sortField, $sortOrder) {
-
-                    if ($filterString) {
-                        $options['filter'] = $filterString;
-                    }
-
-                    $options['limit'] = $limit;
-                    $options['offset'] = $offset;
-                    $options['sort'] = [$sortField . ':' . $sortOrder];
-
-                    return $meilisearch->search($query, $options);
-                })->raw();
-
-                $totalHits = $raw['estimatedTotalHits'] ?? $raw['totalHits'] ?? $totalHits;
-                $hits = $raw['hits'] ?? [];
-
-                foreach ($hits as $item) {
-                    $id = $item['id'];
-                    if (!isset($combinedResults[$id])) {
-                        $combinedResults[$id] = ['count' => 0];
-                    }
-                    $combinedResults[$id]['count']++;
-                }
+        // 🔍 Meilisearch query
+        $raw = NewProperty::search('', function ($meilisearch, $query, $options) use (
+            $filterString,
+            $limit,
+            $offset,
+            $sortField,
+            $sortOrder
+        ) {
+            if ($filterString) {
+                $options['filter'] = $filterString;
             }
+
+            $options['limit']  = $limit;
+            $options['offset'] = $offset;
+            $options['sort']   = [$sortField . ':' . $sortOrder];
+
+            return $meilisearch->search($query, $options);
+        })->raw();
+
+        $hits      = $raw['hits'] ?? [];
+        $totalHits = $raw['estimatedTotalHits'] ?? $raw['totalHits'] ?? 0;
+
+        // 🧱 Preserve Meilisearch order
+        $ids = array_column($hits, 'id');
+
+        if (empty($ids)) {
+            return response()->json([
+                'page'         => $page,
+                'limit'        => $limit,
+                'total'        => $totalHits,
+                'total_pages'  => ceil($totalHits / $limit),
+                'count'        => 0,
+                'sort_by'      => $sortField,
+                'sort_order'   => $sortOrder,
+                'data'         => [],
+            ]);
         }
 
-        // 🔍 SEARCH WITHOUT KEYWORDS
-        else {
-            $raw = NewProperty::search('', function ($meilisearch, $query, $options)
-            use ($filterString, $limit, $offset, $sortField, $sortOrder) {
-
-                if ($filterString) {
-                    $options['filter'] = $filterString;
-                }
-
-                $options['limit'] = $limit;
-                $options['offset'] = $offset;
-                $options['sort'] = [$sortField . ':' . $sortOrder];
-
-                return $meilisearch->search($query, $options);
-            })->raw();
-
-            $totalHits = $raw['estimatedTotalHits'] ?? $raw['totalHits'] ?? 0;
-            $hits = $raw['hits'] ?? [];
-
-            foreach ($hits as $item) {
-                $combinedResults[$item['id']] = ['count' => 1];
-            }
-        }
-
-        // 📌 SORT BY MATCH COUNT
-        $sortedIds = collect($combinedResults)
-            ->sortByDesc('count')
-            ->keys()
-            ->toArray();
-
-        // 🔄 GET REAL ELOQUENT MODELS
-        $eloquentResults = NewProperty::whereIn('id', $sortedIds)
+        // 🔄 Hydrate Eloquent models (order preserved)
+        $properties = NewProperty::whereIn('id', $ids)
             ->with([
                 'pcommunity:id,name',
                 'psubcommunity:id,name',
                 'user:id,name,email,phone,image',
             ])
             ->get()
-            ->sortBy(function ($item) use ($combinedResults) {
-                return $combinedResults[$item->id]['count'] ?? 0;
-            })
+            ->sortBy(fn ($item) => array_search($item->id, $ids))
             ->values();
 
-        // 🧱 TRANSFORM DATA
-        $data = $eloquentResults->map(function ($item) {
+        // 🧱 Transform
+        $data = $properties->map(function ($item) {
             return [
-                'id' => $item->id,
-                'title_en' => $item->title_en,
-                'slug' => $item->slug,
-                'city' => $item->city,
-                'community' => $item->pcommunity?->name,
-                'sub_community' => $item->psubcommunity?->name,
-                'property_type' => $item->property_type,
-                'completion_status' => $item->completion_status,
-                'offering_type' => $item->offering_type,
-                'bedroom' => $item->bedroom,
-                'bathroom' => $item->bathroom,
-                'price' => $item->price,
-                'currency' => $item->currency,
-                'updated_at' => $item->updated_at,
-                'added_date' => Carbon::make($item->updated_at)->diffForHumans(),
-                'photo' => $item->photo,
-                'user' => $item->user ? [
-                    'name' => $item->user->name,
+                'id'               => $item->id,
+                'title_en'         => $item->title_en,
+                'slug'             => $item->slug,
+                'city'             => $item->city,
+                'community'        => $item->pcommunity?->name,
+                'sub_community'    => $item->psubcommunity?->name,
+                'property_type'    => $item->property_type,
+                'completion_status'=> $item->completion_status,
+                'offering_type'    => $item->offering_type,
+                'bedroom'          => $item->bedroom,
+                'bathroom'         => $item->bathroom,
+                'price'            => $item->price,
+                'currency'         => $item->currency,
+                'updated_at'       => $item->updated_at,
+                'added_date'       => Carbon::make($item->updated_at)->diffForHumans(),
+                'photo'            => $item->photo,
+                'user'             => $item->user ? [
+                    'name'  => $item->user->name,
                     'email' => $item->user->email,
                     'phone' => $item->user->phone,
                     'image' => $item->user->image,
@@ -576,18 +547,19 @@ class HomeController
             ];
         });
 
-        // 📤 RESPONSE
+        // 📤 Response
         return response()->json([
-            'page' => $page,
-            'limit' => $limit,
-            'total' => $totalHits,
+            'page'        => $page,
+            'limit'       => $limit,
+            'total'       => $totalHits,
             'total_pages' => ceil($totalHits / $limit),
-            'count' => $data->count(),
-            'sort_by' => $sortField,
-            'sort_order' => $sortOrder,
-            'data' => $data,
+            'count'       => $data->count(),
+            'sort_by'     => $sortField,
+            'sort_order'  => $sortOrder,
+            'data'        => $data,
         ]);
     }
+
 
 
     public function searchOffplan(Request $request)
