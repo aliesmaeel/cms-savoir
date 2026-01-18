@@ -256,22 +256,40 @@ class HomeController
     {
         $limit = $request->input('limit', 9);
 
+        // Allowed fields for sorting (prevent SQL injection)
+        $allowedSortFields = ['title', 'created_at', 'price'];
+
+        $sortField = $request->input('sort_field', 'created_at');
+        $sortOrder = $request->input('sort_order', 'desc');
+
+        // Validate sort field
+        if (!in_array($sortField, $allowedSortFields)) {
+            $sortField = 'created_at';
+        }
+
+        // Validate sort order
+        if (!in_array(strtolower($sortOrder), ['asc', 'desc'])) {
+            $sortOrder = 'desc';
+        }
+
         $blogs = Blog::with('blog_image')
             ->select('id', 'title', 'slug', 'created_at', 'posted_by', 'title_details')
+            ->orderBy($sortField, $sortOrder)
             ->paginate($limit);
 
         return response()->json([
             'data' => $blogs->items(),
             'pagination' => [
-                'total' => $blogs->total(),          // total number of items
-                'per_page' => $blogs->perPage(),     // items per page
-                'current_page' => $blogs->currentPage(), // current page number
-                'last_page' => $blogs->lastPage(),   // total number of pages
-                'from' => $blogs->firstItem(),       // first item number on this page
-                'to' => $blogs->lastItem(),          // last item number on this page
+                'total' => $blogs->total(),
+                'per_page' => $blogs->perPage(),
+                'current_page' => $blogs->currentPage(),
+                'last_page' => $blogs->lastPage(),
+                'from' => $blogs->firstItem(),
+                'to' => $blogs->lastItem(),
             ]
         ]);
     }
+
 
     public function news(Request $request)
     {
