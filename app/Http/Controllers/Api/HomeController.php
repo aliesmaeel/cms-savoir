@@ -431,9 +431,12 @@ class HomeController
 
         $allowedSorts = [
             'name' => 'title_en',
+            'title_en' => 'title_en',
             'date' => 'updated_at',
+            'updated_at' => 'updated_at',
             'price' => 'price',
         ];
+
 
         $sortField = $allowedSorts[$sortField] ?? 'updated_at';
         $sortOrder = $sortOrder === 'asc' ? 'asc' : 'desc';
