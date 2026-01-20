@@ -548,7 +548,7 @@
                         id="password_confirm" required>
                 </div>
             </div>
-            <div class="mb-3 form-group" style="display: none" id="company_input">
+            <div class="mb-3 form-group" style="" id="company_input">
 
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
@@ -614,16 +614,16 @@
                     <div class="col-md-8">
                         <input type="file" placeholder="Enter Image" name="image" id="image"
                             style="background: #fff!important">
-                        @if($image)
+
                         <img src="{{$image}}" alt="" width="75px"
                             height="75px">
-                        @endif
+
                     </div>
                 </div>
 
                 <div class="row mt-4 mb-4" style="align-items: center;">
                     <div class="col-md-3">
-                        <label class="title-input" for="property">Image</label>
+                        <label class="title-input" for="property">Without border Image</label>
                     </div>
                     <div class="col-md-8 " style="display: flex;flex-direction: column">
                         <input type="file" placeholder="Enter Image" name="image_border" id="image_border"
