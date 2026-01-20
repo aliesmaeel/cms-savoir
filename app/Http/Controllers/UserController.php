@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Exception;
 use Carbon\Carbon;
 use App\Models\User;
@@ -21,174 +22,176 @@ class UserController extends Controller
     {
         return view('admin.createuser');
     }
-     // create new agent
-     public function createnewuser(Request $request)
-     {
-         if ($request->type == "3"||$request->type == "6") {
-             $request->validate(
-                 [
-                     'name' => 'required',
-                     'email' => 'required|email|unique:users,email',
-                     'phone' => 'required|regex:/^\+(?:[0-9] ?){8,14}[0-9]$/',
-                     'language' => 'required',
-                     'type' => 'required',
-                     'password' => 'required|required_with:password_confirm|same:password_confirm',
-                     'websiteId' => 'required',
-                     // 'brn' => 'required',
-                     // 'bio' => 'required',
-                     'Job_Description' => 'required',
-                     'slug' =>'required',
-                     // 'order' =>'required',
-                 ]
-             );
-             // replace non letter or digits by divider
-             $text = preg_replace('~[^\pL\d]+~u', '-', $request->slug);
-             // transliterate
-             $text = iconv('utf-8', 'utf-8//IGNORE', $text);
+    // create new agent
+    public function createnewuser(Request $request)
+    {
+        if ($request->type == "3" || $request->type == "6") {
+            $request->validate(
+                [
+                    'name' => 'required',
+                    'email' => 'required|email|unique:users,email',
+                    'phone' => 'required|regex:/^\+(?:[0-9] ?){8,14}[0-9]$/',
+                    'language' => 'required|array',
+                    'language.*' => 'string',
+                    'type' => 'required',
+                    'password' => 'required|required_with:password_confirm|same:password_confirm',
+                    'websiteId' => 'required',
+                    // 'brn' => 'required',
+                    // 'bio' => 'required',
+                    'Job_Description' => 'required',
+                    'slug' => 'required',
+                    // 'order' =>'required',
+                ]
+            );
+            // replace non letter or digits by divider
+            $text = preg_replace('~[^\pL\d]+~u', '-', $request->slug);
+            // transliterate
+            $text = iconv('utf-8', 'utf-8//IGNORE', $text);
 
-             // trim
-             $text = trim($text, '-');
+            // trim
+            $text = trim($text, '-');
 
-             // remove duplicate divider
-             $text = preg_replace('~-+~', '-', $text);
+            // remove duplicate divider
+            $text = preg_replace('~-+~', '-', $text);
 
-             // lowercase
-             $text = strtolower($text);
+            // lowercase
+            $text = strtolower($text);
 
-             if (empty($text)) {
-                 $text = 'n-a';
-             }else{
-                 $slug = User::where('slug',$text)->get();
-                 if(count($slug) > 0){
-                     return response()->json(['success' => false, 'message' => 'This sulg already exists']);
-                 }
-             }
-             $user = User::create([
-                 'name' => $request->name,
-                 'email' => $request->email,
-                 'phone' => $request->phone,
-                 'language' => $request->language,
-                 'role_id' => $request->type,
-                 'password' => Hash::make($request->password),
-                 'websiteId' => $request->websiteId,
-                 'brn' => $request->brn,
-                 'bio' => $request->bio,
-                 'Job_Description' => $request->Job_Description,
-                 'slug' => $text,
-                 'order' => $request->order,
+            if (empty($text)) {
+                $text = 'n-a';
+            } else {
+                $slug = User::where('slug', $text)->get();
+                if (count($slug) > 0) {
+                    return response()->json(['success' => false, 'message' => 'This sulg already exists']);
+                }
+            }
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'language' => is_array($request->language) ? implode(',', $request->language) : $request->language,
+                'role_id' => $request->type,
+                'password' => Hash::make($request->password),
+                'websiteId' => $request->websiteId,
+                'brn' => $request->brn,
+                'bio' => $request->bio,
+                'Job_Description' => $request->Job_Description,
+                'slug' => $text,
+                'order' => $request->order,
 
-             ]);
-             if ($request->publish_to_web_site == '1') {
-                 $user->update([
-                     'publish_to_web_site' => '1',
-                 ]);
-             }
-             $cloudName = "djd3y5gzw";
-
-
-
-                     if ($request->hasFile('floorplans')) {
-                         $file = $request->file('floorplans');
-                         $filename =uploadFile($file ,'image/Agent',false);
-                         $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/image/Agent/'.$filename;
-                         $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-
-                         $user->update([
-                             'image' => $store,
-
-                         ]);
-                     }
-
-                     if ($request->hasFile('floorplansBorder')){
-                            $file = $request->file('floorplansBorder');
-                            $filename =uploadFile($file ,'image/Agent',false);
-                            $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/image/Agent/'.$filename;
-                            $store2 = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-
-                            $user->update([
-                                'image_border' => $store2,
-                            ]);
-                     }
+            ]);
+            if ($request->publish_to_web_site == '1') {
+                $user->update([
+                    'publish_to_web_site' => '1',
+                ]);
+            }
+            $cloudName = "djd3y5gzw";
 
 
 
+            if ($request->hasFile('floorplans')) {
+                $file = $request->file('floorplans');
+                $filename = uploadFile($file, 'image/Agent', false);
+                $originalUrl = 'https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/image/Agent/' . $filename;
+                $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
+                $user->update([
+                    'image' => $store,
+
+                ]);
+            }
+
+            if ($request->hasFile('floorplansBorder')) {
+                $file = $request->file('floorplansBorder');
+                $filename = uploadFile($file, 'image/Agent', false);
+                $originalUrl = 'https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/image/Agent/' . $filename;
+                $store2 = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
+
+                $user->update([
+                    'image_border' => $store2,
+                ]);
+            }
 
 
-             $details = [
-                 'email' => $request->email,
-                 'password' => $request->password
-             ];
-
-             try {
-                 $details = [
-                     'admin_name' => Auth::user()->name,
-                     'created_date' => Carbon::parse($user->created_at)->format('Y-m-d h:m a'),
-                     'role' => $user->role_id == 3 ? 'Agent' : 'Photographer',
-                     'email' => $user->email,
-                     'password' => $request->password,
-                     'login_link' => route('login')
-                 ];
-
-                 $this->sendEmailNewUser([["email" => $user->email]],  $details);
-                 // Mail::to($request->email)->send(new SendAgentInfoMail($details));
-             } catch (Exception $th) {
-                 // return response()->json(['success' => false, 'message' => 'Unable to send email to this user']);
-             }
 
 
-             if ($user != null)
-                 return response()->json(['success' => true, 'message' => 'User created successfully']);
-             else
-                 return response()->json(['success' => false, 'message' => 'Error in creating new agent']);
-         } else {
-             $request->validate(
-                 [
-                     'name' => 'required',
-                     'email' => 'required|email|unique:users,email',
-                     'phone' => 'required|regex:/^\+(?:[0-9] ?){8,14}[0-9]$/',
-                     'language' => 'required',
-                     'type' => 'required',
-                     'password' => 'required|required_with:password_confirm|same:password_confirm',
-                 ]
-             );
 
-             $user = User::create([
-                 'name' => $request->name,
-                 'email' => $request->email,
-                 'phone' => $request->phone,
-                 'language' => $request->language,
-                 'role_id' => $request->type,
-                 'password' => Hash::make($request->password),
-             ]);
-             $details = [
-                 'email' => $request->email,
-                 'password' => $request->password
-             ];
+            $details = [
+                'email' => $request->email,
+                'password' => $request->password
+            ];
 
-             try {
-                 $details = [
-                     'admin_name' => Auth::user()->name,
-                     'created_date' => Carbon::parse($user->created_at)->format('Y-m-d h:m a'),
-                     'role' => $user->role_id == 3 ? 'Agent' : 'Photographer',
-                     'email' => $user->email,
-                     'password' => $request->password,
-                     'login_link' => route('login')
-                 ];
+            try {
+                $details = [
+                    'admin_name' => Auth::user()->name,
+                    'created_date' => Carbon::parse($user->created_at)->format('Y-m-d h:m a'),
+                    'role' => $user->role_id == 3 ? 'Agent' : 'Photographer',
+                    'email' => $user->email,
+                    'password' => $request->password,
+                    'login_link' => route('login')
+                ];
 
-                 $this->sendEmailNewUser([["email" => $user->email]],  $details);
-                 // Mail::to($request->email)->send(new SendAgentInfoMail($details));
-             } catch (Exception $th) {
-                 // return response()->json(['success' => false, 'message' => 'Unable to send email to this user']);
-             }
+                $this->sendEmailNewUser([["email" => $user->email]],  $details);
+                // Mail::to($request->email)->send(new SendAgentInfoMail($details));
+            } catch (Exception $th) {
+                // return response()->json(['success' => false, 'message' => 'Unable to send email to this user']);
+            }
 
 
-             if ($user != null)
-                 return response()->json(['success' => true, 'message' => 'User created successfully']);
-             else
-                 return response()->json(['success' => false, 'message' => 'Error in creating new agent']);
-         }
-     }
-     public function updateuserindex($id)
+            if ($user != null)
+                return response()->json(['success' => true, 'message' => 'User created successfully']);
+            else
+                return response()->json(['success' => false, 'message' => 'Error in creating new agent']);
+        } else {
+            $request->validate(
+                [
+                    'name' => 'required',
+                    'email' => 'required|email|unique:users,email',
+                    'phone' => 'required|regex:/^\+(?:[0-9] ?){8,14}[0-9]$/',
+                    'language' => 'required|array',
+                    'language.*' => 'string',
+                    'type' => 'required',
+                    'password' => 'required|required_with:password_confirm|same:password_confirm',
+                ]
+            );
+
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'language' => is_array($request->language) ? implode(',', $request->language) : $request->language,
+                'role_id' => $request->type,
+                'password' => Hash::make($request->password),
+            ]);
+            $details = [
+                'email' => $request->email,
+                'password' => $request->password
+            ];
+
+            try {
+                $details = [
+                    'admin_name' => Auth::user()->name,
+                    'created_date' => Carbon::parse($user->created_at)->format('Y-m-d h:m a'),
+                    'role' => $user->role_id == 3 ? 'Agent' : 'Photographer',
+                    'email' => $user->email,
+                    'password' => $request->password,
+                    'login_link' => route('login')
+                ];
+
+                $this->sendEmailNewUser([["email" => $user->email]],  $details);
+                // Mail::to($request->email)->send(new SendAgentInfoMail($details));
+            } catch (Exception $th) {
+                // return response()->json(['success' => false, 'message' => 'Unable to send email to this user']);
+            }
+
+
+            if ($user != null)
+                return response()->json(['success' => true, 'message' => 'User created successfully']);
+            else
+                return response()->json(['success' => false, 'message' => 'Error in creating new agent']);
+        }
+    }
+    public function updateuserindex($id)
     {
         $user = User::find($id);
 
@@ -196,17 +199,18 @@ class UserController extends Controller
         if ($user->role_id == 4) {
             return view('admin.updatebuyer', ['username' => $user->name, 'userphone' => $user->phone, 'useremail' => $user->email, 'userid' => $id]);
         } else {
-            return view('admin.updateuser', ['username' => $user->name, 'userphone' => $user->phone, 'useremail' => $user->email, 'userid' => $id, 'userlang' => $user->language, 'role' => $user->role_id, 'Job_Description' => $user->Job_Description, 'brn' => $user->brn, 'websiteId' => $user->websiteId, 'bio' => $user->bio, 'publish_to_web_site' => $user->publish_to_web_site, 'image' => $user->image,'image_border'=>$user->image_border, 'slug' => $user->slug,'order'=>$user->order,'user_id' => $user->id]);
+            return view('admin.updateuser', ['username' => $user->name, 'userphone' => $user->phone, 'useremail' => $user->email, 'userid' => $id, 'userlang' => $user->language, 'role' => $user->role_id, 'Job_Description' => $user->Job_Description, 'brn' => $user->brn, 'websiteId' => $user->websiteId, 'bio' => $user->bio, 'publish_to_web_site' => $user->publish_to_web_site, 'image' => $user->image, 'image_border' => $user->image_border, 'slug' => $user->slug, 'order' => $user->order, 'user_id' => $user->id]);
         }
     }
     public function updateuser(Request $request)
     {
 
-        if ($request->type == "3"||$request->type == "6") {
+        if ($request->type == "3" || $request->type == "6") {
             $roles = [];
-            $roles['email'] = 'required|unique:users,email,'.$request->user_id;
+            $roles['email'] = 'required|unique:users,email,' . $request->user_id;
             $roles['name'] = 'required';
-            $roles['language'] = 'required';
+            $roles['language'] = 'required|array';
+            $roles['language.*'] = 'string';
             $roles['type'] = 'required';
             if ($request->phone != null) {
                 $roles['phone'] = 'regex:/^\+(?:[0-9] ?){8,14}[0-9]$/';
@@ -242,15 +246,15 @@ class UserController extends Controller
 
                 if (empty($text)) {
                     $text = 'n-a';
-                }else{
-                    $slug = User::where('slug',$text)->where('id','!=',$customer->id)->get();
-                    if(count($slug) > 0){
+                } else {
+                    $slug = User::where('slug', $text)->where('id', '!=', $customer->id)->get();
+                    if (count($slug) > 0) {
                         return response()->json(['success' => false, 'message' => 'This sulg already exists']);
                     }
                 }
                 $customer->name = $request->name;
                 $customer->email = $request->email;
-                $customer->language = $request->language;
+                $customer->language = is_array($request->language) ? implode(',', $request->language) : $request->language;
                 $customer->role_id = $request->type;
                 if ($request->phone != null) {
                     $customer->phone = $request->phone;
@@ -280,22 +284,21 @@ class UserController extends Controller
                     for ($x = 0; $x < $request->FloorPlan; $x++) {
                         if ($request->hasFile('floorplans' . $x)) {
 
-                            $file = $request->file('floorplans'.$x);
-                            $filename =uploadFile($file ,'image/Agent',false);
-                            $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/image/Agent/'.$filename;
+                            $file = $request->file('floorplans' . $x);
+                            $filename = uploadFile($file, 'image/Agent', false);
+                            $originalUrl = 'https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/image/Agent/' . $filename;
 
                             $store = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
-
                         }
                         $customer->update([
                             'image' => $store
                         ]);
                     }
 
-                    if ($request->hasFile('floorplansBorder')){
+                    if ($request->hasFile('floorplansBorder')) {
                         $file = $request->file('floorplansBorder');
-                        $filename =uploadFile($file ,'image/Agent',false);
-                        $originalUrl='https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/image/Agent/'.$filename;
+                        $filename = uploadFile($file, 'image/Agent', false);
+                        $originalUrl = 'https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/image/Agent/' . $filename;
                         $store2 = "https://res.cloudinary.com/{$cloudName}/image/fetch/f_auto,q_auto,fl_lossy/" . urlencode($originalUrl);
 
                         $customer->update([
@@ -315,7 +318,7 @@ class UserController extends Controller
             }
         } else {
             $roles = [];
-            $roles['email'] = 'required|unique:users,email,'.$request->user_id;
+            $roles['email'] = 'required|unique:users,email,' . $request->user_id;
             $roles['name'] = 'required';
             $roles['language'] = 'required';
             $roles['type'] = 'required';
@@ -381,7 +384,7 @@ class UserController extends Controller
                     $actionBtn .= '<a class="edit btn btn-info btn-sm">Edit</a>';
                     return $actionBtn;
                 })
-                ->rawColumns(['action','image'])
+                ->rawColumns(['action', 'image'])
                 ->make(true);
         } else {
             $users = User::where('role_id', 'not like', '%5%')->orderBy('created_at', 'DESC')->get();
@@ -410,14 +413,14 @@ class UserController extends Controller
                     $actionBtn .= '<a class="edit btn btn-info btn-sm">Edit</a>';
                     return $actionBtn;
                 })
-                ->rawColumns(['action','image'])
+                ->rawColumns(['action', 'image'])
                 ->make(true);
         }
     }
     public function deleteuser(Request $request)
     {
         $user = User::find($request->id);
-        if ($user){
+        if ($user) {
             deleteFile($user->image);
             //make all properties of this user to be assigned to admin where admin is the user with id 1
             $properties = $user->newproperties;
@@ -429,11 +432,9 @@ class UserController extends Controller
 
             $user->delete();
             return response()->json(['success' => true, 'message' => 'User has been deleted successfully']);
-        }
-        else{
+        } else {
             return response()->json(['success' => true, 'message' => 'Error while deleting user']);
         }
-
     }
     public function createbuyerindex()
     {
