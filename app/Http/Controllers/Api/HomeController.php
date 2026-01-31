@@ -820,19 +820,27 @@ class HomeController
         $project = GlobalProject::with('user:name,phone,id,image,email')->where('name', $name)->first();
 
         $similarProjects = NewProperty::with([
-            'user:id,name,email,phone,image',
+            'user:id,name,email,phone,image','pcommunity:id,name','psubcommunity:id,name',
         ])
             ->where('country', ucfirst($name))
-            ->select('id', 'title_en', 'slug', 'price', 'currency', 'bedroom', 'bathroom', 'photo', 'offering_type', 'user_id')
+            ->select('id', 'title_en', 'slug', 'price', 'currency', 'bedroom', 'bathroom', 'photo', 'offering_type', 'user_id','community','sub_community')
             ->take(10)
-            ->get();
+            ->get()->map(function ($property) {
+                $property->community = $property->pcommunity->name ?? null;
+                $property->subcommunity = $property->psubcommunity->name ?? null;
+                return $property;
+            });
 
         $fallBackProjects = NewProperty::with([
-            'user:id,name,email,phone,image',
+            'user:id,name,email,phone,image','pcommunity:id,name','psubcommunity:id,name',
         ])
-            ->select('id', 'title_en', 'slug', 'price', 'currency', 'bedroom', 'bathroom', 'photo', 'offering_type', 'user_id')
+            ->select('id', 'title_en', 'slug', 'price', 'currency', 'bedroom', 'bathroom', 'photo', 'offering_type', 'user_id','community','sub_community')
             ->take(10)
-            ->get();
+            ->get()->map(function ($property) {
+                $property->community = $property->pcommunity->name ?? null;
+                $property->subcommunity = $property->psubcommunity->name ?? null;
+                return $property;
+            });
 
         if ($similarProjects->isEmpty()) {
             $similarProjects = $fallBackProjects;
