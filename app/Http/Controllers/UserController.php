@@ -78,6 +78,7 @@ class UserController extends Controller
                 'Job_Description' => $request->Job_Description,
                 'slug' => $text,
                 'order' => $request->order,
+                'is_external_agent'=>$request->is_external_agent ? 1 : 0,
 
             ]);
             if ($request->publish_to_web_site == '1') {
@@ -199,7 +200,7 @@ class UserController extends Controller
         if ($user->role_id == 4) {
             return view('admin.updatebuyer', ['username' => $user->name, 'userphone' => $user->phone, 'useremail' => $user->email, 'userid' => $id]);
         } else {
-            return view('admin.updateuser', ['username' => $user->name, 'userphone' => $user->phone, 'useremail' => $user->email, 'userid' => $id, 'userlang' => $user->language, 'role' => $user->role_id, 'Job_Description' => $user->Job_Description, 'brn' => $user->brn, 'websiteId' => $user->websiteId, 'bio' => $user->bio, 'publish_to_web_site' => $user->publish_to_web_site, 'image' => $user->image, 'image_border' => $user->image_border, 'slug' => $user->slug, 'order' => $user->order, 'user_id' => $user->id]);
+            return view('admin.updateuser', ['username' => $user->name, 'userphone' => $user->phone, 'useremail' => $user->email, 'userid' => $id, 'userlang' => $user->language, 'role' => $user->role_id, 'Job_Description' => $user->Job_Description, 'brn' => $user->brn, 'websiteId' => $user->websiteId, 'bio' => $user->bio, 'publish_to_web_site' => $user->publish_to_web_site, 'image' => $user->image, 'image_border' => $user->image_border, 'slug' => $user->slug, 'order' => $user->order,'is_external_agent'=>$user->is_external_agent, 'user_id' => $user->id]);
         }
     }
     public function updateuser(Request $request)
@@ -268,6 +269,7 @@ class UserController extends Controller
                 $customer->slug = $text;
                 $customer->order = $request->order;
                 $customer->Job_Description = $request->Job_Description;
+                $customer->is_external_agent=$request->is_external_agent ? 1 : 0;
                 if ($request->publish_to_web_site == "1") {
                     $customer->update([
                         'publish_to_web_site' => '1',
@@ -331,6 +333,7 @@ class UserController extends Controller
             $request->validate($roles);
 
             try {
+
                 $customer = User::where('id', $request->user_id)->first();
                 $customer->name = $request->name;
                 $customer->email = $request->email;

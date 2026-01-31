@@ -654,6 +654,17 @@
                         <label class="title-input" for="publish_to_web_site"> </label>
                     </div>
                 </div>
+
+                <div class="row mt-4 mb-4" style="align-items: center;">
+                    <div class="col-md-3">
+                        <label class="title-input" for="property">Is Agent</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="checkbox" name="is_external_agent" value="1" id="is_external_agent">
+                        <label class="title-input" for="is_external_agent"> </label>
+                    </div>
+                </div>
+
             </div>
             <div class="row mt-5">
                 <div class="col-md-12 text-center">

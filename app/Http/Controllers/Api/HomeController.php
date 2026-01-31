@@ -760,6 +760,7 @@ class HomeController
 
         $team = User::where('slug', $slug)->first();
         $otherTeams = User::where('publish_to_web_site', true)
+            ->where('is_external_agent', true)
             ->where('slug', '!=', $slug)
             ->get();
 
