@@ -24,7 +24,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           script: |
             git config --global --add safe.directory /home/savoirproperties-cms/htdocs/cms.savoirproperties.com
-            cd /home/savoirproperties-cms/htdocs/dev-cms.savoirproperties.com/cms-savoir
+            cd /home/savoirproperties-cms/htdocs/cms.savoirproperties.com
 
             git fetch origin
             sudo git reset --hard origin/main # change 'main' if using a different branch
