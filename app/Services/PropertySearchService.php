@@ -118,7 +118,7 @@ class PropertySearchService
                 'status'     => $item->completion_status === 'completed' ? 'Ready' : 'Off-plan',
                 'roi'        => '',
                 'image'      => $item->photo ?? '',
-                'link'       => $baseUrl . '/property/' . ($item->slug ?? $item->id),
+                'link'       => 'https://savoirproperties.com' . '/project/' . ($item->slug ?? $item->id),
             ];
         })->all();
     }
