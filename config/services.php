@@ -42,4 +42,8 @@ return [
     ],
     'google_map_key' => env('GOOGLE_MAP_KEY'),
     'cms_link'=> env('CMS_LINK'),
+
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+    ],
 ];
