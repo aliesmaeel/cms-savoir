@@ -534,7 +534,7 @@ class HomeController
                 'user:id,name,email,phone,image',
             ])
             ->get()
-            ->sortBy(fn ($item) => array_search($item->id, $ids))
+            ->sortBy(fn($item) => array_search($item->id, $ids))
             ->values();
 
         // 🧱 Transform
@@ -547,7 +547,7 @@ class HomeController
                 'community'        => $item->pcommunity?->name,
                 'sub_community'    => $item->psubcommunity?->name,
                 'property_type'    => $item->property_type,
-                'completion_status'=> $item->completion_status,
+                'completion_status' => $item->completion_status,
                 'offering_type'    => $item->offering_type,
                 'bedroom'          => $item->bedroom,
                 'bathroom'         => $item->bathroom,
@@ -751,7 +751,8 @@ class HomeController
 
     public function teams()
     {
-        $teams = User::where('publish_to_web_site', true)->get();
+        $teams = User::where('publish_to_web_site', true)
+            ->orderBy('websiteId', 'asc')->get();
         return response()->json($teams);
     }
 
@@ -821,10 +822,12 @@ class HomeController
         $project = GlobalProject::with('user:name,phone,id,image,email')->where('name', $name)->first();
 
         $similarProjects = NewProperty::with([
-            'user:id,name,email,phone,image','pcommunity:id,name','psubcommunity:id,name',
+            'user:id,name,email,phone,image',
+            'pcommunity:id,name',
+            'psubcommunity:id,name',
         ])
             ->where('country', ucfirst($name))
-            ->select('id', 'title_en', 'slug', 'price', 'currency', 'bedroom', 'bathroom', 'photo', 'offering_type', 'user_id','community','sub_community')
+            ->select('id', 'title_en', 'slug', 'price', 'currency', 'bedroom', 'bathroom', 'photo', 'offering_type', 'user_id', 'community', 'sub_community')
             ->take(10)
             ->get()->map(function ($property) {
                 $property->community = $property->pcommunity->name ?? null;
@@ -833,9 +836,11 @@ class HomeController
             });
 
         $fallBackProjects = NewProperty::with([
-            'user:id,name,email,phone,image','pcommunity:id,name','psubcommunity:id,name',
+            'user:id,name,email,phone,image',
+            'pcommunity:id,name',
+            'psubcommunity:id,name',
         ])
-            ->select('id', 'title_en', 'slug', 'price', 'currency', 'bedroom', 'bathroom', 'photo', 'offering_type', 'user_id','community','sub_community')
+            ->select('id', 'title_en', 'slug', 'price', 'currency', 'bedroom', 'bathroom', 'photo', 'offering_type', 'user_id', 'community', 'sub_community')
             ->take(10)
             ->get()->map(function ($property) {
                 $property->community = $property->pcommunity->name ?? null;
