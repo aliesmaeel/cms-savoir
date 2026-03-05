@@ -141,7 +141,7 @@ class HomeController
             ->get();
 
         // ✅ Cache for 10 minutes
-        return Cache::remember('homepage_data', now()->addMinutes(10), function () use (
+        return Cache::remember('homepage_data', now()->addMinutes(2), function () use (
             $search,
             $grouped,
             $countries,
