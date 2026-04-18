@@ -657,7 +657,7 @@ class HomeController
                 'developer' => $item['developer'] ?? null,
                 'completion_date' => $item['completion_date'] ?? null,
                 'location' => $item['location'] ?? null,
-                'price' => $item['starting_price'] ?? null,
+                'starting_price' => $item['starting_price'] ?? null,
                 'updated_at' => $item['updated_at'] ?? null,
             ];
         });
