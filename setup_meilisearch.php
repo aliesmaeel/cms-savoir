@@ -53,7 +53,7 @@ $documents = $allProperties->map(function ($p) {
         'city' => $p->city,
         'community' => $p->community,
         'sub_community' => $p->sub_community,
-        'country'=> $p->country,
+        'country' => $p->country,
     ];
 })->toArray();
 
@@ -83,11 +83,11 @@ $index->addDocuments(
             'id' => $p->id,
             'title' => $p->title,
             'link' => $p->link,
-            'image'=> $p->image,
+            'image' => $p->image,
             'location' => $p->location,
             'developer' => $p->developer,
             'completion_date' => $p->completion_date,
-            'price' => $p->starting_price,
+            'starting_price' => $p->starting_price,
             'updated_at' => $p->updated_at->toIso8601String(),
         ];
     })->toArray()
