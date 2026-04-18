@@ -8,8 +8,8 @@ use Laravel\Scout\Searchable;
 
 class OffPlanProject extends Model
 {
-    use HasFactory,Searchable;
-    protected $guarded=[];
+    use HasFactory, Searchable;
+    protected $guarded = [];
     protected $table = 'off_plan_projects';
 
     public function toSearchableArray(): array
@@ -18,15 +18,15 @@ class OffPlanProject extends Model
             'id' => $this->id,
             'title' => $this->title,
             'link' => $this->link,
-            'image'=> $this->image,
+            'image' => $this->image,
             'location' => $this->location,
             'developer' => $this->developer,
             'completion_date' => $this->completion_date,
-            'price' => $this->starting_price,
+            'starting_price' => $this->starting_price,
         ];
     }
 
-    public function searchableSettings() :array
+    public function searchableSettings(): array
     {
         return [
             "filterableAttributes" => [
@@ -46,6 +46,4 @@ class OffPlanProject extends Model
     {
         return 'off_plan_projects';
     }
-
-
 }
