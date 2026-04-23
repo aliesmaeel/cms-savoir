@@ -174,7 +174,7 @@ class HomeController
         // 🧠 Use only selected columns for pagination (faster query)
         $offplan_projects = OffPlanProject::query()
             ->select('id', 'image', 'title', 'link as slug', 'developer', 'completion_date', 'location', 'starting_price')
-            ->paginate($limit);
+            ->orderBy('created_at', 'desc')->paginate($limit);
 
         // 🧠 Retrieve distinct filters in one query (if filters are needed)
         $filters = OffPlanProject::select('developer', 'completion_date', 'location', 'link')->get();
@@ -296,7 +296,7 @@ class HomeController
         $limit = $request->input('limit', 6);
 
         $news = Insight::select('id', 'title', 'slug', 'image', 'created_at')
-            ->paginate($limit);
+            ->orderBy('created_at', 'desc')->paginate($limit);
 
         return response()->json([
             'data' => $news->items(),
@@ -768,9 +768,15 @@ class HomeController
         if (!$team) {
             return response()->json(['message' => 'Team member not found'], 404);
         }
+
+        $testimonials = DB::table('testimonials')
+            ->select('id', 'name', 'position', 'image', 'message')
+            ->get();
+
         return response()->json([
             'team' => $team,
             'other_teams' => $otherTeams,
+            'testimonials' => $testimonials,
         ]);
     }
 
