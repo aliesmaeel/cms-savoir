@@ -769,9 +769,12 @@ class HomeController
             return response()->json(['message' => 'Team member not found'], 404);
         }
 
-        $testimonials = DB::table('testimonials')
+        $testimonials =
+            DB::table('testimonials')
             ->select('id', 'name', 'position', 'image', 'message')
             ->get();
+
+
 
         return response()->json([
             'team' => $team,
