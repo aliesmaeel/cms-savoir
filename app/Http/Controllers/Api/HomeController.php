@@ -98,17 +98,17 @@ class HomeController
         $grouped = [
             'off_plan' => $properties
                 ->where('completion_status', 'off_plan')
-                ->take(3)
+                ->take(4)
                 ->values(),
             'RR' => $properties
                 ->where('completion_status', 'completed')
                 ->where('offering_type', 'RR')
-                ->take(3)
+                ->take(4)
                 ->values(),
             'RS' => $properties
                 ->where('completion_status', 'completed')
                 ->where('offering_type', 'RS')
-                ->take(3)
+                ->take(4)
                 ->values(),
         ];
 
@@ -128,7 +128,7 @@ class HomeController
             ->select('id', 'name', 'position', 'image', 'message')
             ->get();
 
-        $offplan_projects = OffPlanProject::select('id', 'image', 'link', 'title')
+        $offplan_projects = OffPlanProject::select('id', 'image', 'link', 'title', 'starting_price')
             ->orderBy('order', 'asc')
             ->take(5)
             ->get();
