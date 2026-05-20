@@ -25,6 +25,7 @@ use ArielMejiaDev\LarapexCharts\LarapexChart;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\OffPlanProjectController;
 use App\Http\Controllers\SignatureController;
+use App\Http\Controllers\PropertyXmlController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -523,3 +524,8 @@ Route::match(['post', 'get'], '/homepage_slider_create', [HomepageSliderControll
 Route::match(['post', 'get'], '/homepage_slider_list', [HomepageSliderController::class, 'homepage_slider_list'])->name('homepage_slider_list');
 Route::match(['post', 'get'], '/homepage_slider_update/{id}', [HomepageSliderController::class, 'homepage_slider_update'])->name('homepage_slider_update');
 Route::post('/homepage_slider_delete', [HomepageSliderController::class, 'homepage_slider_delete'])->name('homepage_slider_delete');
+
+
+
+
+Route::get('/update-xml', [PropertyXmlController::class, 'generateXml']);
