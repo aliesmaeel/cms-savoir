@@ -60,13 +60,20 @@ class PropertyXmlController extends Controller
         // 6. Build XML String
         $xml = '<?xml version="1.0" encoding="utf-8"?><rss><Properties>';
         
+        $processedCount = 0;
+
         foreach ($allResults as $item) {
-            // Filters
+            // --- FILTERS (Now including Pending Approval) ---
             $stage = strtolower($item['state']['stage'] ?? '');
             $type = strtolower($item['state']['type'] ?? '');
-            if ($stage !== 'live' || $type === 'live_changes_pending_approval') continue;
 
-            // Fetch Location Tree (Hierarchy) - IMPORTANT FIX
+            // Logic: Shamil karo agar 'live' ho YA 'pending_approval' ho
+            // Aur 'live_changes_pending_approval' ko bhi ab allow kar diya gaya hai
+            if ($stage !== 'live' && $stage !== 'pending_approval') {
+                continue;
+            }
+
+            // Fetch Location Tree (Hierarchy)
             $locationData = $this->getLocationTree($item['location']['id'] ?? null, $token);
             $city = 'Dubai'; $locality = ''; $subLocality = ''; $tower = '';
             if ($locationData && isset($locationData['tree'])) {
@@ -88,15 +95,17 @@ class PropertyXmlController extends Controller
             $xml .= "<Property_Ref_No><![CDATA[{$item['reference']}]]></Property_Ref_No>";
             $xml .= "<Property_purpose><![CDATA[$purpose]]></Property_purpose>";
             $xml .= "<Property_Type><![CDATA[" . ucfirst($item['type'] ?? '') . "]]></Property_Type>";
+            
+            // Status tag hamesha 'live' bhejna portals ko (validation ke liye)
             $xml .= "<Property_Status><![CDATA[live]]></Property_Status>";
 
-            // 2. Location Tree (Missing in previous Controller)
+            // 2. Location Tree
             $xml .= "<City><![CDATA[$city]]></City>";
             $xml .= "<Locality><![CDATA[$locality]]></Locality>";
             $xml .= "<Sub_Locality><![CDATA[$subLocality]]></Sub_Locality>";
             $xml .= "<Tower_Name><![CDATA[$tower]]></Tower_Name>";
 
-            // 3. Multi-language Title & Description (Fixed Arabic)
+            // 3. Titles & Descriptions (EN/AR)
             $xml .= "<Property_Title><![CDATA[" . ($item['title']['en'] ?? '') . "]]></Property_Title>";
             $xml .= "<Property_Title_AR><![CDATA[" . ($item['title']['ar'] ?? '') . "]]></Property_Title_AR>";
             $xml .= "<Property_Description><![CDATA[" . nl2br($item['description']['en'] ?? '') . "]]></Property_Description>";
@@ -108,7 +117,7 @@ class PropertyXmlController extends Controller
             
             $beds = (strtolower($item['bedrooms'] ?? '') === 'studio') ? 'Studio' : ($item['bedrooms'] ?? 0);
             $xml .= "<Bedrooms>$beds</Bedrooms>";
-            $xml .= "<Bathroom>" . ($item['bathrooms'] ?? 0) . "</Bathroom>"; // Singular fixed
+            $xml .= "<Bathroom>" . ($item['bathrooms'] ?? 0) . "</Bathroom>"; 
             
             $xml .= "<Price><![CDATA[" . ($item['price']['amounts']['yearly'] ?? $item['price']['amounts']['sale'] ?? 0) . "]]></Price>";
             $xml .= "<Furnished><![CDATA[$furn]]></Furnished>";
@@ -125,21 +134,21 @@ class PropertyXmlController extends Controller
             }
             $xml .= "</Images>";
 
-            // 6. Videos (Missing in previous Controller)
+            // 6. Videos
             $xml .= "<Videos>";
             if (!empty($item['media']['videos']['default'])) {
                 $xml .= "<Video><![CDATA[" . $item['media']['videos']['default'] . "]]></Video>";
             }
             $xml .= "</Videos>";
 
-            // 7. Floor Plans (Missing in previous Controller)
+            // 7. Floor Plans
             $xml .= "<Floor_Plans>";
             foreach (($item['media']['floorPlans'] ?? []) as $fp) {
                 $xml .= "<Floor_Plan><![CDATA[{$fp['url']}]]></Floor_Plan>";
             }
             $xml .= "</Floor_Plans>";
 
-            // 8. Dates & Permit (Missing in previous Controller)
+            // 8. Dates & Permit
             $xml .= "<Last_Updated><![CDATA[" . date('Y-m-d H:i:s', strtotime($item['updatedAt'])) . "]]></Last_Updated>";
             $xml .= "<Permit_Number><![CDATA[" . ($item['compliance']['listingAdvertisementNumber'] ?? '') . "]]></Permit_Number>";
 
@@ -149,7 +158,7 @@ class PropertyXmlController extends Controller
             $xml .= "<Listing_Agent_Email><![CDATA[{$agent['email']}]]></Listing_Agent_Email>";
             $xml .= "<Listing_Agent_Photo><![CDATA[{$agent['photo']}]]></Listing_Agent_Photo>";
 
-            // 10. Portals & Amenities (Features)
+            // 10. Features (Amenities)
             $xml .= "<Features>";
             foreach (($item['amenities'] ?? []) as $amenity) {
                 $xml .= "<Feature><![CDATA[" . str_replace('-', ' ', ucfirst($amenity)) . "]]></Feature>";
@@ -159,16 +168,16 @@ class PropertyXmlController extends Controller
             $xml .= "<Portals><Portal>Bayut</Portal><Portal>dubizzle</Portal></Portals>";
             
             $xml .= "</Property>";
+            $processedCount++;
         }
         $xml .= "</Properties></rss>";
 
         // 7. Save to Public Folder
         File::put(public_path('BayutProperties.xml'), $xml);
 
-        return "<h2>SUCCESS: XML file updated with ALL fields!</h2><p><a href='/BayutProperties.xml' target='_blank'>View XML File</a></p>";
+        return "<h2>SUCCESS: XML file updated!</h2><p>Total Included (Live + Pending): $processedCount</p><p><a href='/BayutProperties.xml' target='_blank'>View XML File</a></p>";
     }
 
-    // Helper to fetch Location Tree Hierarchy
     private function getLocationTree($locationId, $token) {
         if (!$locationId) return null;
         $response = Http::withToken($token)->get("https://atlas.propertyfinder.com/v1/locations?filter[id]=$locationId");
