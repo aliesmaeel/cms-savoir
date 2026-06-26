@@ -440,7 +440,7 @@ class HomeController
 
         // 🧭 Pagination
         $page   = max(1, (int) $request->input('page', 1));
-        $limit  = 5;
+        $limit  = min(100, max(1, (int) $request->input('limit', 5)));
         $offset = ($page - 1) * $limit;
 
         // 🔽 Sorting
@@ -448,15 +448,34 @@ class HomeController
         $sortOrder      = strtolower($request->input('sort_order', 'desc')) === 'asc' ? 'asc' : 'desc';
 
         $allowedSorts = [
-            'name'  => 'title_en',
-            'date'  => 'updated_at',
-            'price' => 'price',
+            'name'     => 'title_en',
+            'title_en' => 'title_en',
+            'date'     => 'updated_at',
+            'updated_at' => 'updated_at',
+            'price'    => 'price',
         ];
 
         $sortField = $allowedSorts[$sortFieldInput] ?? 'updated_at';
 
         // 🧩 Build Meilisearch filter string
         $filterConditions = [];
+
+        // 📍 Location keywords (country / community / sub-community names)
+        $keywords = array_values(array_filter(
+            (array) $keywords,
+            fn($keyword) => is_string($keyword) && trim($keyword) !== ''
+        ));
+
+        if (!empty($keywords)) {
+            $locationConditions = collect($keywords)->map(function ($keyword) {
+                $escaped = str_replace('"', '\"', trim($keyword));
+                return '(country = "' . $escaped . '"'
+                    . ' OR community_name = "' . $escaped . '"'
+                    . ' OR sub_community_name = "' . $escaped . '")';
+            })->implode(' OR ');
+
+            $filterConditions[] = '(' . $locationConditions . ')';
+        }
 
         if ($filters['offering_type']) {
             $filterConditions[] = 'offering_type = "' . $filters['offering_type'] . '"';

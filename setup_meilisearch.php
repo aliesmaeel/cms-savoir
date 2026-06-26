@@ -28,6 +28,12 @@ $index->updateFilterableAttributes([
     'bedroom',
     'bathroom',
     'price',
+    'city',
+    'country',
+    'community',
+    'sub_community',
+    'community_name',
+    'sub_community_name',
 ]);
 
 $index->updateSortableAttributes([
@@ -37,7 +43,7 @@ $index->updateSortableAttributes([
 ]);
 
 // Fetch all properties
-$allProperties = NewProperty::all();
+$allProperties = NewProperty::with(['pcommunity:id,name', 'psubcommunity:id,name'])->get();
 
 $documents = $allProperties->map(function ($p) {
     return [
@@ -53,6 +59,8 @@ $documents = $allProperties->map(function ($p) {
         'city' => $p->city,
         'community' => $p->community,
         'sub_community' => $p->sub_community,
+        'community_name' => $p->pcommunity?->name,
+        'sub_community_name' => $p->psubcommunity?->name,
         'country' => $p->country,
     ];
 })->toArray();

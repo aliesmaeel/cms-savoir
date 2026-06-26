@@ -105,6 +105,8 @@ class NewProperty extends Model
             'city' => $this->city,
             'community' => $this->community,
             'sub_community' => $this->sub_community,
+            'community_name' => $this->pcommunity?->name,
+            'sub_community_name' => $this->psubcommunity?->name,
             'country'=> $this->country,
             'property_type' => $this->property_type,
             'completion_status' => $this->completion_status,
@@ -129,6 +131,9 @@ class NewProperty extends Model
                 'city',
                 'community',
                 'sub_community',
+                'community_name',
+                'sub_community_name',
+                'country',
             ],
             'sortableAttributes' => [
                 'price',
