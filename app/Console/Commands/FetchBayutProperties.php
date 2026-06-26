@@ -5,31 +5,21 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-class FetchGoyzerProperties extends Command
+class FetchBayutProperties extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'fetch:goyzerproperties';
+    protected $signature = 'fetch:bayutproperties';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'fetch properties from goyzer portal';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    protected $description = 'Import properties from the local Bayut XML feed';
 
     /**
      * Execute the console command.
@@ -38,7 +28,11 @@ class FetchGoyzerProperties extends Command
      */
     public function handle()
     {
-        Log::channel('fetching_properties')->alert('Goyzer integration disabled; replaced by fetch:bayutproperties');
+        ini_set('memory_limit', '-1');
+
+        Log::channel('fetching_properties')->alert('Bayut XML fetching start');
+        app()->call('App\Http\Controllers\Api\BayutXmlIntegrationController@import');
+        $this->runMeilisearchIndex();
 
         return self::SUCCESS;
     }

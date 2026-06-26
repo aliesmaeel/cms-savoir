@@ -26,6 +26,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('quote:daily')->dailyAt('15:05')->timezone('Europe/Berlin');
+        $schedule->command('fetch:bayutproperties')->hourly()->withoutOverlapping();
     }
 
     /**
