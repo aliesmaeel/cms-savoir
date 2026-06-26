@@ -63,5 +63,6 @@ Route::get('/download-guide/{id}', [\App\Http\Controllers\Api\HomeController::cl
 Route::post('/who-downloads-guide', [\App\Http\Controllers\Api\HomeController::class, 'whoDownloadsGuide']);
 Route::get('/area-transactions', [\App\Http\Controllers\Api\HomeController::class, 'areaTransactions']);
 Route::get('/leatest-listings', [\App\Http\Controllers\Api\HomeController::class, 'leatestListings']);
+Route::get('/savoirs-collection', [\App\Http\Controllers\Api\HomeController::class, 'savoirsCollection']);
 
 Route::post('/chat/openai', [\App\Http\Controllers\Api\ChatController::class, 'openai']);

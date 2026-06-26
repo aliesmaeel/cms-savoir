@@ -1029,6 +1029,98 @@ class HomeController
         return response()->json($listings);
     }
 
+    /**
+     * Savoir's Collection page: paginated list of featured properties.
+     */
+    public function savoirsCollection(Request $request)
+    {
+        // 🧭 Pagination
+        $page  = max(1, (int) $request->input('page', 1));
+        $limit = min(100, max(1, (int) $request->input('limit', 12)));
+
+        // 🔽 Sorting
+        $sortFieldInput = $request->input('sort_field', 'date');
+        $sortOrder      = strtolower($request->input('sort_order', 'desc')) === 'asc' ? 'asc' : 'desc';
+
+        $allowedSorts = [
+            'name'       => 'title_en',
+            'title_en'   => 'title_en',
+            'date'       => 'updated_at',
+            'updated_at' => 'updated_at',
+            'price'      => 'price',
+        ];
+        $sortField = $allowedSorts[$sortFieldInput] ?? 'updated_at';
+
+        // 🧪 Optional filters
+        $offeringType     = $request->input('offering_type');
+        $completionStatus = $request->input('completion_status');
+        $propertyType     = $request->input('type');
+
+        $query = NewProperty::query()
+            ->where('featured', 1)
+            ->with([
+                'pcommunity:id,name',
+                'psubcommunity:id,name',
+                'user:id,name,email,phone,image',
+            ]);
+
+        if ($offeringType) {
+            $query->where('offering_type', $offeringType);
+        }
+
+        if ($completionStatus) {
+            $query->where('completion_status', $completionStatus);
+        }
+
+        if ($propertyType) {
+            $query->where('property_type', $propertyType);
+        }
+
+        $properties = $query
+            ->orderBy($sortField, $sortOrder)
+            ->paginate($limit, ['*'], 'page', $page);
+
+        // 🧱 Transform
+        $data = collect($properties->items())->map(function ($item) {
+            return [
+                'id'                => $item->id,
+                'title_en'          => $item->title_en,
+                'slug'              => $item->slug,
+                'city'              => $item->city,
+                'community'         => $item->pcommunity?->name,
+                'sub_community'     => $item->psubcommunity?->name,
+                'property_type'     => $item->property_type,
+                'completion_status' => $item->completion_status,
+                'offering_type'     => $item->offering_type,
+                'bedroom'           => $item->bedroom,
+                'bathroom'          => $item->bathroom,
+                'price'             => $item->price,
+                'currency'          => $item->currency,
+                'updated_at'        => $item->updated_at,
+                'added_date'        => Carbon::make($item->updated_at)->diffForHumans(),
+                'photo'             => $item->photo,
+                'user'              => $item->user ? [
+                    'name'  => $item->user->name,
+                    'email' => $item->user->email,
+                    'phone' => $item->user->phone,
+                    'image' => $item->user->image,
+                ] : null,
+            ];
+        });
+
+        // 📤 Response
+        return response()->json([
+            'page'        => $properties->currentPage(),
+            'limit'       => $properties->perPage(),
+            'total'       => $properties->total(),
+            'total_pages' => $properties->lastPage(),
+            'count'       => $data->count(),
+            'sort_by'     => $sortField,
+            'sort_order'  => $sortOrder,
+            'data'        => $data,
+        ]);
+    }
+
     public function areaTransactions(Request $request)
     {
         $areaName = $request->input('area_name');
