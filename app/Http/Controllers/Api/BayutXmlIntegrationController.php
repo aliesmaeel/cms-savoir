@@ -21,15 +21,23 @@ class BayutXmlIntegrationController extends Controller
 {
     /**
      * Parse the local Bayut XML feed and upsert every property into the database.
+     *
+     * Returns a summary array so callers (e.g. the console command) can report
+     * progress in the terminal. An optional progress callback is invoked after
+     * each listing with (processedSoFar, totalListings).
+     *
+     * @param  callable|null  $progress
+     * @return array{status:string,message?:string,total:int,imported:int,failed:int,deleted:int,images:int}
      */
-    public function import(): void
+    public function import(?callable $progress = null): array
     {
         $path = $this->xmlPath();
 
         if (! is_file($path)) {
-            Log::channel('fetching_properties')->error("Bayut XML feed not found: {$path}");
+            $message = "Bayut XML feed not found: {$path}";
+            Log::channel('fetching_properties')->error($message);
 
-            return;
+            return ['status' => 'error', 'message' => $message, 'total' => 0, 'imported' => 0, 'failed' => 0, 'deleted' => 0, 'images' => 0];
         }
 
         Log::channel('fetching_properties')->alert('Bayut XML import start');
@@ -37,20 +45,26 @@ class BayutXmlIntegrationController extends Controller
         try {
             $xml = new SimpleXMLElement(file_get_contents($path));
         } catch (\Throwable $th) {
-            Log::channel('fetching_properties')->error('Bayut XML parse error: ' . $th->getMessage());
+            $message = 'Bayut XML parse error: ' . $th->getMessage();
+            Log::channel('fetching_properties')->error($message);
 
-            return;
+            return ['status' => 'error', 'message' => $message, 'total' => 0, 'imported' => 0, 'failed' => 0, 'deleted' => 0, 'images' => 0];
         }
 
         $communities = Community::pluck('id', 'name')->toArray();
         $subCommunities = SubCommunity::pluck('id', 'name')->toArray();
 
+        $total = $xml->Properties->Property->count();
         $referenceNumbers = [];
+        $imported = 0;
+        $failed = 0;
 
         // Disable per-row Scout (Meilisearch) syncing during import. The search
         // index is rebuilt in bulk afterwards, so a slow/unavailable Meilisearch
         // instance must not abort the database import row by row.
-        NewProperty::withoutSyncingToSearch(function () use ($xml, $communities, $subCommunities, &$referenceNumbers) {
+        NewProperty::withoutSyncingToSearch(function () use ($xml, $communities, $subCommunities, &$referenceNumbers, &$imported, &$failed, $total, $progress) {
+            $processed = 0;
+
             foreach ($xml->Properties->Property as $node) {
                 try {
                     $property = $this->normalize($node);
@@ -62,22 +76,43 @@ class BayutXmlIntegrationController extends Controller
                     $referenceNumbers[] = $property['reference_number'];
 
                     $this->create_new_property($property, $communities, $subCommunities);
+                    $imported++;
                 } catch (\Throwable $th) {
+                    $failed++;
                     Log::channel('fetching_properties')->alert($th->getMessage());
+                }
+
+                $processed++;
+
+                if ($progress) {
+                    $progress($processed, $total);
                 }
             }
         });
 
-        $this->cleanup($referenceNumbers);
+        $deleted = $this->cleanup($referenceNumbers);
+        $images = (int) DB::table('property_images')->count();
 
-        Log::channel('fetching_properties')->alert('Bayut XML import done; processed ' . count($referenceNumbers) . ' listings');
+        Log::channel('fetching_properties')->alert(
+            "Bayut XML import done; imported {$imported}, failed {$failed}, deleted {$deleted}, total images {$images}"
+        );
+
+        return [
+            'status' => 'ok',
+            'total' => $total,
+            'imported' => $imported,
+            'failed' => $failed,
+            'deleted' => $deleted,
+            'images' => $images,
+        ];
     }
 
     /**
      * Remove previously imported listings that are no longer present in the feed.
-     * Scoped to externally imported rows so manually created listings are untouched.
+     * Scoped to imported rows so manually created listings are untouched.
+     * Returns the number of deleted rows.
      */
-    private function cleanup(array $referenceNumbers): void
+    private function cleanup(array $referenceNumbers): int
     {
         $query = NewProperty::where('goyzer', true);
 
@@ -85,7 +120,7 @@ class BayutXmlIntegrationController extends Controller
             $query->whereNotIn('reference_number', $referenceNumbers);
         }
 
-        $query->delete();
+        return $query->delete();
     }
 
     /**
