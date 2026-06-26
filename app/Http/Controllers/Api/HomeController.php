@@ -863,23 +863,6 @@ class HomeController
                 return $property;
             });
 
-        $fallBackProjects = NewProperty::with([
-            'user:id,name,email,phone,image',
-            'pcommunity:id,name',
-            'psubcommunity:id,name',
-        ])
-            ->select('id', 'title_en', 'slug', 'price', 'currency', 'bedroom', 'bathroom', 'photo', 'offering_type', 'user_id', 'community', 'sub_community')
-            ->take(10)
-            ->get()->map(function ($property) {
-                $property->community = $property->pcommunity->name ?? null;
-                $property->subcommunity = $property->psubcommunity->name ?? null;
-                return $property;
-            });
-
-        if ($similarProjects->isEmpty()) {
-            $similarProjects = $fallBackProjects;
-        }
-
         if (!$project) {
             return response()->json(['message' => 'Global Project not found'], 404);
         }
