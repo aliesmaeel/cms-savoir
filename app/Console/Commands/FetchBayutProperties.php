@@ -30,7 +30,14 @@ class FetchBayutProperties extends Command
     {
         ini_set('memory_limit', '-1');
 
-        Log::channel('fetching_properties')->alert('Bayut XML fetching start');
+        Log::channel('fetching_properties')->alert('Bayut pipeline start: regenerating XML from PropertyFinder');
+
+        try {
+            app()->call('App\Http\Controllers\PropertyXmlController@generateXml');
+        } catch (\Throwable $th) {
+            Log::channel('fetching_properties')->error('XML regeneration failed, importing existing file: ' . $th->getMessage());
+        }
+
         app()->call('App\Http\Controllers\Api\BayutXmlIntegrationController@import');
         $this->runMeilisearchIndex();
 
