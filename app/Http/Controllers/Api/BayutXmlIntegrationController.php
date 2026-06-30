@@ -332,12 +332,37 @@ class BayutXmlIntegrationController extends Controller
      * listing shows the correct name/photo/phone.
      */
     private const AGENT_EMAIL_MAP = [
-        'admin@savoirproperties.com' => 'eva@savoirproperties.com',
+        'admin@savoirproperties.com' => [
+            'info@savoirproperties.com',
+            'asha@savoirproperties.com',
+        ],
     ];
+
+    /**
+     * Round-robin counters for source emails mapped to multiple agents,
+     * keyed by the (lowercased) source email. Persists for the import run.
+     */
+    private array $agentEmailRotation = [];
 
     private function map_agent_email(string $email): string
     {
-        return self::AGENT_EMAIL_MAP[strtolower($email)] ?? $email;
+        $key = strtolower($email);
+
+        if (!isset(self::AGENT_EMAIL_MAP[$key])) {
+            return $email;
+        }
+
+        $target = self::AGENT_EMAIL_MAP[$key];
+
+        if (!is_array($target)) {
+            return $target;
+        }
+
+        // Distribute evenly across the mapped agents as listings are imported.
+        $index = ($this->agentEmailRotation[$key] ?? 0) % count($target);
+        $this->agentEmailRotation[$key] = $index + 1;
+
+        return $target[$index];
     }
 
     public function get_user(string $email, string $name, string $photo = '', string $phone = ''): ?int
