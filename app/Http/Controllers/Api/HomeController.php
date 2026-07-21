@@ -771,7 +771,7 @@ class HomeController
     public function teams()
     {
         $teams = User::where('publish_to_web_site', true)
-            ->orderBy('websiteId', 'asc')->get();
+            ->orderBy('order', 'asc')->get();
         return response()->json($teams);
     }
 
