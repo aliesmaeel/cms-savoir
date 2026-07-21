@@ -171,6 +171,7 @@ route::post('deletepayment', [App\Http\Controllers\PaymentController::class, 'de
 
 route::get('listusersindex', [App\Http\Controllers\UserController::class, 'listusersindex'])->name('list_users_index');
 route::post('listusers', [App\Http\Controllers\UserController::class, 'listusers'])->name('list_users');
+route::post('updateuserorder', [App\Http\Controllers\UserController::class, 'updateUserOrder'])->name('update_user_order');
 route::post('deleteuser', [App\Http\Controllers\UserController::class, 'deleteuser'])->name('delete_user');
 
 route::get('listpropertiesindex', [App\Http\Controllers\PropertyController::class, 'listpropertiesindex'])->name('list_properties_index');
