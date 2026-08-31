@@ -70,7 +70,8 @@ class HomeController
             ];
         }
 
-        $properties = NewProperty::select(
+        $properties = NewProperty::with('propertyImages')
+            ->select(
             'id',
             'title_en',
             'slug',
@@ -91,6 +92,7 @@ class HomeController
             ->get()
             ->map(function ($property) {
                 $property->added_at = $property->updated_at->diffForHumans();
+                $property->photo = $property->getPhotoUrl();
                 return $property;
             });
 
@@ -1045,6 +1047,7 @@ class HomeController
                 'pcommunity:id,name',
                 'psubcommunity:id,name',
                 'user:id,name,email,phone,image',
+                'propertyImages',
             ]);
 
         if ($offeringType) {
@@ -1081,7 +1084,7 @@ class HomeController
                 'currency'          => $item->currency,
                 'updated_at'        => $item->updated_at,
                 'added_date'        => Carbon::make($item->updated_at)->diffForHumans(),
-                'photo'             => $item->photo,
+                'photo'             => $item->getPhotoUrl(),
                 'user'              => $item->user ? [
                     'name'  => $item->user->name,
                     'email' => $item->user->email,

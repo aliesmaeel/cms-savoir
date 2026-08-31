@@ -260,7 +260,11 @@ class BayutXmlIntegrationController extends Controller
             ])
         );
 
-        $newProperty->update($data);
+        $updateData = $data;
+        if (!$newProperty->wasRecentlyCreated) {
+            unset($updateData['featured']);
+        }
+        $newProperty->update($updateData);
 
         $this->sync_images($newProperty, $property['images']);
         $this->sync_media($newProperty, 'property_videos', $property['videos']);

@@ -10,7 +10,7 @@ use Laravel\Scout\Searchable;
 
 class NewProperty extends Model
 {
-    use HasFactory,Searchable;
+    use HasFactory, Searchable;
     protected $guarded = [];
 
     protected $casts = [
@@ -52,6 +52,42 @@ class NewProperty extends Model
         return $this->hasMany(PropertyImage::class, 'newProperty_id', 'id');
     }
 
+    public function getPhotoUrl(): ?string
+    {
+        if (!empty($this->photo)) {
+            return $this->photo;
+        }
+
+        $image = $this->relationLoaded('propertyImages')
+            ? $this->propertyImages->first()
+            : $this->propertyImages()->first();
+
+        if (!$image) {
+            return null;
+        }
+
+        return $this->buildPropertyImageUrl($image);
+    }
+
+    public function syncPhotoFromImages(): void
+    {
+        $image = $this->propertyImages()->first();
+        $photo = $image ? $this->buildPropertyImageUrl($image) : null;
+
+        static::withoutSyncingToSearch(function () use ($photo) {
+            $this->update(['photo' => $photo]);
+        });
+    }
+
+    private function buildPropertyImageUrl(PropertyImage $image): string
+    {
+        if ($image->is_external_image) {
+            return $image->url;
+        }
+
+        return rtrim((string) config('services.cms_link'), '/') . '/storage/properties/images/' . ltrim($image->url, '/');
+    }
+
     public function propertyFloorPlans()
     {
         return $this->hasMany(PropertyFloorPlan::class, 'newProperty_id', 'id');
@@ -69,16 +105,16 @@ class NewProperty extends Model
 
     public function scopeGetLive($query)
     {
-        return $query->Where("property_status","live")
-        ->select("new_properties.*")
-        ->groupBy("new_properties.reference_number");
+        return $query->Where("property_status", "live")
+            ->select("new_properties.*")
+            ->groupBy("new_properties.reference_number");
     }
 
     public function scopeGetArchived($query)
     {
-        return $query->Where("property_status","archive")
-        ->select("new_properties.*")
-        ->groupBy("new_properties.reference_number");
+        return $query->Where("property_status", "archive")
+            ->select("new_properties.*")
+            ->groupBy("new_properties.reference_number");
     }
 
     public function pcommunity()
@@ -107,7 +143,7 @@ class NewProperty extends Model
             'sub_community' => $this->sub_community,
             'community_name' => $this->pcommunity?->name,
             'sub_community_name' => $this->psubcommunity?->name,
-            'country'=> $this->country,
+            'country' => $this->country,
             'property_type' => $this->property_type,
             'completion_status' => $this->completion_status,
             'offering_type' => $this->offering_type,

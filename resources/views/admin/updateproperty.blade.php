@@ -888,6 +888,7 @@
                                         @foreach ($property_images as $property_imag)
                                             <div class="img-thumb-wrapper grid-img card shadow" style="width: 100%">
                                                 <img class="img-thumb image-grid"
+                                                data-image-id="{{ $property_imag->id }}"
                                                 @if($property_imag->is_external_image)
                                                 src="{{  $property_imag->url }}"
                                                 @else
@@ -3272,9 +3273,15 @@ type="text/css" />
         formData.append('description_ar', description_ar);
 
         var old_images = [];
+        var old_image_ids = [];
         $(".img-thumb").each(function(val, obj) {
+            var imageId = $(obj).attr('data-image-id');
+            if (imageId) {
+                old_image_ids.push(parseInt(imageId, 10));
+            }
             old_images.push(obj.src);
         });
+        formData.append('old_image_ids', JSON.stringify(old_image_ids));
         formData.append('old_images', JSON.stringify(old_images));
 
         $.ajax({
