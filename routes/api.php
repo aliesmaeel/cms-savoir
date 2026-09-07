@@ -5,6 +5,8 @@ use App\Http\Controllers\leadsregisteController;
 use App\Http\Controllers\CareerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\ListingSyncController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,3 +67,7 @@ Route::get('/area-transactions', [\App\Http\Controllers\Api\HomeController::clas
 Route::get('/leatest-listings', [\App\Http\Controllers\Api\HomeController::class, 'leatestListings']);
 
 Route::post('/chat/openai', [\App\Http\Controllers\Api\ChatController::class, 'openai']);
+
+Route::post('/pf-webhook', [WebhookController::class, 'handlePropertyFinderLead']);
+Route::post('/pf-listing-webhook', [ListingSyncController::class, 'handlePFListingWebhook']);
+Route::get('/pf-bulk-sync', [ListingSyncController::class, 'syncAllListings']);
