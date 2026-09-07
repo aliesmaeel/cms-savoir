@@ -874,14 +874,9 @@ content: "";
 
                                     <thead style="background: #70cacc;color: aliceblue;">
                                         <tr>
-                                        {{-- <th><span class="table-title">id</span></th> --}}
                                             <th><span class="table-title">Image</span></th>
                                             <th><span class="table-title">Name</span></th>
-                                            <th><span class="table-title">Email</span></th>
-                                            <th><span class="table-title">Phone</span></th>
-                                            {{-- <th><span class="table-title">Project name</span></th>
-                                            <th><span class="table-title">Notes</span></th> --}}
-                                            <th><span class="table-title">Language</span></th>
+                                            <th><span class="table-title">Order</span></th>
                                             <th><span class="table-title">Role</span></th>
                                             <th><span class="table-title">Action</span></th>
                                         </tr>
@@ -945,6 +940,7 @@ content: "";
             scrollCollapse: true,
                     "pageLength": 100,
                     'bPaginate': false,
+                    "order": [[2, "asc"]],
                     "ajax": {
                         "url": "{{ route('list_users') }}",
                         "dataType": "json",
@@ -964,39 +960,26 @@ content: "";
                     "columns": [
                         {
                             data: "image",
-                            width: '100px'
+                            width: '100px',
+                            orderable: false
                         },
                         {
                             data: "name",
                             width: '200px'
                         },
                         {
-                            data: "email",
-                            width: '250px'
-                        },
-                        {
-                            data: "phone",
-                            width: '200px'
-                        },
-                        // {
-                        //     data: "project_name",
-                        //     width: '200px'
-                        // },
-                        // {
-                        //     data: "notes",
-                        //     width: '200px'
-                        // },
-                        {
-                            data: "language",
-                            width: '250px'
+                            data: "order",
+                            width: '100px'
                         },
                         {
                             data: "role",
-                            width: '200px'
+                            width: '200px',
+                            orderable: false
                         },
                         {
                             data: "action",
-                            width: '200px'
+                            width: '200px',
+                            orderable: false
                         }
                     ],
                     "lengthMenu": [
@@ -1175,6 +1158,54 @@ content: "";
                         }
                     });
 
+                });
+
+                // Update order inline
+                $('body').on('change', '.user-order-input', function() {
+                    var $input = $(this);
+                    var id = $input.data('id');
+                    var order = $input.val();
+                    var original = $input.data('original');
+
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('update_user_order') }}",
+                        data: {
+                            id: id,
+                            order: order
+                        },
+                        dataType: 'json',
+                        success: function(result) {
+                            if (result.success) {
+                                $input.data('original', result.order ?? '');
+                                $input.css('border-color', '#28a745');
+                                setTimeout(function() {
+                                    $input.css('border-color', '');
+                                }, 1000);
+                                table.ajax.reload(null, false);
+                            } else {
+                                $input.val(original);
+                                $('#alertdiv').empty().append(
+                                    "<div class='alert alert-danger'>" + (result.message || 'Failed to update order') + "</div>"
+                                ).attr('hidden', false);
+                            }
+                        },
+                        error: function(error) {
+                            $input.val(original);
+                            var message = error.responseJSON && error.responseJSON.message
+                                ? error.responseJSON.message
+                                : 'Failed to update order';
+                            $('#alertdiv').empty().append(
+                                "<div class='alert alert-danger'>" + message + "</div>"
+                            ).attr('hidden', false);
+                        }
+                    });
                 });
             });
         </script>

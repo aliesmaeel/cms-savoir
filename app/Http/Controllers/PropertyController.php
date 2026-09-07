@@ -23,6 +23,7 @@ use Yajra\DataTables\DataTables;
 use App\Models\PropertyFloorPlan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Intervention\Image\ImageManagerStatic as Image;
@@ -46,10 +47,10 @@ class PropertyController extends Controller
     {
         $totalpropertiesamount = NewProperty::GetLive()->get()->count();
         $communities = Community::get();
-        $countries=Country::get();
+        $countries = Country::get();
         $users = User::select('id', 'name')->where('role_id', '3')->orwhere('role_id', '1')->orwhere('role_id', '5')->get();
         $cities = NewProperty::GetLive()->select('city')->groupBy('city')->distinct()->get();
-        return view('admin.listproperties', compact('countries','users', 'totalpropertiesamount', 'cities','communities'));
+        return view('admin.listproperties', compact('countries', 'users', 'totalpropertiesamount', 'cities', 'communities'));
     }
     // live properties
     public function listproperties(Request $request)
@@ -96,9 +97,9 @@ class PropertyController extends Controller
             })
             ->addColumn('community_name', function (NewProperty $property) {
                 $communities = Community::find($property->community);
-                if($communities){
+                if ($communities) {
                     return $communities->name;
-                }else{
+                } else {
                     return '';
                 }
             })
@@ -110,7 +111,7 @@ class PropertyController extends Controller
                 $actionBtn .= '<a class="duplicate btn btn-info btn-sm">Duplicate</a>' . " ";
                 return $actionBtn;
             })
-            ->rawColumns([ 'actions'])
+            ->rawColumns(['actions'])
             ->make(true);
     }
     // archived properties
@@ -118,10 +119,10 @@ class PropertyController extends Controller
     {
         $totalpropertiesamount = NewProperty::GetArchived()->get()->count();
         $communities = Community::get();
-        $countries=Country::get();
+        $countries = Country::get();
         $users = User::select('id', 'name')->where('role_id', '3')->orwhere('role_id', '1')->orwhere('role_id', '5')->get();
         $cities = NewProperty::GetArchived()->select('city')->groupBy('city')->distinct()->get();
-        return view('admin.listarchproperties', compact('countries','users', 'totalpropertiesamount', 'cities','communities'));
+        return view('admin.listarchproperties', compact('countries', 'users', 'totalpropertiesamount', 'cities', 'communities'));
     }
     // archived properties
     public function listarchproperties(Request $request)
@@ -167,9 +168,9 @@ class PropertyController extends Controller
             })
             ->addColumn('community_name', function (NewProperty $property) {
                 $communities = Community::find($property->community);
-                if($communities){
+                if ($communities) {
                     return $communities->name;
-                }else{
+                } else {
                     return '';
                 }
             })
@@ -248,7 +249,7 @@ class PropertyController extends Controller
             "Chalkida" => "Chalkida",
             "Agrinio" => "Agrinio",
             "Tripoli" => "Tripoli",
-             "Serres" => "Serres",
+            "Serres" => "Serres",
             "Zakynthos" => "Zakynthos",
             "Crete" => "Crete",
             "Agios Nikolaos" => "Agios Nikolaos"
@@ -269,9 +270,9 @@ class PropertyController extends Controller
             'Rabat (Victoria)' => 'Rabat (Victoria)',
             'Zebbug' => 'Zebbug'
         ];
-        $countries=Country::get();
+        $countries = Country::get();
 
-        return view('admin.createproperty', ['countries'=>$countries,'user' => $user, 'communities' => $communities, 'city_uae'=> $city_uae, 'MaltaCities'=>$MaltaCities, 'CyprusCities'=>$CyprusCities,'GreekCities' =>$GreekCities, 'BulgariaCities'=>$BulgariaCities]);
+        return view('admin.createproperty', ['countries' => $countries, 'user' => $user, 'communities' => $communities, 'city_uae' => $city_uae, 'MaltaCities' => $MaltaCities, 'CyprusCities' => $CyprusCities, 'GreekCities' => $GreekCities, 'BulgariaCities' => $BulgariaCities]);
     }
     public function slugify($text)
     {
@@ -515,8 +516,8 @@ class PropertyController extends Controller
                     'bathroom' => 'nullable|numeric|min:0|max:10',
                     'parking' => 'nullable|numeric|min:0|max:999',
                     'slug' => 'required',
-                    'completion_status'=>'required',
-                    'project_name'=>'required',
+                    'completion_status' => 'required',
+                    'project_name' => 'required',
                 ],
                 [
                     'required' => 'The :attribute field is required.',
@@ -549,8 +550,8 @@ class PropertyController extends Controller
                     'parking' => 'nullable|numeric|min:0|max:999',
                     'user_id' => 'required',
                     'slug' => 'required',
-                    'completion_status'=>'required',
-                    'project_name'=>'required'
+                    'completion_status' => 'required',
+                    'project_name' => 'required'
                 ],
                 [
                     'required' => 'The :attribute field is required.',
@@ -567,9 +568,9 @@ class PropertyController extends Controller
                 ]
             );
         }
-        $slug=$this->slugify($request->slug);
-        $property=NewProperty::where('slug',$slug)->first();
-        if($property){
+        $slug = $this->slugify($request->slug);
+        $property = NewProperty::where('slug', $slug)->first();
+        if ($property) {
             return response()->json(['success' => false, 'message' => 'Slug is already taken. Please choose another slug']);
         }
         if ($request->private_amenities == "") {
@@ -599,16 +600,16 @@ class PropertyController extends Controller
                 'user_id' => auth()->user()->id,
                 'slug' => $slug,
                 'parking' => $request->parking,
-                'property_name'=>$request->property_name,
-                'property_status'=>$request->property_status,
-                'completion_status'=>$request->completion_status,
-                'lng'=>$request->search_longitude,
-                'lat'=>$request->search_latitude,
-                'country'=>$request->country,
-                'project_name'=>$request->project_name,
-                'featured'=>($request->featured) ? true : false,
-                'price_name'=>$request->price_name,
-                'has_tour'=>$request->has_tour,
+                'property_name' => $request->property_name,
+                'property_status' => $request->property_status,
+                'completion_status' => $request->completion_status,
+                'lng' => $request->search_longitude,
+                'lat' => $request->search_latitude,
+                'country' => $request->country,
+                'project_name' => $request->project_name,
+                'featured' => ($request->featured) ? true : false,
+                'price_name' => $request->price_name,
+                'has_tour' => $request->has_tour,
             ]);
             if ($request->RemaxWebsite == 'RemaxWebsite') {
                 $newproperty->update([
@@ -636,15 +637,15 @@ class PropertyController extends Controller
                 'user_id' => $request->user_id,
                 'slug' => $slug,
                 'parking' => $request->parking,
-                'property_name'=>$request->property_name,
-                'property_status'=>$request->property_status,
-                'completion_status'=>$request->completion_status,
-                'lng'=>$request->search_longitude,
-                'lat'=>$request->search_latitude,
-                'country'=>$request->country,
-                'project_name'=>$request->project_name,
-                'featured'=>($request->featured) ? true : false,
-                'has_tour'=>$request->has_tour,
+                'property_name' => $request->property_name,
+                'property_status' => $request->property_status,
+                'completion_status' => $request->completion_status,
+                'lng' => $request->search_longitude,
+                'lat' => $request->search_latitude,
+                'country' => $request->country,
+                'project_name' => $request->project_name,
+                'featured' => ($request->featured) ? true : false,
+                'has_tour' => $request->has_tour,
             ]);
             if ($request->RemaxWebsite == 'RemaxWebsite') {
                 $newproperty->update([
@@ -656,7 +657,7 @@ class PropertyController extends Controller
             for ($x = 0; $x < $request->TotalFiles; $x++) {
                 if ($request->hasFile('files' . $x)) {
                     $file = $request->file('files' . $x);
-                    $name=uploadFile($file ,'properties/images/'. $newproperty->reference_number,false );
+                    $name = uploadFile($file, 'properties/images/' . $newproperty->reference_number, false);
                 }
                 DB::table('property_images')->insert(
                     array(
@@ -672,8 +673,7 @@ class PropertyController extends Controller
             for ($x = 0; $x < $request->FloorPlan; $x++) {
                 if ($request->hasFile('floorplans' . $x)) {
                     $file = $request->file('floorplans' . $x);
-                    $name=uploadFile($file ,'properties/FloorPrperty/'. $newproperty->reference_number,false);
-
+                    $name = uploadFile($file, 'properties/FloorPrperty/' . $newproperty->reference_number, false);
                 }
                 DB::table('property_floor_plans')->insert(
                     array(
@@ -685,14 +685,18 @@ class PropertyController extends Controller
                 );
             }
         }
-        if($newproperty)
+
+        $newproperty->syncPhotoFromImages();
+        Cache::forget('homepage_data');
+
+        if ($newproperty)
             return response()->json(['success' => true, 'message' => 'Property created successfully']);
         else
             return response()->json(['success' => false, 'message' => 'Error in creating Property']);
     }
     public function getsubcommunity($community_id)
     {
-        $community = Community::where('id',$community_id)->first();
+        $community = Community::where('id', $community_id)->first();
         $subCommunity = SubCommunity::where('community_id', $community->community_id)->get();
         if ($subCommunity) {
             return $subCommunity;
@@ -700,7 +704,7 @@ class PropertyController extends Controller
     }
     public function gettowername($sub_community_id)
     {
-        $subCommunity = SubCommunity::where('id',$sub_community_id)->first();
+        $subCommunity = SubCommunity::where('id', $sub_community_id)->first();
         $buildings = Building::where('subcommunity_id', $subCommunity->subcommunity_id)->get();
         if ($buildings) {
             return $buildings;
@@ -769,7 +773,7 @@ class PropertyController extends Controller
             "Chalkida" => "Chalkida",
             "Agrinio" => "Agrinio",
             "Tripoli" => "Tripoli",
-             "Serres" => "Serres",
+            "Serres" => "Serres",
             "Zakynthos" => "Zakynthos",
             "Crete" => "Crete",
             "Agios Nikolaos" => "Agios Nikolaos"
@@ -922,31 +926,48 @@ class PropertyController extends Controller
 
         $communities = Community::get();
         $subCommunities = SubCommunity::where('community_id', $newProperty->community)->get();
-        $towersname = Building::where('subcommunity_id',$newProperty->sub_community)->get();
-        $initial_pos=$newProperty->lat .',' .$newProperty->lng;
+        $towersname = Building::where('subcommunity_id', $newProperty->sub_community)->get();
+        $initial_pos = $newProperty->lat . ',' . $newProperty->lng;
         if ($initial_pos == '') {
             $initial_pos = '25.168282,55.250286';
         }
-        $countries=Country::get();
-        $country=Country::where('name',$newProperty->country)->first();
-        $cities=($country) ? City::where('country_id',$country->id)->get() : [];
+        $countries = Country::get();
+        $country = Country::where('name', $newProperty->country)->first();
+        $cities = ($country) ? City::where('country_id', $country->id)->get() : [];
         return view(
             'admin.updateproperty',
             [
-                'cities'=>$cities,
-                'countries'=>$countries,
-                'private_amenities' => $private_amenities, 'newProperty' => $newProperty, 'type' => $type, 'property_type_residential' => $property_type_residential,
-                'property_type_Commercial' => $property_type_Commercial, 'city_uae' => $city_uae,
-                'GreekCities'=> $GreekCities,
-                'MaltaCities'=> $MaltaCities,
-                'CyprusCities'=> $CyprusCities,
-                'BulgariaCities'=> $BulgariaCities,
+                'cities' => $cities,
+                'countries' => $countries,
+                'private_amenities' => $private_amenities,
+                'newProperty' => $newProperty,
+                'type' => $type,
+                'property_type_residential' => $property_type_residential,
+                'property_type_Commercial' => $property_type_Commercial,
+                'city_uae' => $city_uae,
+                'GreekCities' => $GreekCities,
+                'MaltaCities' => $MaltaCities,
+                'CyprusCities' => $CyprusCities,
+                'BulgariaCities' => $BulgariaCities,
                 'completion_status' => $completion_status,
-                'furnished' => $furnished, 'users' => $users, 'property_images' => $property_images, 'property_floor' => $property_floor,
-                'bayut_property' => $bayut_property, 'finder_property' => $finder_property, 'emirates_property' => $emirates_property, 'dubizzle_property' => $dubizzle_property, 'off_plans' => $off_plans,
-                'property_statuses' => $property_statuses, 'rent_Frequencies' => $rent_Frequencies, 'finder_checkbox' => $finder_checkbox,
-                'bayut_checkbox' => $bayut_checkbox, 'emirates_checkbox' => $emirates_checkbox, 'dubizzle_checkbox' => $dubizzle_checkbox,
-                'bayutproperty_videos' => $bayutproperty_videos, 'dubizzleproperty_videos' => $dubizzleproperty_videos, 'bedrooms' => $bedrooms,
+                'furnished' => $furnished,
+                'users' => $users,
+                'property_images' => $property_images,
+                'property_floor' => $property_floor,
+                'bayut_property' => $bayut_property,
+                'finder_property' => $finder_property,
+                'emirates_property' => $emirates_property,
+                'dubizzle_property' => $dubizzle_property,
+                'off_plans' => $off_plans,
+                'property_statuses' => $property_statuses,
+                'rent_Frequencies' => $rent_Frequencies,
+                'finder_checkbox' => $finder_checkbox,
+                'bayut_checkbox' => $bayut_checkbox,
+                'emirates_checkbox' => $emirates_checkbox,
+                'dubizzle_checkbox' => $dubizzle_checkbox,
+                'bayutproperty_videos' => $bayutproperty_videos,
+                'dubizzleproperty_videos' => $dubizzleproperty_videos,
+                'bedrooms' => $bedrooms,
                 'cheques' => $cheques,
                 'initial_pos' => $initial_pos,
                 'communities' => $communities,
@@ -974,7 +995,7 @@ class PropertyController extends Controller
                     'bedroom' => 'required',
                     'bathroom' => 'nullable|numeric|min:0|max:10',
                     'slug' => 'required|unique:new_properties,slug,' . $id . ',id',
-                    'project_name'=>'required',
+                    'project_name' => 'required',
                 ],
                 [
                     'required' => 'The :attribute field is required.',
@@ -1000,7 +1021,7 @@ class PropertyController extends Controller
                     'bathroom' => 'nullable|numeric|min:0|max:10',
                     'user_id' => 'required',
                     'slug' => 'required|unique:new_properties,slug,' . $id . ',id',
-                    'project_name'=>'required',
+                    'project_name' => 'required',
                 ],
                 [
                     'required' => 'The :attribute field is required.',
@@ -1011,9 +1032,9 @@ class PropertyController extends Controller
                 ]
             );
         }
-        $slug=$this->slugify($request->slug);
-        $property=NewProperty::whereNotIn('id',[$id])->where('slug',$slug)->first();
-        if($property){
+        $slug = $this->slugify($request->slug);
+        $property = NewProperty::whereNotIn('id', [$id])->where('slug', $slug)->first();
+        if ($property) {
             return response()->json(['success' => false, 'message' => 'Slug is already taken. Please choose another slug']);
         }
         if ($request->private_amenities == "") {
@@ -1040,19 +1061,18 @@ class PropertyController extends Controller
                 'sub_community' => $request->sub_community,
                 'private_amenities' => $private_amenities,
                 'slug' => $slug,
-                'parking'=>$request->parking,
-                'property_name'=>$request->property_name,
-                'property_status'=>$request->property_status,
-                'completion_status'=>$request->completion_status,
-                'lng'=>$request->search_longitude,
-                'lat'=>$request->search_latitude,
-                'country'=>$request->country,
-                'project_name'=>$request->project_name,
-                'featured'=>($request->featured) ? true : false,
-                'price_name'=>$request->price_name,
-                'has_tour'=>$request->has_tour,
+                'parking' => $request->parking,
+                'property_name' => $request->property_name,
+                'property_status' => $request->property_status,
+                'completion_status' => $request->completion_status,
+                'lng' => $request->search_longitude,
+                'lat' => $request->search_latitude,
+                'country' => $request->country,
+                'project_name' => $request->project_name,
+                'featured' => ($request->featured) ? true : false,
+                'price_name' => $request->price_name,
+                'has_tour' => $request->has_tour,
             ]);
-
         } else {
             $newproperty->update([
                 'permit_number' => $request->permit_number,
@@ -1072,46 +1092,27 @@ class PropertyController extends Controller
                 'private_amenities' => $private_amenities,
                 'user_id' => $request->user_id,
                 'slug' => $slug,
-                'parking'=>$request->parking,
-                'property_name'=>$request->property_name,
-                'property_status'=>$request->property_status,
-                'completion_status'=>$request->completion_status,
-                'lng'=>$request->search_longitude,
-                'lat'=>$request->search_latitude,
-                'country'=>$request->country,
-                'project_name'=>$request->project_name,
-                'featured'=>($request->featured) ? true : false,
-                'price_name'=>$request->price_name,
-                'has_tour'=>$request->has_tour,
+                'parking' => $request->parking,
+                'property_name' => $request->property_name,
+                'property_status' => $request->property_status,
+                'completion_status' => $request->completion_status,
+                'lng' => $request->search_longitude,
+                'lat' => $request->search_latitude,
+                'country' => $request->country,
+                'project_name' => $request->project_name,
+                'featured' => ($request->featured) ? true : false,
+                'price_name' => $request->price_name,
+                'has_tour' => $request->has_tour,
             ]);
-
         }
-        $old_images = DB::table('property_images')->where('newProperty_id', $id)->pluck('url')->toArray();
-        $new_images = [];
-        foreach (json_decode($request->old_images) as $key => $value) {
-            if(!str_contains($value, "https://images.goyzer.com")){
-                if (!str_contains($value, "base64")) {
-                    $temp = explode('/', $value);
-                    $val = $temp[count($temp) - 2] . '/' . $temp[count($temp) - 1];
-                    $new_images[] = $val;
-                }
-            }else{
-                $new_images[] =$value;
-            }
-
-        }
-        foreach ($old_images as $key => $image) {
-            if (!in_array($image, $new_images)) {
-                $is_deleted = DB::table('property_images')->where('newProperty_id', $id)->where('url', $image)->Delete();
-            }
-        }
+        $this->syncPropertyImages($id, $request);
 
         if ($request->TotalFiles > 0) {
             $setting = Setting::where('type', 'logo')->first();
             for ($x = 0; $x < $request->TotalFiles; $x++) {
                 if ($request->hasFile('files' . $x)) {
                     $file = $request->file('files' . $x);
-                    $name=uploadFile($file ,'properties/images/'. $newproperty->reference_number,false );
+                    $name = uploadFile($file, 'properties/images/' . $newproperty->reference_number, false);
 
                     // if ($setting) {
                     //     if(FileExists($setting->description['logo'])){
@@ -1144,8 +1145,7 @@ class PropertyController extends Controller
             for ($x = 0; $x < $request->FloorPlan; $x++) {
                 if ($request->hasFile('floorplans' . $x)) {
                     $file = $request->file('floorplans' . $x);
-                    $name=uploadFile($file ,'properties/FloorPrperty/'. $newproperty->reference_number,false );
-
+                    $name = uploadFile($file, 'properties/FloorPrperty/' . $newproperty->reference_number, false);
                 }
                 DB::table('property_floor_plans')->insert(
                     array(
@@ -1157,6 +1157,9 @@ class PropertyController extends Controller
                 );
             }
         }
+
+        $newproperty->syncPhotoFromImages();
+        Cache::forget('homepage_data');
 
         if (
             $newproperty
@@ -1310,13 +1313,31 @@ class PropertyController extends Controller
         return view(
             'admin.shownewproperty',
             [
-                'private_amenities' => $private_amenities, 'newProperty' => $newProperty, 'type' => $type, 'property_type' => $property_type,
-                'city' => $city, 'completion_status' => $completion_status,
-                'furnished' => $furnished, 'users' => $users, 'property_images' => $property_images, 'property_floor' => $property_floor,
-                'bayut_property' => $bayut_property, 'finder_property' => $finder_property, 'emirates_property' => $emirates_property, 'dubizzle_property' => $dubizzle_property, 'off_plans' => $off_plans,
-                'property_statuses' => $property_statuses, 'rent_Frequencies' => $rent_Frequencies, 'finder_checkbox' => $finder_checkbox,
-                'bayut_checkbox' => $bayut_checkbox, 'emirates_checkbox' => $emirates_checkbox, 'dubizzle_checkbox' => $dubizzle_checkbox,
-                'bayutproperty_videos' => $bayutproperty_videos, 'dubizzleproperty_videos' => $dubizzleproperty_videos, "community" => $community, "subCommunity" => $subCommunity
+                'private_amenities' => $private_amenities,
+                'newProperty' => $newProperty,
+                'type' => $type,
+                'property_type' => $property_type,
+                'city' => $city,
+                'completion_status' => $completion_status,
+                'furnished' => $furnished,
+                'users' => $users,
+                'property_images' => $property_images,
+                'property_floor' => $property_floor,
+                'bayut_property' => $bayut_property,
+                'finder_property' => $finder_property,
+                'emirates_property' => $emirates_property,
+                'dubizzle_property' => $dubizzle_property,
+                'off_plans' => $off_plans,
+                'property_statuses' => $property_statuses,
+                'rent_Frequencies' => $rent_Frequencies,
+                'finder_checkbox' => $finder_checkbox,
+                'bayut_checkbox' => $bayut_checkbox,
+                'emirates_checkbox' => $emirates_checkbox,
+                'dubizzle_checkbox' => $dubizzle_checkbox,
+                'bayutproperty_videos' => $bayutproperty_videos,
+                'dubizzleproperty_videos' => $dubizzleproperty_videos,
+                "community" => $community,
+                "subCommunity" => $subCommunity
             ]
         );
     }
@@ -1351,7 +1372,7 @@ class PropertyController extends Controller
             "WH" => "Warehouse",
             "VI" => "Villa"
         ];
-        return isset($types[$type])? $types[$type] : $type;
+        return isset($types[$type]) ? $types[$type] : $type;
     }
 
     public function getOfferingType($type)
@@ -1553,31 +1574,51 @@ class PropertyController extends Controller
 
         $communities = Community::get();
         $subCommunities = SubCommunity::where('community_id', $newProperty->community)->get();
-        $towersname = Building::where('subcommunity_id',$newProperty->sub_community)->get();
-        $initial_pos=$newProperty->lat .',' .$newProperty->lng;
-        if($initial_pos == ''){
+        $towersname = Building::where('subcommunity_id', $newProperty->sub_community)->get();
+        $initial_pos = $newProperty->lat . ',' . $newProperty->lng;
+        if ($initial_pos == '') {
             $initial_pos = '25.168282,55.250286';
         }
-        $countries=Country::get();
-        $country=Country::where('name',$newProperty->country)->first();
-        $cities=($country) ? City::where('country_id',$country->id)->get() : [];
+        $countries = Country::get();
+        $country = Country::where('name', $newProperty->country)->first();
+        $cities = ($country) ? City::where('country_id', $country->id)->get() : [];
         return view(
             'admin.duplicateproperty',
             [
-                'countries'=>$countries,'cities'=>$cities,
-                'private_amenities' => $private_amenities, 'newProperty' => $newProperty, 'type' => $type, 'property_type_residential' => $property_type_residential,
-                'property_type_Commercial' => $property_type_Commercial, 'city_uae' => $city_uae,'city_iraq'=> $city_iraq, 'completion_status' => $completion_status,
-                'furnished' => $furnished, 'users' => $users, 'property_images' => $property_images, 'property_floor' => $property_floor,
-                'bayut_property' => $bayut_property, 'finder_property' => $finder_property, 'emirates_property' => $emirates_property, 'dubizzle_property' => $dubizzle_property, 'off_plans' => $off_plans,
-                'property_statuses' => $property_statuses, 'rent_Frequencies' => $rent_Frequencies, 'finder_checkbox' => $finder_checkbox,
-                'bayut_checkbox' => $bayut_checkbox, 'emirates_checkbox' => $emirates_checkbox, 'dubizzle_checkbox' => $dubizzle_checkbox,
-                'bayutproperty_videos' => $bayutproperty_videos, 'dubizzleproperty_videos' => $dubizzleproperty_videos, 'bedrooms' => $bedrooms,
+                'countries' => $countries,
+                'cities' => $cities,
+                'private_amenities' => $private_amenities,
+                'newProperty' => $newProperty,
+                'type' => $type,
+                'property_type_residential' => $property_type_residential,
+                'property_type_Commercial' => $property_type_Commercial,
+                'city_uae' => $city_uae,
+                'city_iraq' => $city_iraq,
+                'completion_status' => $completion_status,
+                'furnished' => $furnished,
+                'users' => $users,
+                'property_images' => $property_images,
+                'property_floor' => $property_floor,
+                'bayut_property' => $bayut_property,
+                'finder_property' => $finder_property,
+                'emirates_property' => $emirates_property,
+                'dubizzle_property' => $dubizzle_property,
+                'off_plans' => $off_plans,
+                'property_statuses' => $property_statuses,
+                'rent_Frequencies' => $rent_Frequencies,
+                'finder_checkbox' => $finder_checkbox,
+                'bayut_checkbox' => $bayut_checkbox,
+                'emirates_checkbox' => $emirates_checkbox,
+                'dubizzle_checkbox' => $dubizzle_checkbox,
+                'bayutproperty_videos' => $bayutproperty_videos,
+                'dubizzleproperty_videos' => $dubizzleproperty_videos,
+                'bedrooms' => $bedrooms,
                 'cheques' => $cheques,
                 'initial_pos' => $initial_pos,
                 'communities' => $communities,
                 'subCommunities' => $subCommunities,
                 'towersname' => $towersname,
-                'has_tour'=>$newProperty->has_tour
+                'has_tour' => $newProperty->has_tour
             ]
         );
     }
@@ -1608,7 +1649,7 @@ class PropertyController extends Controller
                     'service_charge' => 'nullable|numeric|min:0',
                     'plot_size' => 'nullable|min:0',
                     'slug' => 'required',
-                    'project_name'=>'required',
+                    'project_name' => 'required',
                 ],
                 [
                     'required' => 'The :attribute field is required.',
@@ -1649,7 +1690,7 @@ class PropertyController extends Controller
                     'plot_size' => 'nullable|min:0',
                     'user_id' => 'required',
                     'slug' => 'required',
-                    'project_name'=>'required',
+                    'project_name' => 'required',
                 ],
                 [
                     'required' => 'The :attribute field is required.',
@@ -1671,9 +1712,9 @@ class PropertyController extends Controller
         } else {
             $private_amenities = implode(',', $request->private_amenities);
         }
-        $slug=$this->slugify($request->slug);
-        $property=NewProperty::where('slug',$slug)->first();
-        if($property){
+        $slug = $this->slugify($request->slug);
+        $property = NewProperty::where('slug', $slug)->first();
+        if ($property) {
             return response()->json(['success' => false, 'message' => 'Slug is already taken. Please choose another slug']);
         }
         if (Auth::user()->isAgent()) {
@@ -1698,16 +1739,15 @@ class PropertyController extends Controller
                 'user_id' => auth()->user()->id,
                 'slug' => $slug,
                 'parking' => $request->parking,
-                'property_name'=>$request->property_name,
-                'property_status'=>$request->property_status,
-                'completion_status'=>$request->completion_status,
-                'lng'=>$request->search_longitude,
-                'lat'=>$request->search_latitude,
-                'country'=>$request->country,
-                'project_name'=>$request->project_name,
-                'featured'=>($request->featured) ? true : false,
+                'property_name' => $request->property_name,
+                'property_status' => $request->property_status,
+                'completion_status' => $request->completion_status,
+                'lng' => $request->search_longitude,
+                'lat' => $request->search_latitude,
+                'country' => $request->country,
+                'project_name' => $request->project_name,
+                'featured' => ($request->featured) ? true : false,
             ]);
-
         } else {
             $newproperty = NewProperty::create([
                 'reference_number' => $this->generateUniqueCode(),
@@ -1730,34 +1770,33 @@ class PropertyController extends Controller
                 'user_id' => $request->user_id,
                 'slug' => $slug,
                 'parking' => $request->parking,
-                'property_name'=>$request->property_name,
-                'property_status'=>$request->property_status,
-                'completion_status'=>$request->completion_status,
-                'lng'=>$request->search_longitude,
-                'lat'=>$request->search_latitude,
-                'country'=>$request->country,
-                'project_name'=>$request->project_name,
-                'featured'=>($request->featured) ? true : false,
+                'property_name' => $request->property_name,
+                'property_status' => $request->property_status,
+                'completion_status' => $request->completion_status,
+                'lng' => $request->search_longitude,
+                'lat' => $request->search_latitude,
+                'country' => $request->country,
+                'project_name' => $request->project_name,
+                'featured' => ($request->featured) ? true : false,
             ]);
-
         }
         $property_images = PropertyImage::where('newProperty_id', $request->property_id)->get();
-        if($property_images){
-            foreach($property_images as $image){
+        if ($property_images) {
+            foreach ($property_images as $image) {
                 DB::table('property_images')->insert(
                     array(
                         'url' => $image->url,
                         'newProperty_id' => $newproperty->id,
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now(),
-                        'is_external_image'=>$image->is_external_image
+                        'is_external_image' => $image->is_external_image
                     )
                 );
             }
         }
         $property_floor = PropertyFloorPlan::where('newProperty_id', $request->property_id)->get();
-        if($property_floor){
-            foreach($property_floor as $floor){
+        if ($property_floor) {
+            foreach ($property_floor as $floor) {
                 DB::table('property_floor_plans')->insert(
                     array(
                         'url' => $floor->url,
@@ -1772,7 +1811,7 @@ class PropertyController extends Controller
             for ($x = 0; $x < $request->TotalFiles; $x++) {
                 if ($request->hasFile('files' . $x)) {
                     $file = $request->file('files' . $x);
-                    $name=uploadFile($file ,'properties/images/'.$newproperty->reference_number,false);
+                    $name = uploadFile($file, 'properties/images/' . $newproperty->reference_number, false);
                     // $setting = Setting::where('type','logo')->first();
                     // if($setting){
                     //     if(FileExists($setting->description['logo'])){
@@ -1791,7 +1830,7 @@ class PropertyController extends Controller
                 }
                 DB::table('property_images')->insert(
                     array(
-                        'url' =>  $newproperty->reference_number .'/'.$name,
+                        'url' =>  $newproperty->reference_number . '/' . $name,
                         'newProperty_id' => $newproperty->id,
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now(),
@@ -1803,11 +1842,11 @@ class PropertyController extends Controller
             for ($x = 0; $x < $request->FloorPlan; $x++) {
                 if ($request->hasFile('floorplans' . $x)) {
                     $file = $request->file('floorplans' . $x);
-                    $name=uploadFile($file ,'properties/FloorPrperty/'.$newproperty->reference_number,false);
+                    $name = uploadFile($file, 'properties/FloorPrperty/' . $newproperty->reference_number, false);
                 }
                 DB::table('property_floor_plans')->insert(
                     array(
-                        'url' =>$newproperty->reference_number .'/'.$name,
+                        'url' => $newproperty->reference_number . '/' . $name,
                         'newProperty_id' => $newproperty->id,
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now(),
@@ -1829,6 +1868,119 @@ class PropertyController extends Controller
         return response()->json([
             'message' => 'Data deleted successfully!'
         ]);
+    }
+
+    private function syncPropertyImages(int $propertyId, Request $request): void
+    {
+        if ($request->has('old_image_ids')) {
+            $keepIds = json_decode((string) $request->input('old_image_ids'), true);
+            if (!is_array($keepIds)) {
+                return;
+            }
+
+            $keepIds = array_values(array_filter(array_map('intval', $keepIds)));
+
+            // If IDs are empty but the form still sent existing (non-preview) thumbs,
+            // ID collection failed — do not wipe the gallery.
+            if ($keepIds === [] && $this->submittedOldImagesIncludeExistingThumbs($request->input('old_images'))) {
+                return;
+            }
+
+            $query = DB::table('property_images')->where('newProperty_id', $propertyId);
+            if ($keepIds !== []) {
+                $query->whereNotIn('id', $keepIds);
+            }
+            $query->delete();
+
+            return;
+        }
+
+        $this->syncPropertyImagesByUrl($propertyId, $request->input('old_images'));
+    }
+
+    private function submittedOldImagesIncludeExistingThumbs($oldImagesJson): bool
+    {
+        $submittedUrls = is_string($oldImagesJson) ? json_decode($oldImagesJson, true) : $oldImagesJson;
+        if (!is_array($submittedUrls)) {
+            return false;
+        }
+
+        foreach ($submittedUrls as $submittedUrl) {
+            if (is_string($submittedUrl) && $submittedUrl !== '' && !str_contains($submittedUrl, 'base64')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function syncPropertyImagesByUrl(int $propertyId, $oldImagesJson): void
+    {
+        if (!is_string($oldImagesJson) || $oldImagesJson === '') {
+            return;
+        }
+
+        $submittedUrls = json_decode($oldImagesJson, true);
+        if (!is_array($submittedUrls)) {
+            return;
+        }
+
+        $storedImages = DB::table('property_images')
+            ->where('newProperty_id', $propertyId)
+            ->get(['id', 'url', 'is_external_image']);
+
+        foreach ($storedImages as $storedImage) {
+            $shouldKeep = false;
+
+            foreach ($submittedUrls as $submittedUrl) {
+                if (!is_string($submittedUrl) || $submittedUrl === '' || str_contains($submittedUrl, 'base64')) {
+                    continue;
+                }
+
+                if ($this->propertyImageUrlMatches((string) $storedImage->url, $submittedUrl, (bool) $storedImage->is_external_image)) {
+                    $shouldKeep = true;
+                    break;
+                }
+            }
+
+            if (!$shouldKeep) {
+                DB::table('property_images')
+                    ->where('id', $storedImage->id)
+                    ->delete();
+            }
+        }
+    }
+
+    private function propertyImageUrlMatches(string $storedUrl, string $submittedUrl, bool $isExternal = false): bool
+    {
+        $normalize = static function (string $url): string {
+            return rtrim(urldecode(html_entity_decode($url)), '/');
+        };
+
+        $stored = $normalize($storedUrl);
+        $submitted = $normalize($submittedUrl);
+
+        if ($stored === $submitted || $storedUrl === $submittedUrl) {
+            return true;
+        }
+
+        if (str_contains($submitted, $stored) || str_contains($stored, $submitted)) {
+            return true;
+        }
+
+        if ($isExternal || strpos($stored, 'http') === 0) {
+            return false;
+        }
+
+        if (str_ends_with($submitted, $storedUrl) || str_contains($submitted, $storedUrl)) {
+            return true;
+        }
+
+        if (preg_match('#/storage/properties/images/([^?]+)#', $submittedUrl, $matches)) {
+            return $matches[1] === $storedUrl;
+        }
+
+        return false;
     }
     public function sync(Request $request)
     {

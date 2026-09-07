@@ -28,6 +28,12 @@ $index->updateFilterableAttributes([
     'bedroom',
     'bathroom',
     'price',
+    'city',
+    'country',
+    'community',
+    'sub_community',
+    'community_name',
+    'sub_community_name',
 ]);
 
 $index->updateSortableAttributes([
@@ -37,7 +43,8 @@ $index->updateSortableAttributes([
 ]);
 
 // Fetch all properties
-$allProperties = NewProperty::all();
+$allProperties = NewProperty::with(['pcommunity:id,name', 'psubcommunity:id,name'])->get();
+$dbPropertyCount = $allProperties->count();
 
 $documents = $allProperties->map(function ($p) {
     return [
@@ -53,42 +60,65 @@ $documents = $allProperties->map(function ($p) {
         'city' => $p->city,
         'community' => $p->community,
         'sub_community' => $p->sub_community,
+        'community_name' => $p->pcommunity?->name,
+        'sub_community_name' => $p->psubcommunity?->name,
         'country' => $p->country,
     ];
 })->toArray();
 
-// Add documents to Meilisearch
-$index->addDocuments($documents);
+echo "MySQL properties: {$dbPropertyCount}\n";
+echo "Indexing " . count($documents) . " property documents...\n";
 
-echo "✅ Meilisearch reindex complete.\n";
+// Add documents to Meilisearch (async) and wait until searchable
+$propertyTask = $index->addDocuments($documents);
+$client->waitForTask($propertyTask['taskUid'], 120000);
+
+$propertyStats = $index->stats();
+$indexedPropertyCount = $propertyStats['numberOfDocuments'] ?? 0;
+
+echo "✅ Properties reindex complete.\n";
+echo "Indexed properties (Meilisearch): {$indexedPropertyCount}\n";
 
 
-$index = $client->index('off_plan_projects');
+$offPlanIndex = $client->index('off_plan_projects');
 
-$index->updateFilterableAttributes([
+$offPlanIndex->updateFilterableAttributes([
     'developer',
     'completion_date',
     'link',
     'price'
 ]);
 
-$index->updateSortableAttributes([
+$offPlanIndex->updateSortableAttributes([
     'updated_at',
     'title'
 ]);
 
-$index->addDocuments(
-    \App\Models\OffPlanProject::all()->map(function ($p) {
-        return [
-            'id' => $p->id,
-            'title' => $p->title,
-            'link' => $p->link,
-            'image' => $p->image,
-            'location' => $p->location,
-            'developer' => $p->developer,
-            'completion_date' => $p->completion_date,
-            'starting_price' => $p->starting_price,
-            'updated_at' => $p->updated_at->toIso8601String(),
-        ];
-    })->toArray()
-);
+$offPlanProjects = \App\Models\OffPlanProject::all();
+$dbOffPlanCount = $offPlanProjects->count();
+$offPlanDocuments = $offPlanProjects->map(function ($p) {
+    return [
+        'id' => $p->id,
+        'title' => $p->title,
+        'link' => $p->link,
+        'image' => $p->image,
+        'location' => $p->location,
+        'developer' => $p->developer,
+        'completion_date' => $p->completion_date,
+        'starting_price' => $p->starting_price,
+        'updated_at' => $p->updated_at->toIso8601String(),
+    ];
+})->toArray();
+
+echo "MySQL off-plan projects: {$dbOffPlanCount}\n";
+echo "Indexing " . count($offPlanDocuments) . " off-plan documents...\n";
+
+$offPlanTask = $offPlanIndex->addDocuments($offPlanDocuments);
+$client->waitForTask($offPlanTask['taskUid'], 120000);
+
+$offPlanStats = $offPlanIndex->stats();
+$indexedOffPlanCount = $offPlanStats['numberOfDocuments'] ?? 0;
+
+echo "✅ Off-plan reindex complete.\n";
+echo "Indexed off-plan projects (Meilisearch): {$indexedOffPlanCount}\n";
+echo "✅ Meilisearch reindex complete.\n";

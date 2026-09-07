@@ -362,14 +362,30 @@ class UserController extends Controller
     }
     public function listusers(Request $request)
     {
+        $imageColumn = function ($row) {
+            $image = $row->image;
+            if (empty($image)) {
+                return '<span class="text-muted">—</span>';
+            }
+            if (!str_starts_with($image, 'http')) {
+                $image = 'https://savoirbucket.s3.eu-north-1.amazonaws.com/storage/image/Agent/' . ltrim($image, '/');
+            }
+            return '<img src="' . e($image) . '" width="50" height="50" style="object-fit:cover;border-radius:50%;" alt="' . e($row->name) . '"/>';
+        };
+
+        $orderColumn = function ($row) {
+            $value = $row->order ?? '';
+            return '<input type="number" min="0" class="form-control form-control-sm user-order-input" '
+                . 'data-id="' . e($row->id) . '" data-original="' . e($value) . '" '
+                . 'value="' . e($value) . '" style="width:80px;">';
+        };
+
         if (Auth::user()->isadmin()) {
-            $users = User::wherenotIn('role_id', ['1', '5'])->orderBy('created_at', 'DESC')->get();
+            $users = User::wherenotIn('role_id', ['1', '5']);
             return DataTables::of($users)
                 ->addIndexColumn()
-                ->addColumn('image', function ($row) {
-                    $img = '<img src="' . $row->image . '" width="50" height="50"/>';
-                    return $img;
-                })
+                ->addColumn('image', $imageColumn)
+                ->editColumn('order', $orderColumn)
                 ->addColumn('role', function ($row) {
                     if ($row->role_id == '2')
                         return 'Consultant';
@@ -387,16 +403,15 @@ class UserController extends Controller
                     $actionBtn .= '<a class="edit btn btn-info btn-sm">Edit</a>';
                     return $actionBtn;
                 })
-                ->rawColumns(['action', 'image'])
+                ->orderColumn('order', '`order` IS NULL, `order` $1')
+                ->rawColumns(['action', 'image', 'order'])
                 ->make(true);
         } else {
-            $users = User::where('role_id', 'not like', '%5%')->orderBy('created_at', 'DESC')->get();
+            $users = User::where('role_id', 'not like', '%5%');
             return DataTables::of($users)
                 ->addIndexColumn()
-                ->addColumn('image', function ($row) {
-                    $img = '<img src="' . $row->image . '" width="50" height="50"/>';
-                    return $img;
-                })
+                ->addColumn('image', $imageColumn)
+                ->editColumn('order', $orderColumn)
                 ->addColumn('role', function ($row) {
                     if ($row->role_id == '2')
                         return 'Consultant';
@@ -416,9 +431,28 @@ class UserController extends Controller
                     $actionBtn .= '<a class="edit btn btn-info btn-sm">Edit</a>';
                     return $actionBtn;
                 })
-                ->rawColumns(['action', 'image'])
+                ->orderColumn('order', '`order` IS NULL, `order` $1')
+                ->rawColumns(['action', 'image', 'order'])
                 ->make(true);
         }
+    }
+
+    public function updateUserOrder(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:users,id',
+            'order' => 'nullable|integer|min:0',
+        ]);
+
+        $user = User::find($request->id);
+        $user->order = $request->order === '' || $request->order === null ? null : (int) $request->order;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order updated successfully',
+            'order' => $user->order,
+        ]);
     }
     public function deleteuser(Request $request)
     {

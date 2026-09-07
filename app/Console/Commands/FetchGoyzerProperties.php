@@ -38,12 +38,9 @@ class FetchGoyzerProperties extends Command
      */
     public function handle()
     {
-        ini_set('memory_limit', '-1');
+        Log::channel('fetching_properties')->alert('Goyzer integration disabled; replaced by fetch:bayutproperties');
 
-        Log::channel('fetching_properties')->alert("Goyzer ferching start");
-       app()->call('App\Http\Controllers\Api\GoyzerIntegrationConroller@get_goyzer_properties_for_sale');
-       app()->call('App\Http\Controllers\Api\GoyzerIntegrationConroller@get_goyzer_properties_for_rent');
-        $this->runMeilisearchIndex();
+        return self::SUCCESS;
     }
 
     private function runMeilisearchIndex(): void
