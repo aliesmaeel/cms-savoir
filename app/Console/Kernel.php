@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\dailyjob::class,
+        \App\Console\Commands\SyncPFListings::class,
     ];
 
     /**
