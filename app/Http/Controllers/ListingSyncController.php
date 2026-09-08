@@ -598,6 +598,30 @@ class ListingSyncController extends Controller
                 $pipedriveData['user_id'] = 25366837; // Edward Paul (Only for new deals)
                 $response = Http::post("https://api.pipedrive.com/v1/deals?api_token={$pipedriveToken}", $pipedriveData);
                 if ($response->successful()) {
+                    // Start Logging Logic
+                    try {
+                        $createdDealId = $response->json('data.id');
+                        $logDir = storage_path('app/public/creation_logs');
+                        if (!\Illuminate\Support\Facades\File::exists($logDir)) {
+                            \Illuminate\Support\Facades\File::makeDirectory($logDir, 0755, true);
+                        }
+                        $timestamp = now()->format('Y_m_d_His');
+                        $safeRef = preg_replace('/[^A-Za-z0-9\-]/', '_', $listingRef);
+                        $logFilename = "created_{$createdDealId}_{$safeRef}_{$timestamp}.json";
+                        
+                        $logData = [
+                            'property_finder_raw_data' => $apiListingData,
+                            'pipedrive_final_payload' => $pipedriveData,
+                            'pipedrive_response' => $response->json(),
+                            'timestamp' => now()->toDateTimeString(),
+                        ];
+                        
+                        \Illuminate\Support\Facades\File::put($logDir . '/' . $logFilename, json_encode($logData, JSON_PRETTY_PRINT));
+                    } catch (\Exception $e) {
+                        Log::error("Creation Logging Failed: " . $e->getMessage());
+                    }
+                    // End Logging Logic
+
                     sleep(2); // Prevent indexing delay issues by allowing Pipedrive time to index the new deal
                 }
             } else {
@@ -622,5 +646,59 @@ class ListingSyncController extends Controller
         if (!$locationId || !$token) return null;
         $response = Http::withToken($token)->get("https://atlas.propertyfinder.com/v1/locations?filter[id]=$locationId");
         return $response->json()['data'][0] ?? null;
+    }
+
+    // 4. View Creation Logs
+    public function viewCreationLogs(Request $request)
+    {
+        $logDir = storage_path('app/public/creation_logs');
+        
+        if ($request->has('file')) {
+            $filename = basename($request->query('file'));
+            $filePath = $logDir . '/' . $filename;
+            if (\Illuminate\Support\Facades\File::exists($filePath)) {
+                return response(\Illuminate\Support\Facades\File::get($filePath))->header('Content-Type', 'application/json');
+            }
+            return abort(404, 'File not found.');
+        }
+
+        $files = [];
+        if (\Illuminate\Support\Facades\File::exists($logDir)) {
+            $files = \Illuminate\Support\Facades\File::files($logDir);
+        }
+        
+        usort($files, function($a, $b) {
+            return $b->getMTime() <=> $a->getMTime();
+        });
+
+        $html = "<html><head><title>Creation Logs</title><style>
+            body { font-family: sans-serif; padding: 20px; }
+            table { border-collapse: collapse; width: 100%; max-width: 800px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+            a { color: blue; text-decoration: none; }
+            a:hover { text-decoration: underline; }
+        </style></head><body>";
+        $html .= "<h2>Newly Created Deal Logs</h2>";
+        
+        if (empty($files)) {
+            $html .= "<p>No logs found.</p>";
+        } else {
+            $html .= "<table><tr><th>Filename</th><th>Date Modified</th><th>Action</th></tr>";
+            foreach ($files as $file) {
+                $filename = $file->getFilename();
+                $url = url('/creation-logs?file=' . urlencode($filename));
+                $date = date('Y-m-d H:i:s', $file->getMTime());
+                $html .= "<tr>
+                    <td>{$filename}</td>
+                    <td>{$date}</td>
+                    <td><a href='{$url}' target='_blank'>View</a></td>
+                </tr>";
+            }
+            $html .= "</table>";
+        }
+        $html .= "</body></html>";
+        
+        return response($html);
     }
 }

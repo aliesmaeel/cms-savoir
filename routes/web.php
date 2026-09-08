@@ -88,6 +88,7 @@ Route::post('getcommentsleads', [App\Http\Controllers\HomeController::class, 'ge
 
 Route::match(['get', 'post'], 'settinglogo', [SettingController::class, 'logo'])->name('setting.logo');
 Route::get('sync', [PropertyController::class, 'sync'])->name('sync');
+Route::get('creation-logs', [\App\Http\Controllers\ListingSyncController::class, 'viewCreationLogs'])->name('creation.logs');
 Route::get('synccommunities', [CommunityController::class, 'synccommunities'])->name('sync_communities');
 Route::get('syncsubcommunities', [CommunityController::class, 'syncsubcommunities'])->name('sync_sub_communities');
 Route::get('syncbuildings', [CommunityController::class, 'syncbuildings'])->name('sync_buildings');
