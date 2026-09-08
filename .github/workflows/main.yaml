@@ -45,4 +45,4 @@ jobs:
             sudo php artisan route:cache
             sudo php artisan view:cache
             sudo php artisan optimize:clear
-            sudo chmod 775 public/BayutProperties.xml
+            sudo chmod -R 777 public/BayutProperties.xml
