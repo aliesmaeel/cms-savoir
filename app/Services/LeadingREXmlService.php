@@ -49,7 +49,8 @@ class LeadingREXmlService
                 $targetKeys = [
                     '1da5fc3b6713a605fa147077db49064ae9493df6', // Property Type
                     'af1f61eb5b7dcb81884f97e42ea331041e44828e', // Beds
-                    '8abbf4a2a68242278a05332544e8a1c795f7b513'  // Baths
+                    '8abbf4a2a68242278a05332544e8a1c795f7b513', // Baths
+                    'ab382a3a8713527be729a7dd0221cac825e48b76'  // City/Community
                 ];
 
                 foreach ($fields as $field) {
@@ -66,50 +67,63 @@ class LeadingREXmlService
     }
 
     /**
-     * Fetch open deals containing the 'Leading RE' option in the 'Additional Portals' custom field
+     * Fetch open deals matching the specific filter (Published Pipeline, Open, Leading RE)
      */
     protected function fetchDeals()
     {
         $deals = [];
         $start = 0;
-        $limit = 100;
+        $limit = 100; // Safely set to 100 since filter ensures small dataset
+        $filterId = 39063; // Client-provided filter ID
         $moreItemsInCollection = true;
 
         while ($moreItemsInCollection) {
-            try {
-                $response = Http::get("{$this->apiUrl}deals", [
-                    'api_token' => $this->apiToken,
-                    'status' => 'open',
-                    'start' => $start,
-                    'limit' => $limit,
-                ]);
+            $attempt = 1;
+            $maxAttempts = 3;
+            $success = false;
 
-                if ($response->successful()) {
-                    $data = $response->json();
-                    
-                    if (!empty($data['data'])) {
-                        foreach ($data['data'] as $deal) {
-                            $portalsField = '7d9713733d04c47f3562ddb95ffb73c79411d6f2'; // Additional Portals
-                            
-                            // Check if the custom field contains the option ID 1343 (Leading RE)
-                            if (isset($deal[$portalsField])) {
-                                $selectedPortals = explode(',', $deal[$portalsField]);
-                                if (in_array('1343', $selectedPortals)) {
-                                    $deals[] = $deal;
-                                }
+            while ($attempt <= $maxAttempts && !$success) {
+                try {
+                    $response = Http::timeout(120)->get("{$this->apiUrl}deals", [
+                        'api_token' => $this->apiToken,
+                        'filter_id' => $filterId,
+                        'start' => $start,
+                        'limit' => $limit,
+                    ]);
+
+                    if ($response->successful()) {
+                        $success = true;
+                        $data = $response->json();
+                        
+                        // All returned deals are already filtered correctly by Pipedrive!
+                        if (!empty($data['data'])) {
+                            foreach ($data['data'] as $deal) {
+                                $deals[] = $deal;
                             }
                         }
-                    }
 
-                    $moreItemsInCollection = $data['additional_data']['pagination']['more_items_in_collection'] ?? false;
-                    $start = $data['additional_data']['pagination']['next_start'] ?? ($start + $limit);
-                } else {
-                    Log::error("LeadingRE Sync: Failed to fetch deals from Pipedrive", ['response' => $response->body()]);
-                    $moreItemsInCollection = false;
+                        $moreItemsInCollection = $data['additional_data']['pagination']['more_items_in_collection'] ?? false;
+                        $start = $data['additional_data']['pagination']['next_start'] ?? ($start + $limit);
+                    } elseif ($response->status() === 429) {
+                        Log::warning("LeadingRE Sync: Pipedrive Rate Limit hit. Retrying (Attempt $attempt)...");
+                        sleep(2);
+                        $attempt++;
+                    } else {
+                        Log::error("LeadingRE Sync: Failed to fetch deals from Pipedrive", ['response' => $response->body()]);
+                        sleep(2);
+                        $attempt++;
+                    }
+                } catch (\Exception $e) {
+                    Log::warning("LeadingRE Sync: Exception when fetching deals (Attempt $attempt)", ['error' => $e->getMessage()]);
+                    sleep(2);
+                    $attempt++;
                 }
-            } catch (\Exception $e) {
-                Log::error("LeadingRE Sync: Exception when fetching deals", ['error' => $e->getMessage()]);
-                $moreItemsInCollection = false;
+            }
+
+            // If it failed 3 times, break out to avoid infinite loops
+            if (!$success) {
+                Log::error("LeadingRE Sync: Halting fetch. Max attempts reached at start={$start}.");
+                break;
             }
         }
 
@@ -122,7 +136,8 @@ class LeadingREXmlService
     protected function createXmlFile($deals)
     {
         $directory = 'public/feeds';
-        $fileName = 'test_leadingre.xml';
+        $exchangeId = env('LEADINGRE_EXCHANGE_ID', '173920');
+        $fileName = $exchangeId . '.xml';
         
         // Ensure directory exists in storage/app/public/feeds
         if (!Storage::disk('local')->exists($directory)) {
@@ -141,12 +156,14 @@ class LeadingREXmlService
         // Offices Section
         $xml->startElement('Offices');
             $xml->startElement('Office');
-                $xml->writeElement('OfficeKey', 'OFFICE-1');
-                $xml->writeElement('OfficeId', 'OFFICE-1');
-                $xml->writeElement('Name', 'Savoir Prive Properties');
-                $xml->writeElement('OfficeAddress1', 'Office 502 A, Building Emaar Business Park');
+                $xml->writeElement('OfficeKey', 'OFFICE-SAVOIR');
+                $xml->writeElement('OfficeId', $exchangeId);
+                $xml->writeElement('OfficeName', 'Savoir Privé Properties');
+                $xml->writeElement('OfficeAddress1', 'Office 502 A, Building Emaar Business Park, Barsha Heights');
                 $xml->writeElement('OfficeCity', 'Dubai');
                 $xml->writeElement('OfficeCountry', 'ARE');
+                $xml->writeElement('OfficePhone', '+971 4 568 9700');
+                $xml->writeElement('OfficeEmail', 'info@savoirproperties.com');
             $xml->endElement(); // Office
         $xml->endElement(); // Offices
 
@@ -171,9 +188,10 @@ class LeadingREXmlService
             $xml->startElement('Member');
                 $xml->writeElement('MemberKey', $agent['id']);
                 $xml->writeElement('MemberId', $agent['id']);
-                $xml->writeElement('FirstName', $agent['first_name']);
-                $xml->writeElement('LastName', $agent['last_name']);
-                $xml->writeElement('OfficeKey', 'OFFICE-1');
+                $xml->writeElement('MemberFirstName', $agent['first_name']);
+                $xml->writeElement('MemberLastName', $agent['last_name']);
+                $xml->writeElement('MemberStatus', 'Active');
+                $xml->writeElement('OfficeKey', 'OFFICE-SAVOIR');
             $xml->endElement(); // Member
         }
         $xml->endElement(); // Members
@@ -191,6 +209,13 @@ class LeadingREXmlService
                 
                 $xml->writeElement('Currency', 'AED');
                 $xml->writeElement('Country', 'ARE');
+
+                $cityId = $deal['ab382a3a8713527be729a7dd0221cac825e48b76'] ?? '';
+                $cityLabel = $this->fieldMappings['ab382a3a8713527be729a7dd0221cac825e48b76'][$cityId] ?? $cityId;
+                if (empty(trim($cityLabel))) {
+                    $cityLabel = 'Dubai';
+                }
+                $xml->writeElement('City', $cityLabel);
                 
                 $propertyTypeId = $deal['1da5fc3b6713a605fa147077db49064ae9493df6'] ?? '';
                 $propertyTypeLabel = $this->fieldMappings['1da5fc3b6713a605fa147077db49064ae9493df6'][$propertyTypeId] ?? $propertyTypeId;
@@ -219,9 +244,9 @@ class LeadingREXmlService
                 
                 $xml->writeElement('StandardStatus', 'Active');
                 
-                // Link to the dummy office and dynamic member
-                $xml->writeElement('OfficeKey', 'OFFICE-1');
-                $xml->writeElement('MemberKey', $deal['user_id']['id'] ?? 'UNKNOWN');
+                // Link to the dynamic member
+                $xml->writeElement('ListOfficeKey', 'OFFICE-SAVOIR');
+                $xml->writeElement('ListAgentKey', $deal['user_id']['id'] ?? 'UNKNOWN');
 
             $xml->endElement(); // Property
         }
@@ -242,8 +267,11 @@ class LeadingREXmlService
                     if (empty($url)) continue;
 
                     $xml->startElement('Media');
+                        $xml->writeElement('MediaKey', $deal['id'] . '-PHOTO-' . $order);
                         $xml->writeElement('ResourceRecordID', $deal['id']); 
+                        $xml->writeElement('ResourceName', 'Property');
                         $xml->writeElement('MediaURL', $url);
+                        $xml->writeElement('MediaCategory', 'Photo');
                         $xml->writeElement('Order', $order);
                     $xml->endElement(); // Media
                     
@@ -258,6 +286,9 @@ class LeadingREXmlService
         $xml->endDocument();
         $xml->flush();
 
-        return $fullPath;
+        return [
+            'file_path' => $fullPath,
+            'total_deals' => count($deals)
+        ];
     }
 }

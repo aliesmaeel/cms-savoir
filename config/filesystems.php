@@ -58,6 +58,16 @@ return [
          'visibility' => 'public',
         ],
 
+        'leadingre_sftp' => [
+            'driver' => 'sftp',
+            'host' => env('LEADINGRE_SFTP_HOST'),
+            'username' => env('LEADINGRE_SFTP_USERNAME'),
+            'password' => env('LEADINGRE_SFTP_PASSWORD'),
+            'port' => env('LEADINGRE_SFTP_PORT', 22),
+            // 'root' => '', // Removed completely to let Flysystem default to user landing directory
+            'timeout' => 30,
+        ],
+
     ],
 
     /*
