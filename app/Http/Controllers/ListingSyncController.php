@@ -71,7 +71,7 @@ class ListingSyncController extends Controller
         $token = $authResponse->json()['accessToken'] ?? null;
         if (!$token) return "Auth Failed.";
 
-        $states = ['draft', 'live', 'takendown', 'archived', 'unpublished', 'pending_approval', 'rejected', 'approved', 'failed'];
+        $states = ['live', 'takendown', 'archived', 'unpublished', 'pending_approval', 'rejected', 'approved', 'failed'];
         $processed = 0;
 
         foreach ($states as $state) {
@@ -83,7 +83,7 @@ class ListingSyncController extends Controller
                 'filter[state]' => $state
             ];
             
-            if (in_array($state, ['draft', 'unpublished', 'pending_approval'])) {
+            if (in_array($state, ['unpublished', 'pending_approval'])) {
                 $queryParams['draft'] = 'true';
             }
 
@@ -593,7 +593,7 @@ class ListingSyncController extends Controller
                 return; // Abort further execution for this listing
             }
         } else {
-            if (in_array($rawState, ['live', 'draft'])) {
+            if ($rawState === 'live') {
                 Log::info("Action: CREATING new deal (State: {$rawState})");
                 $pipedriveData['user_id'] = 25366837; // Edward Paul (Only for new deals)
                 $response = Http::post("https://api.pipedrive.com/v1/deals?api_token={$pipedriveToken}", $pipedriveData);
