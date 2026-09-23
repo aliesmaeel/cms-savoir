@@ -502,6 +502,12 @@ class ListingSyncController extends Controller
 
         // Create or Update
         if ($dealId) {
+            // Safety Check: Do not let Drafts overwrite an existing (Live) deal.
+            if (in_array($rawState, ['draft', 'pending_approval'])) {
+                Log::info("Action: SKIPPED updating existing deal ID {$dealId} because incoming listing is in state '{$rawState}'.");
+                return; // Abort further execution for this listing
+            }
+            
             $actualChanges = [];
             
             if ($existingDealData) {
