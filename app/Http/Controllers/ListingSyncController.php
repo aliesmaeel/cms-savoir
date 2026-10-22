@@ -677,33 +677,105 @@ class ListingSyncController extends Controller
             return $b->getMTime() <=> $a->getMTime();
         });
 
-        $html = "<html><head><title>Creation Logs</title><style>
-            body { font-family: sans-serif; padding: 20px; }
-            table { border-collapse: collapse; width: 100%; max-width: 800px; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-            th { background-color: #f2f2f2; }
-            a { color: blue; text-decoration: none; }
-            a:hover { text-decoration: underline; }
-        </style></head><body>";
-        $html .= "<h2>Newly Created Deal Logs</h2>";
+        $searchQuery = trim($request->query('search', $request->query('ref', '')));
+
+        $html = "<!DOCTYPE html><html><head><title>Creation Logs</title><style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 24px; background: #f8fafc; color: #1e293b; }
+            .container { max-width: 1050px; margin: 0 auto; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; }
+            h2 { margin-top: 0; color: #0f172a; display: flex; align-items: center; justify-content: space-between; font-size: 20px; }
+            .search-box { margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
+            .search-box input { flex: 1; padding: 10px 14px; font-size: 14px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; }
+            .search-box input:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+            .search-info { font-size: 13px; color: #64748b; margin-top: -12px; margin-bottom: 16px; }
+            table { border-collapse: collapse; width: 100%; font-size: 14px; }
+            th, td { border-bottom: 1px solid #e2e8f0; padding: 12px 10px; text-align: left; }
+            th { background-color: #f1f5f9; color: #475569; font-weight: 600; }
+            tr:hover { background-color: #f8fafc; }
+            .badge-ref { background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-weight: 600; font-family: monospace; }
+            .badge-deal { background: #f1f5f9; color: #334155; padding: 3px 8px; border-radius: 4px; font-family: monospace; }
+            .file-name { color: #64748b; font-family: monospace; font-size: 12px; word-break: break-all; }
+            .btn-view { display: inline-block; padding: 4px 12px; background: #2563eb; color: #fff; text-decoration: none; border-radius: 4px; font-size: 13px; }
+            .btn-view:hover { background: #1d4ed8; }
+            .no-records { padding: 30px; text-align: center; color: #94a3b8; font-style: italic; }
+            .count-badge { font-size: 14px; font-weight: normal; color: #64748b; }
+        </style></head><body>
+        <div class='container'>
+            <h2>
+                <span>Newly Created Deal Logs</span>
+                <span class='count-badge'>Total: <span id='visibleCount'>" . count($files) . "</span> logs</span>
+            </h2>
+            <div class='search-box'>
+                <input type='text' id='searchInput' placeholder='🔍 Search by Ref Number, Deal ID, or Filename...' value='" . htmlspecialchars($searchQuery) . "' onkeyup='filterTable()' autofocus>
+            </div>
+            <div class='search-info'>
+                Tip: Reference numbers are highlighted below. Type any part of the Reference Number to filter immediately.
+            </div>";
         
         if (empty($files)) {
-            $html .= "<p>No logs found.</p>";
+            $html .= "<div class='no-records'>No logs found in storage.</div>";
         } else {
-            $html .= "<table><tr><th>Filename</th><th>Date Modified</th><th>Action</th></tr>";
+            $html .= "<table id='logsTable'>
+                <thead>
+                    <tr>
+                        <th style='width: 220px;'>Ref Number</th>
+                        <th style='width: 110px;'>Deal ID</th>
+                        <th style='width: 170px;'>Date Modified</th>
+                        <th>Filename</th>
+                        <th style='width: 70px; text-align: center;'>Action</th>
+                    </tr>
+                </thead>
+                <tbody>";
+
             foreach ($files as $file) {
                 $filename = $file->getFilename();
+                $dealId = '-';
+                $refNumber = '-';
+
+                // Match created_{dealId}_{ref}_{timestamp}.json
+                if (preg_match('/^created_([0-9]+)_(.+)_([0-9]{4}_[0-9]{2}_[0-9]{2}_[0-9]{6})\.json$/', $filename, $matches)) {
+                    $dealId = $matches[1];
+                    $refNumber = $matches[2];
+                }
+
                 $url = url('/creation-logs?file=' . urlencode($filename));
                 $date = date('Y-m-d H:i:s', $file->getMTime());
-                $html .= "<tr>
-                    <td>{$filename}</td>
-                    <td>{$date}</td>
-                    <td><a href='{$url}' target='_blank'>View</a></td>
+
+                $html .= "<tr class='log-row'>
+                    <td><span class='badge-ref'>" . htmlspecialchars($refNumber) . "</span></td>
+                    <td><span class='badge-deal'>" . htmlspecialchars($dealId) . "</span></td>
+                    <td>" . htmlspecialchars($date) . "</td>
+                    <td><span class='file-name'>" . htmlspecialchars($filename) . "</span></td>
+                    <td style='text-align: center;'><a href='{$url}' target='_blank' class='btn-view'>View</a></td>
                 </tr>";
             }
-            $html .= "</table>";
+            $html .= "</tbody></table>";
         }
-        $html .= "</body></html>";
+
+        $html .= "</div>
+        <script>
+            function filterTable() {
+                var input = document.getElementById('searchInput').value.toLowerCase().trim();
+                var rows = document.querySelectorAll('#logsTable tbody tr');
+                var visibleCount = 0;
+                rows.forEach(function(row) {
+                    var text = row.innerText.toLowerCase();
+                    if (!input || text.indexOf(input) !== -1) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                var countElem = document.getElementById('visibleCount');
+                if (countElem) {
+                    countElem.innerText = visibleCount;
+                }
+            }
+            if (document.getElementById('searchInput').value.trim() !== '') {
+                filterTable();
+            }
+        </script>
+        </body></html>";
         
         return response($html);
     }
