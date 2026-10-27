@@ -228,16 +228,30 @@ class WebhookController extends Controller
 
             $isVerified = ($getListingData('verificationStatus') === 'approved') ? 'Verified' : 'Un-Verified';
             
-            $rawCategory = $getListingData('category');
-            $priceType = $getListingData('price.type');
+            $rawCategory = strtolower(trim((string) $getListingData('category')));
+            $priceType = strtolower(trim((string) $getListingData('price.type')));
             $listingCategory = null;
             if ($rawCategory === 'residential') {
-                if ($priceType === 'sale') $listingCategory = 'Residential Sale';
-                elseif (in_array($priceType, ['yearly', 'monthly'])) $listingCategory = 'Residential Rent';
+                if ($priceType === 'sale') {
+                    $listingCategory = 'Residential Sale';
+                } else {
+                    $listingCategory = 'Residential Rent';
+                }
             } elseif ($rawCategory === 'commercial') {
-                if ($priceType === 'sale') $listingCategory = 'Commercial Sale';
-                elseif (in_array($priceType, ['yearly', 'monthly'])) $listingCategory = 'Commercial Rent';
+                if ($priceType === 'sale') {
+                    $listingCategory = 'Commercial Sale';
+                } else {
+                    $listingCategory = 'Commercial Rent';
+                }
             }
+
+            $categoryLabelToId = [
+                'Residential Rent' => 1307,
+                'Commercial Rent' => 1308,
+                'Residential Sale' => 1309,
+                'Commercial Sale' => 1310
+            ];
+            $mappedCategory = isset($categoryLabelToId[$listingCategory]) ? $categoryLabelToId[$listingCategory] : null;
             
             $rawProjectStatus = $getListingData('projectStatus');
             $listingCompletion = null;
@@ -260,7 +274,7 @@ class WebhookController extends Controller
                 '8abbf4a2a68242278a05332544e8a1c795f7b513' => $getListingData('bathrooms'),
                 '1da5fc3b6713a605fa147077db49064ae9493df6' => $propertyType,
                 '85da40fd76c93821a2cc452d26d94be931409de1' => $getListingData('unitNumber'),
-                '115128d46c1e368dd0680524bc13b3f60c988ca6' => $listingCategory,
+                '115128d46c1e368dd0680524bc13b3f60c988ca6' => $mappedCategory,
                 'f5c3a84e2c36b5d09a83808a9b189c7d25b2424a' => $getListingData('description.en'),
                 '445d6ba6312f20b9a2650a5447234bf4e242a3eb' => $furnishing,
                 '0c984a8705f02d79cdf5bd20057c7232e9dd3fb7' => empty($mappedAmenities) ? null : $mappedAmenities,
