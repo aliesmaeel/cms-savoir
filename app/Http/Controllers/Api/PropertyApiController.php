@@ -114,188 +114,35 @@ class PropertyApiController extends Controller
 
     public function getProperties()
     {
-        DB::table('new_properties')->delete();
-        DB::table('finder_properties')->delete();
-        DB::table('bayut_properties')->delete();
-        DB::table('dubizzle_properties')->delete();
-        DB::table('emirates_properties')->delete();
-        DB::table('property_images')->delete();
-        DB::table('property_floor_plans')->delete();
-        DB::table('property_videos')->delete();
-        $properties =  Http::acceptJson()->get('https://crm.remaxroyalproperties.com/api/feed/web?key=PdSgVkYp3s6v9y');
-        $properties_json = $properties->json();
-        foreach ($properties_json as $property) {
-            $title_lower =strtolower($property['title']);
-            if( Str::contains($title_lower, '|')){
-                $title_lower2 = str_replace('|','',$title_lower);
-            }else{
-                $title_lower2 = $title_lower;
-            }
-            $title_lower3 = str_replace('  ', ' ', $title_lower2);
-            $slug_lower4 = str_replace(' ','-', $title_lower3);
-            $slug_lower5 = str_replace('/','-', $slug_lower4);
-            $slug_x = str_replace('%','-', $slug_lower5);
-            $sameslug= NewProperty::where('slug',$slug_x)->get();
-            $i = $sameslug->count();
-            if($i >= 1 ){
-                $slug =  $slug_x .'-'.  $this->generateUniqueslug();
-            }else{
-                $slug =  $slug_x ;
-            }
-            $community = Community::where('name', $property['community']['name'])->first();
-            if ($community) {
-                $community_id = $community->id;
-            } else {
-                $community_id = '';
-            }
-            $subcommunity = SubCommunity::where('name',$property['sub_community']['name'])->first();
-            if ($subcommunity) {
-                $subcommunity_id = $subcommunity->id;
-            } else {
-                $subcommunity_id = '';
-            }
-            $user = User::where('email', $property['agent']['email'])->first();
-            if ($user) {
-                $user_id = $user->id;
-            } else {
-                $user_id = 1;
-            }
-            $features = [];
-            foreach ($property['features'] as $feature) {
-                array_push($features, $feature['pf_code']);
-            }
-            $features = array_filter($features);
-            $amenities = implode(',', $features);
-            if ($property['furnished'] == 'Furnished') {
-                $furnished = 'Yes';
-            } elseif ($property['furnished'] == 'Unfurnished') {
-                $furnished = 'No';
-            } else {
-                $furnished = 'Partly';
-            }
-            if ($property['region']) {
-                $city = $property['region']['name'];
-            } else {
-                $city = '';
-            }
-            $bedroom = explode(' ', $property['beds']['name']);
-            $bathroom = explode(' ', $property['baths']['name']);
-            if ($property['completion_status'] == 'Off plan') {
-                $completion_status = 'off_plan';
-            } else {
-                $completion_status = 'completed';
-            }
-            if ($property['completion_status'] == 'Off plan') {
-                $off_plan = 'Yes';
-            } else {
-                $off_plan = 'No';
-            }
-            if ($property['bua'] != null) {
-                $bua = $property['bua'];
-            } else {
-                $bua = '';
-            }
-            if ($property['for'] === 1) {
-                $offering_type = 'RS';
-            } else {
-                $offering_type = 'RR';
-            }
-            $newproperty = NewProperty::updateOrCreate(
-                ['reference_number'=> $property['ref_number']],
-                [
-                'reference_number' => $property['ref_number'],
-                'offering_type' => $offering_type,
-                'property_type' => $property['property_category']['pf_code'],
-                'price' => $property['price'],
-                'title_en' => $property['title'],
-                'description_en' => $property['description'],
-                'size' => $bua,
-                'bedroom' => $bedroom[0],
-                'bathroom' => $bathroom[0],
-                'community' => $community_id,
-                'sub_community' => $subcommunity_id,
-                'private_amenities' => $amenities,
-                'user_id' => $user_id,
-                'city' => $city,
-                'finder' => 1,
-                'bayut' => 1,
-                'emirates_estate' => 0,
-                'dubizzle' => 1,
-                'slug' => $slug,
-                'featured' => $property['featured'],
-                'created_at' => $property['created_at'],
-                'updated_at' => $property['updated_at'],
-            ]);
-                $bayut_property = BayutProperty::updateOrCreate(
-                    ['newProperty_id'=> $newproperty->id],
-                    [
-                    'newProperty_id' => $newproperty->id,
-                    'property_status' =>'Live',
-                    'off_plan' => $off_plan,
-                    'created_at' => $property['created_at'],
-                    'updated_at' => $property['updated_at'],
-                ]);
-                $dubizzle_property = DubizzleProperty::updateOrCreate(
-                    ['newProperty_id'=> $newproperty->id],
-                    [
-                    'newProperty_id' => $newproperty->id,
-                    'property_status' =>'Live',
-                    'developer' => 'Emaar',
-                    'furnished' =>  $furnished,
-                    'off_plan' => $off_plan,
-                    'geopoints' => $property['latitude'] . "," . $property['longitude'],
-                    'created_at' => $property['created_at'],
-                    'updated_at' => $property['updated_at'],
-                ]);
-                $finder_property = FinderProperty::updateOrCreate(
-                    ['newProperty_id'=> $newproperty->id],
-                    [
-                    'developer' => 'Emaar',
-                    'furnished' =>  $furnished,
-                    'completion_status' => $completion_status,
-                    'geopoints' => $property['latitude'] . "," . $property['longitude'],
-                    'newProperty_id' => $newproperty->id,
-                    'created_at' => $property['created_at'],
-                    'updated_at' => $property['updated_at'],
-                ]);
+        try {
+            $summary = app(\App\Services\WebsiteFeedSyncService::class)->sync();
+        } catch (\Throwable $exception) {
+            Log::error('Website feed sync failed: ' . $exception->getMessage());
 
-
-            // $emirates_property = EmiratesProperty::create([
-            //     'geopoints' => $property['latitude'] . "," . $property['longitude'],
-            //     'newProperty_id' => $newproperty->id,
-            //     'created_at' => $property['created_at'],
-            //     'updated_at' => $property['updated_at'],
-            // ]);
-
-            if ($property['photos']) {
-                $old_images = DB::table('property_images')->where('newProperty_id',$newproperty->id)->get();
-                if($old_images){
-                     DB::table('property_images')->where('newProperty_id',$newproperty->id)->delete();
-
-                }
-                foreach ($property['photos'] as $photo) {
-                    DB::table('property_images')->insert(
-                        array(
-                            'url' => $photo['name'],
-                            'newProperty_id' => $newproperty->id,
-                            'created_at' => $property['created_at'],
-                            'updated_at' => $property['updated_at'],
-                        )
-                    );
-                }
-            }
-        }
-
-        if ($properties->successful()) {
             return response()->json([
-                'message' =>  'Properties added successfully'
-            ]);
-        } else {
-            return response()->json([
-                'message' =>   $properties['message']
+                'message' => $exception->getMessage(),
             ], 400);
         }
+
+        if (!empty($summary['skipped'])) {
+            return response()->json([
+                'message' => $summary['message'],
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Properties synced successfully',
+            'total' => $summary['total'],
+            'created' => $summary['created'],
+            'updated' => $summary['updated'],
+            'unchanged' => $summary['unchanged'],
+            'images_updated' => $summary['images_updated'],
+            'sub_communities_created' => $summary['sub_communities_created'],
+            'deleted' => $summary['deleted'],
+            'failed' => $summary['failed'],
+        ]);
     }
+
     public function getCommunities()
     {
         $api_communities =  Http::retry(6,10000)->acceptJson()

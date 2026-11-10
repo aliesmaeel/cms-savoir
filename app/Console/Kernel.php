@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('quote:daily')->dailyAt('15:05')->timezone('Europe/Berlin');
-        $schedule->command('fetch:bayutproperties')->hourly()->withoutOverlapping();
+        // Website listings are imported by /etc/cron.d/savoirproperties-cms: sync:properties
     }
 
     /**

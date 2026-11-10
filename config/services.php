@@ -43,6 +43,10 @@ return [
     'google_map_key' => env('GOOGLE_MAP_KEY'),
     'cms_link'=> env('CMS_LINK'),
 
+    'website_feed' => [
+        'url' => env('WEBSITE_FEED_URL'),
+    ],
+
     'openai' => [
         'api_key' => env('OPENAI_API_KEY'),
     ],
