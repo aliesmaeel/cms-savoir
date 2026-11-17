@@ -104,8 +104,6 @@ class PropertyController extends Controller
             $properties->where('completion_status', $request->input('completion_status'));
         }
 
-        $properties->orderBy('new_properties.created_at', 'DESC');
-
         return DataTables::of($properties)
             ->addColumn('user', function (NewProperty $property) {
                 return $property->user?->name;

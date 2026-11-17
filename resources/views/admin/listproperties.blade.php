@@ -1334,6 +1334,7 @@
                 scrollY: 500,
                 scrollX: true,
                 autoWidth: false,
+                order: [[15, 'desc']],
                 columnDefs: [{
                     targets: ':not(:last-child)',
                     createdCell: function (td) {
