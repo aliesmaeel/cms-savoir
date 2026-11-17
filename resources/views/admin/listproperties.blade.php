@@ -216,11 +216,17 @@
             outline: none;
         }
         .property-actions-menu {
-            min-width: 148px;
+            width: max-content;
+            min-width: 0;
+            right: auto;
+            padding: 4px 0;
             z-index: 4000;
         }
         .property-actions-menu .dropdown-item {
-            font-size: 14px;
+            font-size: 13px;
+            line-height: 1.2;
+            padding: 5px 12px;
+            white-space: nowrap;
             cursor: pointer;
         }
         .property-actions-menu .dropdown-item.delete {
@@ -1465,6 +1471,7 @@
                         .css('color', '#000');
                 },
                 drawCallback: function () {
+                    closePropertyActionMenus();
                     window.requestAnimationFrame(fitPropertyColumns);
                 },
 
@@ -1655,18 +1662,51 @@
                 return row ? table.row(row).data()['id'] : null;
             }
 
+            var openPropertyActions = null;
+
+            function restorePropertyActionsMenu($dropdown) {
+                var $menu = $dropdown.children('.property-actions-menu');
+                if (!$menu.length && openPropertyActions && openPropertyActions.dropdown === $dropdown[0]) {
+                    $menu = openPropertyActions.menu;
+                }
+                if ($menu.length) {
+                    $menu.appendTo($dropdown).removeClass('show').removeAttr('data-open').attr('style', '');
+                }
+                $dropdown.removeClass('show');
+                $dropdown.find('.property-actions-toggle').attr('aria-expanded', 'false');
+                if (openPropertyActions && openPropertyActions.dropdown === $dropdown[0]) {
+                    openPropertyActions = null;
+                }
+            }
+
+            function closePropertyActionMenus() {
+                if (openPropertyActions) {
+                    restorePropertyActionsMenu(openPropertyActions.menu.data('owner'));
+                }
+            }
+
             function placePropertyActionsMenu($dropdown) {
                 var toggle = $dropdown.find('.property-actions-toggle')[0];
-                var $menu = $dropdown.find('.dropdown-menu');
-                if (!$menu.length) {
+                var $menu = $dropdown.children('.property-actions-menu');
+                if (!$menu.length || !toggle) {
                     return;
                 }
+                if (openPropertyActions) {
+                    restorePropertyActionsMenu(openPropertyActions.menu.data('owner'));
+                }
+                $menu.data('owner', $dropdown);
+                openPropertyActions = { dropdown: $dropdown[0], menu: $menu };
+                $dropdown.addClass('show');
+                $dropdown.find('.property-actions-toggle').attr('aria-expanded', 'true');
                 var rect = toggle.getBoundingClientRect();
-                $menu.appendTo(document.body).css({
+                $menu.appendTo(document.body).attr('data-open', '1').css({
                     display: 'block',
                     position: 'fixed',
                     top: 0,
                     left: 0,
+                    right: 'auto',
+                    width: 'max-content',
+                    minWidth: 0,
                     zIndex: 4000
                 });
                 var menuHeight = $menu.outerHeight();
@@ -1679,20 +1719,62 @@
                 if (left < 8) {
                     left = 8;
                 }
-                $menu.css({ top: top + 'px', left: left + 'px' });
+                $menu.css({
+                    display: 'block',
+                    position: 'fixed',
+                    top: top + 'px',
+                    left: left + 'px',
+                    right: 'auto',
+                    width: 'max-content',
+                    minWidth: 0,
+                    zIndex: 4000
+                });
             }
 
-            $('body').on('shown.bs.dropdown', '.property-actions', function () {
-                placePropertyActionsMenu($(this));
-            });
-            $('body').on('hide.bs.dropdown', '.property-actions', function () {
-                var $menu = $('body > .property-actions-menu');
-                if ($menu.length) {
-                    $menu.appendTo(this).attr('style', '');
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('.property-actions-menu')) {
+                    return;
                 }
-            });
+                var toggle = e.target.closest('.property-actions-toggle');
+                if (toggle) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var $dropdown = $(toggle).closest('.property-actions');
+                    if (openPropertyActions && openPropertyActions.dropdown === $dropdown[0]) {
+                        restorePropertyActionsMenu($dropdown);
+                    } else {
+                        placePropertyActionsMenu($dropdown);
+                    }
+                    return;
+                }
+                closePropertyActionMenus();
+            }, true);
             $('body').on('click', '.property-actions-menu .dropdown-item', function (e) {
                 e.preventDefault();
+                closePropertyActionMenus();
+            });
+
+            $('body').on('click', '.set-featured', function () {
+                var id = propertyActionId(this);
+                var featured = $(this).attr('data-featured');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('set_property_featured') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: id,
+                        featured: featured
+                    },
+                    dataType: 'json',
+                    success: function (result) {
+                        $('#alertdiv').empty().append(
+                            "<div class='alert alert-" + (result.success ? 'success' : 'danger') + "'>" + result.message + "</div>"
+                        ).attr('hidden', false);
+                        if (result.success) {
+                            table.ajax.reload(null, false);
+                        }
+                    }
+                });
             });
 
             // Delete a record

@@ -127,8 +127,11 @@ class PropertyController extends Controller
                 $id = (int) $row->id;
 
                 return '<div class="dropdown property-actions">'
-                    . '<button type="button" class="property-actions-toggle" data-toggle="dropdown" data-display="static" aria-label="Actions" aria-haspopup="true" aria-expanded="false">&#8942;</button>'
+                    . '<button type="button" class="property-actions-toggle" aria-label="Actions" aria-haspopup="true" aria-expanded="false">&#8942;</button>'
                     . '<div class="dropdown-menu dropdown-menu-right property-actions-menu">'
+                    . '<a class="dropdown-item set-featured" href="#" data-id="' . $id . '" data-featured="' . ((int) $row->featured === 1 ? '0' : '1') . '">'
+                    . ((int) $row->featured === 1 ? 'Not featured' : 'Make featured')
+                    . '</a>'
                     . '<a class="dropdown-item delete" href="#" data-id="' . $id . '">Delete</a>'
                     . '<a class="dropdown-item edit" href="#" data-id="' . $id . '">Edit</a>'
                     . '<a class="dropdown-item Show" href="#" data-id="' . $id . '">Show</a>'
@@ -220,6 +223,26 @@ class PropertyController extends Controller
             return response()->json(['success' => true, 'message' => 'Property has been deleted successfully']);
         else
             return response()->json(['success' => false, 'message' => 'Error hapen while delete property']);
+    }
+    public function setpropertyfeatured(Request $request)
+    {
+        $property = NewProperty::find($request->id);
+        if (!$property) {
+            return response()->json(['success' => false, 'message' => 'Property not found']);
+        }
+
+        if (!in_array((string) $request->featured, ['0', '1'], true)) {
+            return response()->json(['success' => false, 'message' => 'Invalid featured value']);
+        }
+
+        $property->featured = (int) $request->featured;
+        $property->save();
+
+        return response()->json([
+            'success' => true,
+            'featured' => (int) $property->featured,
+            'message' => $property->featured ? 'Property is now featured' : 'Property is no longer featured',
+        ]);
     }
     public function createpropertyindex()
     {

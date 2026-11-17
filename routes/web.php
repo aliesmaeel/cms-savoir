@@ -180,6 +180,7 @@ route::post('listproperties', [App\Http\Controllers\PropertyController::class, '
 route::get('listarchpropertiesindex', [App\Http\Controllers\PropertyController::class, 'listarchpropertiesindex'])->name('list_archived_properties_index');
 route::post('listarchproperties', [App\Http\Controllers\PropertyController::class, 'listarchproperties'])->name('list_archived_properties');
 route::post('deleteproperty', [App\Http\Controllers\PropertyController::class, 'deleteproperty'])->name('delete_property');
+route::post('setpropertyfeatured', [App\Http\Controllers\PropertyController::class, 'setpropertyfeatured'])->name('set_property_featured');
 
 route::get('createpropertyindex', [App\Http\Controllers\PropertyController::class, 'createpropertyindex'])->name('create_property_index');
 route::post('getassigneduserdatainfo', [App\Http\Controllers\HomeController::class, 'getassigneduserdatainfo'])->name('get_assigned_user_data_info');
