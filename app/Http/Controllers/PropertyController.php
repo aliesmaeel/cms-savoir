@@ -57,33 +57,54 @@ class PropertyController extends Controller
     {
 
         $properties = NewProperty::GetLive();
-        if (isset($request->portals)) {
-            $properties->where('reference_number', 'like', '%' . $request->reference_number . '%')
-                ->where('city', 'like', $request->city . '%')
-                ->where('bedroom', 'like', $request->bedrooms . '%')
-                ->where($request->portals, 1)
-                ->orderBy('new_properties.created_at', 'DESC')->get();
+        $properties->where(function ($query) use ($request) {
+            if (isset($request->portals) && $request->portals !== '') {
+                $query->where('reference_number', 'like', '%' . $request->reference_number . '%')
+                    ->where('city', 'like', $request->city . '%')
+                    ->where('bedroom', 'like', $request->bedrooms . '%')
+                    ->where($request->portals, 1);
+            }
+            if ($request->search) {
+                $search = $request->search;
+                $query->where(function ($searchQuery) use ($search) {
+                    $searchQuery->where('price', 'like', '%' . $search . '%')
+                        ->orWhere('title_en', 'like', '%' . $search . '%')
+                        ->orWhere('size', 'like', '%' . $search . '%')
+                        ->orWhere('bathroom', 'like', '%' . $search . '%');
+                });
+            } elseif ($request->user_id !== null) {
+                $query->where('reference_number', 'like', '%' . $request->reference_number . '%')
+                    ->where('community', 'like', $request->community . '%')
+                    ->where('user_id', $request->user_id)
+                    ->where('city', 'like', $request->city . '%')
+                    ->where('bedroom', 'like', $request->bedrooms . '%');
+            } else {
+                $query->where('reference_number', 'like', '%' . $request->reference_number . '%')
+                    ->where('community', 'like', $request->community . '%')
+                    ->where('city', 'like', $request->city . '%')
+                    ->where('bedroom', 'like', $request->bedrooms . '%');
+            }
+        });
+
+        if ($request->input('featured') === '1') {
+            $properties->where('featured', 1);
+        } elseif ($request->input('featured') === '0') {
+            $properties->where(function ($query) {
+                $query->where('featured', 0)->orWhereNull('featured');
+            });
         }
-        if ($request->search) {
-            $properties->where('price', 'like', '%' . $request->search . '%')
-                ->orwhere('title_en', 'like', '%' . $request->search . '%')
-                ->orwhere('size', 'like', '%' . $request->search . '%')
-                ->orwhere('bathroom', 'like', '%' . $request->search . '%')
-                ->orderBy('new_properties.created_at', 'DESC')->get();
-        } else if ($request->user_id !== null) {
-            $properties->where('reference_number', 'like', '%' . $request->reference_number . '%')
-                ->where('community', 'like', $request->community . '%')
-                ->where('user_id',  $request->user_id)
-                ->where('city', 'like', $request->city . '%')
-                ->where('bedroom', 'like', $request->bedrooms . '%')
-                ->orderBy('new_properties.created_at', 'DESC')->get();
-        } else {
-            $properties->where('reference_number', 'like', '%' . $request->reference_number . '%')
-                ->where('community', 'like', $request->community . '%')
-                ->where('city', 'like', $request->city . '%')
-                ->where('bedroom', 'like', $request->bedrooms . '%')
-                ->orderBy('new_properties.created_at', 'DESC')->get();
+
+        $offeringTypes = ['RR', 'RS'];
+        if (in_array($request->input('offering_type'), $offeringTypes, true)) {
+            $properties->where('offering_type', $request->input('offering_type'));
         }
+
+        $completionStatuses = ['completed', 'off_plan'];
+        if (in_array($request->input('completion_status'), $completionStatuses, true)) {
+            $properties->where('completion_status', $request->input('completion_status'));
+        }
+
+        $properties->orderBy('new_properties.created_at', 'DESC');
 
         return DataTables::of($properties)
             ->addColumn('user', function (NewProperty $property) {
@@ -105,11 +126,16 @@ class PropertyController extends Controller
             })
 
             ->addColumn('actions', function ($row) {
-                $actionBtn = '<a class="delete btn btn-danger btn-sm">Delete</a>' . " ";
-                $actionBtn .= '<a class="edit btn btn-info btn-sm">Edit</a>' . " ";
-                $actionBtn .= '<a class="Show btn btn-success btn-sm">Show</a>' . " ";
-                $actionBtn .= '<a class="duplicate btn btn-info btn-sm">Duplicate</a>' . " ";
-                return $actionBtn;
+                $id = (int) $row->id;
+
+                return '<div class="dropdown property-actions">'
+                    . '<button type="button" class="property-actions-toggle" data-toggle="dropdown" data-display="static" aria-label="Actions" aria-haspopup="true" aria-expanded="false">&#8942;</button>'
+                    . '<div class="dropdown-menu dropdown-menu-right property-actions-menu">'
+                    . '<a class="dropdown-item delete" href="#" data-id="' . $id . '">Delete</a>'
+                    . '<a class="dropdown-item edit" href="#" data-id="' . $id . '">Edit</a>'
+                    . '<a class="dropdown-item Show" href="#" data-id="' . $id . '">Show</a>'
+                    . '<a class="dropdown-item duplicate" href="#" data-id="' . $id . '">Duplicate</a>'
+                    . '</div></div>';
             })
             ->rawColumns(['actions'])
             ->make(true);

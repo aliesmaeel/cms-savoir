@@ -175,11 +175,70 @@
             /* width: 25px!important; */
         }
         span.table-title {
-            width: 100%;
             font-size: 12px;
             font-family: 'Lato-Semibold';
             color: #fff;
             /* border-right: 1px solid;*/
+        }
+        #dataTable_wrapper .dataTables_scrollHead table,
+        #dataTable_wrapper .dataTables_scrollBody table {
+            width: max-content !important;
+            table-layout: fixed;
+        }
+        #dataTable_wrapper .dataTables_scrollHead th,
+        #dataTable_wrapper .dataTables_scrollBody td,
+        #dataTable_wrapper .dataTables_scrollBody th {
+            box-sizing: border-box !important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: left !important;
+        }
+        #dataTable_wrapper .dataTables_scrollHead th {
+            padding: 8px 22px 8px 8px !important;
+        }
+        #dataTable_wrapper .dataTables_scrollBody td {
+            padding: 6px 8px !important;
+            max-width: 0;
+        }
+        .property-actions-toggle {
+            border: 0;
+            background: transparent;
+            color: #184d47;
+            font-size: 22px;
+            line-height: 1;
+            padding: 0 8px;
+            cursor: pointer;
+        }
+        .property-actions-toggle:hover,
+        .property-actions-toggle:focus {
+            color: #9D865C;
+            outline: none;
+        }
+        .property-actions-menu {
+            min-width: 148px;
+            z-index: 4000;
+        }
+        .property-actions-menu .dropdown-item {
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .property-actions-menu .dropdown-item.delete {
+            color: #b02a37;
+        }
+        #dataTable_wrapper .dataTables_scrollBody tr.property-row-default td {
+            background-color: #e4e4e4;
+            color: #000;
+        }
+        #dataTable_wrapper .dataTables_scrollBody tr.property-row-featured td {
+            background-color: #98FF98;
+            color: #000;
+        }
+        #dataTable_wrapper .dataTables_scrollBody tr.property-row-default:hover td {
+            background-color: #d4d4d4;
+        }
+        #dataTable_wrapper .dataTables_scrollBody tr.property-row-featured:hover td {
+            background-color: #7ed67e;
         }
         /* #bookslist_wrapper{
             border: 1px solid #e5d5d5;
@@ -712,6 +771,20 @@
             /* border-color: #e5e5e5; */
             color: #bec7c6!important;
         }
+        #tablebuttoncolumns .buttons-colvis {
+            background: #9D865C;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 0.4rem 0.85rem;
+        }
+        div.dt-button-collection {
+            z-index: 2000;
+            max-height: 320px;
+            overflow-y: auto;
+            background: #fff;
+            padding: 0.35rem;
+        }
         /*end*/
         /*responsive*/
         @media(max-width: 1200px) and (min-width: 1000px){
@@ -1033,18 +1106,45 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="row mt-3">
+                            <div class="col-md-3 col-12">
+                                <label class="title-input" for="featured">Featured</label>
+                                <select id="featured" name="featured" class="form-control input-form filter-input">
+                                    <option value="">All</option>
+                                    <option value="1">Featured</option>
+                                    <option value="0">Not featured</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-12">
+                                <label class="title-input" for="offering_type">Offering type</label>
+                                <select id="offering_type" name="offering_type" class="form-control input-form filter-input">
+                                    <option value="">All</option>
+                                    <option value="RR">RR</option>
+                                    <option value="RS">RS</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-12">
+                                <label class="title-input" for="completion_status">Completion status</label>
+                                <select id="completion_status" name="completion_status" class="form-control input-form filter-input">
+                                    <option value="">All</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="off_plan">Off plan</option>
+                                </select>
+                            </div>
+                        </div>
 
 
                     </div>
 
                     <div class="row mt-4 top-row">
-                        @if (Auth::user()->isadmin())
-                            <div class="col-md-3 d-flex justify-content-start">
-                                <div id="tablebuttoncsv" class="mr-1 ml-3"></div>
+                        <div class="col-md-8 d-flex justify-content-start align-items-center">
+                            <div id="tablebuttoncolumns" class="mr-1 ml-3"></div>
+                            @if (Auth::user()->isadmin())
+                                <div id="tablebuttoncsv" class="mr-1"></div>
                                 <div id="tablebuttonexcel" class="mr-1"></div>
                                 <div id="tablebuttonpdf" class="mr-1"></div>
-                            </div>
-                        @endif
+                            @endif
+                        </div>
                     </div>
 
                     <div class="card-body mt-3">
@@ -1064,6 +1164,8 @@
                                 <th><span class="table-title">Bathrooms</span></th>
                                 <th><span class="table-title">Type</span></th>
                                 <th><span class="table-title">Offering</span></th>
+                                <th><span class="table-title">Featured</span></th>
+                                <th><span class="table-title">Completion status</span></th>
                                 <th><span class="table-title">Price</span></th>
                                 <th><span class="table-title">community</span></th>
                                 <th><span class="table-title">Updated</span></th>
@@ -1150,13 +1252,99 @@
     <script>
         $(document).ready(function() {
 
+            function textWidth(el) {
+                if (!el || window.getComputedStyle(el).display === 'none') {
+                    return 0;
+                }
+                var style = window.getComputedStyle(el);
+                var range = document.createRange();
+                var label = el.querySelector('.table-title');
+                if (label && label.firstChild) {
+                    range.selectNodeContents(label.firstChild);
+                } else if (el.childNodes.length) {
+                    range.selectNodeContents(el);
+                } else {
+                    return 0;
+                }
+                var text = Math.ceil(range.getBoundingClientRect().width + 1);
+                if (style.boxSizing === 'border-box') {
+                    var pad = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+                    var border = parseFloat(style.borderLeftWidth) + parseFloat(style.borderRightWidth);
+                    return Math.ceil(text + pad + border);
+                }
+                return text;
+            }
+
+            function fitPropertyColumns() {
+                var wrapper = document.getElementById('dataTable_wrapper');
+                if (!wrapper) {
+                    return;
+                }
+                var headTable = wrapper.querySelector('.dataTables_scrollHead table');
+                var bodyTable = wrapper.querySelector('.dataTables_scrollBody table');
+                if (!headTable || !bodyTable) {
+                    return;
+                }
+                var widths = [];
+                var headerWidths = [];
+                headTable.querySelectorAll('thead th').forEach(function (cell, index) {
+                    headerWidths[index] = textWidth(cell);
+                    widths[index] = headerWidths[index];
+                });
+                bodyTable.querySelectorAll('tbody tr').forEach(function (row) {
+                    Array.prototype.forEach.call(row.children, function (cell, index) {
+                        widths[index] = Math.max(widths[index] || 0, textWidth(cell));
+                    });
+                });
+                widths = widths.map(function (width, index) {
+                    var headerWidth = headerWidths[index] || 0;
+                    return Math.min(width, Math.max(headerWidth, 140));
+                });
+                var total = widths.reduce(function (sum, width) {
+                    return sum + width;
+                }, 0);
+                [headTable, bodyTable].forEach(function (tableEl) {
+                    var colgroup = tableEl.querySelector('colgroup');
+                    if (!colgroup) {
+                        colgroup = document.createElement('colgroup');
+                        tableEl.insertBefore(colgroup, tableEl.firstChild);
+                    }
+                    colgroup.innerHTML = widths.map(function (width) {
+                        return '<col style="width:' + width + 'px">';
+                    }).join('');
+                    tableEl.style.width = total + 'px';
+                    tableEl.querySelectorAll('thead th').forEach(function (cell, index) {
+                        if (!widths[index]) {
+                            return;
+                        }
+                        cell.style.width = widths[index] + 'px';
+                        cell.style.minWidth = widths[index] + 'px';
+                        cell.style.maxWidth = widths[index] + 'px';
+                    });
+                });
+                var inner = wrapper.querySelector('.dataTables_scrollHeadInner');
+                if (inner) {
+                    inner.style.width = total + 'px';
+                }
+            }
+
             let table = $('#dataTable').DataTable({
                 "processing": true,
                 "serverSide": true,
                 scrollY: 500,
                 scrollX: true,
+                autoWidth: false,
+                columnDefs: [{
+                    targets: ':not(:last-child)',
+                    createdCell: function (td) {
+                        var text = $(td).text().trim();
+                        if (text) {
+                            td.setAttribute('title', text);
+                        }
+                    }
+                }],
                 scrollCollapse: true,
-                "pageLength": 100,
+                "pageLength": 25,
                 'bPaginate': false,
                 "deferRender": true,
                 "paging": true,
@@ -1174,6 +1362,9 @@
                             portals: $('#portals').val(),
                             city: $('#city').val(),
                             community: $('#community').val(),
+                            featured: $('#featured').val(),
+                            offering_type: $('#offering_type').val(),
+                            completion_status: $('#completion_status').val(),
                             search: $('input[type=search]').val()
                         });
                     },
@@ -1189,101 +1380,110 @@
                 "columns": [
                     {
                         data: "reference_number",
-                        width: '200px'
                     },
                     {
-                        data: "property_name",
-                        width: '200px'
+                        data: "property_name"
                     },
                     {
-                        data: "property_status",
-                        width: '200px'
+                        data: "property_status"
                     },
                     {
                         data: "user",
-                        name:"user.name",
-                        width: '200px'
+                        name:"user.name"
                     },
                     {
-                        data: "title_en",
-                        width: '200px'
+                        data: "title_en"
                     },
                     {
-                        data: "city",
-                        width: '200px'
+                        data: "city"
                     },
                     {
-                        data: "size",
-                        width: '200px'
+                        data: "size"
                     },
                     {
-                        data: "bedroom",
-                        width: '200px'
+                        data: "bedroom"
                     },
                     {
-                        data: "bathroom",
-                        width: '200px'
+                        data: "bathroom"
                     },
                     {
-                        data: "property_type",
-                        width: '200px',
+                        data: "property_type"
                     },
                     {
-                        data: "offering_type",
-                        width: '200px',
+                        data: "offering_type"
+                    },
+                    {
+                        data: "featured",
+                        name: "featured",
+                        render: function (val) {
+                            return Number(val) === 1 ? 'Yes' : 'No';
+                        }
+                    },
+                    {
+                        data: "completion_status",
+                        name: "completion_status",
+                        render: function (val) {
+                            if (val === 'off_plan') {
+                                return 'Off plan';
+                            }
+                            if (val === 'completed') {
+                                return 'Completed';
+                            }
+                            return val || '';
+                        }
                     },
                     {
                         data: "price",
-                        width: '200px',
                         render: function(val) {
                             return parseFloat(val).toLocaleString();
                         }
                     },
                     {
-                        data: "community_name",
-                        width: '200px'
+                        data: "community_name"
                     },
                     {
-                        data: "updated_at",
-                        width: '200px'
+                        data: "updated_at"
                     },
                     {
-                        data: "project_name",
-                        width: '200px'
+                        data: "project_name"
                     },
                     {
-                        data: "country",
-                        width: '200px'
+                        data: "country"
                     },
                     {
                         data: "actions",
-                        width: '200px'
+                        orderable: false,
+                        searchable: false
                     }
                 ],
-                "createdRow": function( row, data, dataIndex){
-                    if( data.property_status ==  'Live'){
-                        $( row ).css( "background-color", "#98FF98" )
-                        $( row ).css( "color", "#000" )
-                    }else if(data.property_status ==  'Archive'){
-                        $( row ).css( "background-color", "#f79256" )
-                        $( row ).css( "color", "#000" )
-                    }
-                    else if(data.property_status ==  ''){
-                        $( row ).css( "background-color", "" )
-                        $( row ).css( "color", "#000" )
-                    }
+                "createdRow": function( row, data){
+                    var featured = Number(data.featured) === 1;
+                    $(row)
+                        .removeClass('property-row-default property-row-featured')
+                        .addClass(featured ? 'property-row-featured' : 'property-row-default')
+                        .css('color', '#000');
+                },
+                drawCallback: function () {
+                    window.requestAnimationFrame(fitPropertyColumns);
                 },
 
                 "lengthMenu": [
-                    [100, 500, 1000, 2000, 5000, 10000],
-                    [100, 500, 1000, 2000, 5000, 10000]
+                    [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500],
+                    [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500]
                 ],
                 "language":{
                     searchPlaceholder:"Type and press Enter"
                 },
                 dom: 'lftipB',
                 "paging": true,
-                "buttons": [{
+                "buttons": [
+                    {
+                        extend: 'colvis',
+                        text: 'Show / hide columns',
+                        columns: ':not(:last-child)',
+                        postfixButtons: ['colvisRestore']
+                    },
+                    {
                     "extend": 'excel',
                     "action": newexportaction,
                     exportOptions: {
@@ -1298,11 +1498,27 @@
                         }
                     }
                 ],
-                initComplete: (settings, json) => {
+                initComplete: function () {
+                    var api = this.api();
+                    var savedColumns = localStorage.getItem('listproperties-columns');
+                    if (savedColumns) {
+                        try {
+                            var visibility = JSON.parse(savedColumns);
+                            if (Array.isArray(visibility) && visibility.length === api.columns().count()) {
+                                visibility.forEach(function (visible, index) {
+                                    api.column(index).visible(!!visible, false);
+                                });
+                                api.columns.adjust();
+                                fitPropertyColumns();
+                            }
+                        } catch (e) {}
+                    }
                     $('#tablepaginate').empty();
                     $('#dataTable_paginate').appendTo('#tablepaginate');
                     $('#tableinfo').empty();
                     $('#dataTable_info').appendTo('#tableinfo');
+                    $('#tablebuttoncolumns').empty();
+                    $('.btn.btn-secondary.buttons-colvis').appendTo('#tablebuttoncolumns');
                     $('#tablebuttoncsv').empty();
                     $('.btn.btn-secondary.buttons-csv.buttons-html5').appendTo(
                         '#tablebuttoncsv');
@@ -1312,6 +1528,7 @@
                     $('#tablebuttonpdf').empty();
                     $('.btn.btn-secondary.buttons-pdf.buttons-html5').appendTo(
                         '#tablebuttonpdf');
+                    fitPropertyColumns();
                 }
             });
 
@@ -1336,6 +1553,14 @@
             $('#dataTable').DataTable().draw();
             $('.filter-input').change(function(){
                 table.draw();
+            });
+            table.on('column-visibility.dt', function () {
+                localStorage.setItem(
+                    'listproperties-columns',
+                    JSON.stringify(table.columns().visible().toArray())
+                );
+                table.columns.adjust();
+                fitPropertyColumns();
             });
             function newexportaction(e, dt, button, config) {
                 var self = this;
@@ -1420,9 +1645,58 @@
                 $('#alertdiv').attr('hidden', true);
             });
 
+            function propertyActionId(el) {
+                var id = $(el).attr('data-id');
+                if (id) {
+                    return id;
+                }
+                var row = el.closest('tr');
+                return row ? table.row(row).data()['id'] : null;
+            }
+
+            function placePropertyActionsMenu($dropdown) {
+                var toggle = $dropdown.find('.property-actions-toggle')[0];
+                var $menu = $dropdown.find('.dropdown-menu');
+                if (!$menu.length) {
+                    return;
+                }
+                var rect = toggle.getBoundingClientRect();
+                $menu.appendTo(document.body).css({
+                    display: 'block',
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    zIndex: 4000
+                });
+                var menuHeight = $menu.outerHeight();
+                var menuWidth = $menu.outerWidth();
+                var top = rect.bottom + 4;
+                if (top + menuHeight > window.innerHeight - 8) {
+                    top = Math.max(8, rect.top - menuHeight - 4);
+                }
+                var left = rect.right - menuWidth;
+                if (left < 8) {
+                    left = 8;
+                }
+                $menu.css({ top: top + 'px', left: left + 'px' });
+            }
+
+            $('body').on('shown.bs.dropdown', '.property-actions', function () {
+                placePropertyActionsMenu($(this));
+            });
+            $('body').on('hide.bs.dropdown', '.property-actions', function () {
+                var $menu = $('body > .property-actions-menu');
+                if ($menu.length) {
+                    $menu.appendTo(this).attr('style', '');
+                }
+            });
+            $('body').on('click', '.property-actions-menu .dropdown-item', function (e) {
+                e.preventDefault();
+            });
+
             // Delete a record
             $('body').on('click', '.delete', function() {
-                var id = table.row(this.closest('tr')).data()['id'];
+                var id = propertyActionId(this);
                 swal({
                     title: 'Are you sure?',
                     text: 'This record and it`s details will be permanantly deleted!',
@@ -1476,7 +1750,7 @@
             });
             // Edit a record
             $('body').on('click', '.edit', function() {
-                var id = table.row(this.closest('tr')).data()['id'];
+                var id = propertyActionId(this);
 
                 $.ajaxSetup({
                     headers: {
@@ -1499,7 +1773,7 @@
             });
             // Show details
             $('body').on('click', '.Show', function() {
-                var id = table.row(this.closest('tr')).data()['id'];
+                var id = propertyActionId(this);
 
                 $.ajaxSetup({
                     headers: {
@@ -1523,7 +1797,7 @@
 
             // Duplicate a record
             $('body').on('click', '.duplicate', function() {
-                var id = table.row(this.closest('tr')).data()['id'];
+                var id = propertyActionId(this);
 
                 $.ajaxSetup({
                     headers: {
@@ -1564,10 +1838,13 @@
 
     <script src="{{ asset('select2/js/select2.min.js') }}"></script>
     <script>
-        $('.filter-input').select2({
-            width: '100%',
-            placeholder: "Select an Option",
-            allowClear: true,
+        $('.filter-input').each(function () {
+            var emptyLabel = $(this).find('option[value=""]').first().text().trim();
+            $(this).select2({
+                width: '100%',
+                placeholder: emptyLabel || 'Select an Option',
+                allowClear: true,
+            });
         });
     </script>
     <script>
